@@ -177,7 +177,7 @@ export const DateSelect = React.forwardRef<HTMLDivElement, DateSelectProps>(func
       ) : null}
       {helperText ? <p className="text-xs text-charcoal/65">{helperText}</p> : null}
       <div className="grid grid-cols-3 gap-2">
-        <Select value={d || undefined} onValueChange={handleDay}>
+        <Select value={d || ""} onValueChange={handleDay}>
           <SelectTrigger
             id={id ? `${id}-day` : undefined}
             className={cn(
@@ -195,7 +195,7 @@ export const DateSelect = React.forwardRef<HTMLDivElement, DateSelectProps>(func
             ))}
           </SelectContent>
         </Select>
-        <Select value={m || undefined} onValueChange={handleMonth}>
+        <Select value={m || ""} onValueChange={handleMonth}>
           <SelectTrigger
             id={id ? `${id}-month` : undefined}
             className={cn(
@@ -213,7 +213,7 @@ export const DateSelect = React.forwardRef<HTMLDivElement, DateSelectProps>(func
             ))}
           </SelectContent>
         </Select>
-        <Select value={y || undefined} onValueChange={handleYear}>
+        <Select value={y || ""} onValueChange={handleYear}>
           <SelectTrigger
             id={id ? `${id}-year` : undefined}
             className={cn(

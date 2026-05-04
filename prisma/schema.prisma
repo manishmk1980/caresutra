@@ -58,7 +58,7 @@ model CustomerRecord {
   premiumEmi           Decimal?              @db.Decimal(12, 2)
   coverFinalPayout     Decimal?              @db.Decimal(12, 2)
 
-  recordStatus         CustomerRecordStatus  @default(SUBMITTED)
+  recordStatus         CustomerRecordStatus  @default(DRAFT)
 
   createdAt            DateTime              @default(now())
   updatedAt            DateTime              @updatedAt

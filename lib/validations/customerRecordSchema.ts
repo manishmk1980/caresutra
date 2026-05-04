@@ -41,6 +41,7 @@ const expiryAfterService = (data: { serviceCommencedDate?: string; expiryDate?: 
 
 /** Object shape only (no cross-field refinements) — safe for `.pick()` in step schemas (Zod 4). */
 const customerRecordSubmitFieldsSchema = z.object({
+  recordStatus: z.enum(["DRAFT", "SUBMITTED"]).optional(),
   firstName: z.string().min(1, "First name is required."),
   middleName: z.string().optional(),
   lastName: z.string().min(1, "Last name is required."),
@@ -130,6 +131,7 @@ const optStr = z.string().optional();
 export const customerRecordDraftSchema = z
   .object({
     id: z.number().int().positive().optional(),
+    recordStatus: z.enum(["DRAFT", "SUBMITTED"]).optional(),
     firstName: optStr,
     middleName: optStr,
     lastName: optStr,

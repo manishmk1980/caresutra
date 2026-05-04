@@ -33,6 +33,7 @@ export type ApiCustomerRecord = {
 };
 
 export const emptyWizardValues: CustomerRecordFormInput = {
+  recordStatus: "DRAFT",
   firstName: "",
   middleName: "",
   lastName: "",
@@ -91,6 +92,7 @@ export function apiRecordToFormValues(r: ApiCustomerRecord): CustomerRecordFormI
     insuranceLoanAmount: toNum(r.insuranceLoanAmount),
     premiumEmi: toNum(r.premiumEmi),
     coverFinalPayout: toNum(r.coverFinalPayout),
+    recordStatus: r.recordStatus,
   };
 }
 
