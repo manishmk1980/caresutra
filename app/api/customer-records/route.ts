@@ -2,15 +2,38 @@ import { NextRequest, NextResponse } from "next/server";
 import { customerRecordSchema } from "@/lib/validations/customerRecordSchema";
 import { withTimeout } from "@/lib/withTimeout";
 import { unauthorizedIfNoAdminSession } from "@/lib/requireAdminApi";
+import { serializeCustomerRecord } from "@/lib/customerRecordSerialize";
+import { nullableDate, nullableDecimal } from "@/lib/customerRecordNormalize";
 
 const DB_MS = 12_000;
+
+function normalizeCustomerRecordBody(body: unknown): unknown {
+  if (!body || typeof body !== "object" || Array.isArray(body)) return body;
+  const o = { ...(body as Record<string, unknown>) };
+  if (typeof o.customerStatus === "string") {
+    o.customerStatus = o.customerStatus.trim().toUpperCase();
+  }
+  if (typeof o.customerType === "string") {
+    o.customerType = o.customerType.trim().toUpperCase();
+  }
+  return o;
+}
 
 export async function GET() {
   const denied = await unauthorizedIfNoAdminSession();
   if (denied) return denied;
 
   const { getPrisma } = await import("@/lib/prisma");
-  const prisma = getPrisma();
+  let prisma;
+  try {
+    prisma = getPrisma();
+  } catch (e) {
+    console.error("CUSTOMER_RECORDS_GET_ERROR", e);
+    return NextResponse.json(
+      { success: false, message: "Unable to fetch customer records" },
+      { status: 500 },
+    );
+  }
 
   try {
     const records = await withTimeout(
@@ -20,14 +43,17 @@ export async function GET() {
       DB_MS,
       "Database query timed out",
     );
-    return NextResponse.json(records);
+    return NextResponse.json(records.map(serializeCustomerRecord));
   } catch (error) {
-    console.error("Failed to fetch customer records:", error);
+    console.error("CUSTOMER_RECORDS_GET_ERROR", error);
     const message = error instanceof Error ? error.message : "";
     if (message.includes("timed out")) {
-      return NextResponse.json({ error: "Database timeout" }, { status: 504 });
+      return NextResponse.json({ success: false, error: "Database timeout" }, { status: 504 });
     }
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json(
+      { success: false, message: "Unable to fetch customer records" },
+      { status: 500 },
+    );
   }
 }
 
@@ -36,54 +62,85 @@ export async function POST(request: NextRequest) {
   if (denied) return denied;
 
   const { getPrisma } = await import("@/lib/prisma");
-  const prisma = getPrisma();
+  let prisma;
+  try {
+    prisma = getPrisma();
+  } catch (e) {
+    console.error("CUSTOMER_RECORDS_POST_ERROR", e);
+    return NextResponse.json(
+      { success: false, message: "Unable to save customer record" },
+      { status: 500 },
+    );
+  }
+
+  let body: unknown;
+  try {
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ success: false, message: "Invalid JSON body" }, { status: 400 });
+  }
+
+  const parsed = customerRecordSchema.safeParse(normalizeCustomerRecordBody(body));
+  if (!parsed.success) {
+    return NextResponse.json(
+      {
+        success: false,
+        message: "Validation failed",
+        issues: parsed.error.flatten(),
+      },
+      { status: 400 },
+    );
+  }
+
+  const data = parsed.data;
 
   try {
-    const body = await request.json();
-    const validated = customerRecordSchema.parse(body);
-
     const created = await withTimeout(
       prisma.customerRecord.create({
         data: {
-          firstName: validated.firstName,
-          middleName: validated.middleName || null,
-          lastName: validated.lastName,
-          email: validated.email || null,
-          mobile: validated.mobile,
-          alternativeMobile: validated.alternativeMobile || null,
-          dateOfBirth: validated.dateOfBirth ? new Date(validated.dateOfBirth) : null,
-          pan: validated.pan || null,
-          aadhaar: validated.aadhaar || null,
-          addressLine: validated.addressLine,
-          floor: validated.floor || null,
-          street: validated.street,
-          city: validated.city,
-          state: validated.state,
-          pinCode: validated.pinCode,
-          customerPictureUrl: validated.customerPictureUrl || null,
-          customerStatus: validated.customerStatus,
-          customerType: validated.customerType,
-          providerCompanyName: validated.providerCompanyName || null,
-          serviceCommencedDate: validated.serviceCommencedDate
-            ? new Date(validated.serviceCommencedDate)
-            : null,
-          expiryDate: validated.expiryDate ? new Date(validated.expiryDate) : null,
-          insuranceLoanAmount: validated.insuranceLoanAmount ?? null,
-          premiumEmi: validated.premiumEmi ?? null,
-          coverFinalPayout: validated.coverFinalPayout ?? null,
+          firstName: data.firstName.trim(),
+          middleName: data.middleName?.trim() || null,
+          lastName: data.lastName.trim(),
+          email: data.email?.trim() || null,
+          mobile: data.mobile.trim(),
+          alternativeMobile: data.alternativeMobile?.trim() || null,
+          dateOfBirth: nullableDate(data.dateOfBirth),
+          pan: data.pan?.trim() || null,
+          aadhaar: data.aadhaar?.trim() || null,
+          addressLine: data.addressLine.trim(),
+          floor: data.floor?.trim() || null,
+          street: data.street.trim(),
+          city: data.city.trim(),
+          state: data.state.trim(),
+          pinCode: data.pinCode.trim(),
+          customerPictureUrl: data.customerPictureUrl?.trim() || null,
+          customerStatus: data.customerStatus,
+          customerType: data.customerType,
+          providerCompanyName: data.providerCompanyName?.trim() || null,
+          serviceCommencedDate: nullableDate(data.serviceCommencedDate),
+          expiryDate: nullableDate(data.expiryDate),
+          insuranceLoanAmount: nullableDecimal(data.insuranceLoanAmount),
+          premiumEmi: nullableDecimal(data.premiumEmi),
+          coverFinalPayout: nullableDecimal(data.coverFinalPayout),
         },
       }),
       DB_MS,
       "Database query timed out",
     );
 
-    return NextResponse.json({ success: true, record: created }, { status: 201 });
+    return NextResponse.json(
+      { success: true, record: serializeCustomerRecord(created) },
+      { status: 201 },
+    );
   } catch (error) {
-    console.error("Failed to create customer record:", error);
+    console.error("CUSTOMER_RECORDS_POST_ERROR", error);
     const message = error instanceof Error ? error.message : "";
     if (message.includes("timed out")) {
-      return NextResponse.json({ error: "Database timeout" }, { status: 504 });
+      return NextResponse.json({ success: false, error: "Database timeout" }, { status: 504 });
     }
-    return NextResponse.json({ error: "Invalid data or server error" }, { status: 400 });
+    return NextResponse.json(
+      { success: false, message: "Unable to save customer record" },
+      { status: 500 },
+    );
   }
 }

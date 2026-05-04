@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { fetchWithTimeout } from "@/lib/fetchWithTimeout";
+import { formatTimeOnly } from "@/lib/formatDateTime";
 import { Users, Clock, ShieldCheck, CalendarClock, LogOut, RefreshCw } from "lucide-react";
 
 export default function AdminActivityPage() {
@@ -39,17 +40,35 @@ export default function AdminActivityPage() {
             }
             if (res.status === 504) {
                 setLoadError("Database timed out while loading customer records.");
+                setRecords([]);
                 return;
             }
+            const payload = (await res.json().catch(() => null)) as
+                | CustomerRecord[]
+                | { success?: boolean; message?: string }
+                | null;
             if (!res.ok) {
-                setLoadError("Unable to load customer records.");
+                const msg =
+                    payload &&
+                    typeof payload === "object" &&
+                    !Array.isArray(payload) &&
+                    typeof (payload as { message?: string }).message === "string"
+                        ? (payload as { message: string }).message
+                        : "Unable to load customer records. Please refresh or check server logs.";
+                setLoadError(msg);
+                setRecords([]);
                 return;
             }
-            const data = (await res.json()) as CustomerRecord[];
-            setRecords(data);
+            if (!Array.isArray(payload)) {
+                setLoadError("Unable to load customer records. Please refresh or check server logs.");
+                setRecords([]);
+                return;
+            }
+            setRecords(payload);
         } catch (error) {
             console.error("Failed to fetch customer records", error);
-            setLoadError("Unable to load customer records.");
+            setLoadError("Unable to load customer records. Please refresh or check server logs.");
+            setRecords([]);
         } finally {
             setLoading(false);
         }
@@ -196,6 +215,7 @@ export default function AdminActivityPage() {
 
                                 <div className="pt-4">
                                     <Button
+                                        asChild
                                         variant="outline"
                                         className="w-full border-soft-gold text-charcoal hover:bg-soft-gold/10 rounded-xl py-3"
                                     >
@@ -228,7 +248,7 @@ export default function AdminActivityPage() {
                 <div className="mt-8 text-center text-charcoal/50 text-sm">
                     <p>
                       Data updates in real-time. Last refreshed:{" "}
-                      {new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                      <span suppressHydrationWarning>{formatTimeOnly(new Date())}</span>
                     </p>
                 </div>
             </div>

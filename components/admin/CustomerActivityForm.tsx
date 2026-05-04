@@ -9,7 +9,6 @@ import {
   customerStatusOptions,
   customerTypeOptions,
   type CustomerRecordFormInput,
-  type CustomerRecordFormData,
 } from "@/lib/validations/customerRecordSchema";
 import { fetchWithTimeout } from "@/lib/fetchWithTimeout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -17,6 +16,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { DatePickerField } from "@/components/ui/date-picker";
 
 const defaultValues: CustomerRecordFormInput = {
   firstName: "",
@@ -110,9 +110,16 @@ export default function CustomerActivityForm({ onSuccess }: { onSuccess?: () => 
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(values),
       });
-      const body = (await res.json().catch(() => ({}))) as { error?: string };
+      const body = (await res.json().catch(() => ({}))) as {
+        error?: string;
+        message?: string;
+      };
       if (!res.ok) {
-        throw new Error(body.error || "Unable to save customer record. Please check details and try again.");
+        throw new Error(
+          body.message ||
+            body.error ||
+            "Unable to save customer record. Please check details and try again.",
+        );
       }
       setSubmitSuccess("Customer record saved successfully.");
       setUrlInput("");
@@ -159,20 +166,18 @@ export default function CustomerActivityForm({ onSuccess }: { onSuccess?: () => 
               ["email", "Email Address", "ravi@example.com"],
               ["mobile", "Mobile *", "9876543210"],
               ["alternativeMobile", "Alternative Mobile", "9123456789"],
-              ["dateOfBirth", "Date of Birth", ""],
               ["pan", "PAN", "ABCDE1234F"],
-              ["aadhaar", "AADHAR", "123412341234"],
+              ["aadhaar", "AADHAAR", "123412341234"],
             ].map(([name, label, placeholder]) => (
               <FormField
                 key={name}
                 control={form.control}
-                name={name as keyof CustomerRecordFormData}
+                name={name as keyof CustomerRecordFormInput}
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>{label}</FormLabel>
                     <FormControl>
                       <Input
-                        type={name === "dateOfBirth" ? "date" : "text"}
                         placeholder={placeholder}
                         {...field}
                         value={(field.value as string | number | undefined) ?? ""}
@@ -184,6 +189,23 @@ export default function CustomerActivityForm({ onSuccess }: { onSuccess?: () => 
                 )}
               />
             ))}
+            <FormField
+              control={form.control}
+              name="dateOfBirth"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Date of Birth</FormLabel>
+                  <FormControl>
+                    <DatePickerField
+                      value={(field.value as string | undefined) ?? ""}
+                      onChange={field.onChange}
+                      placeholder="Pick date of birth"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </div>
         </Section>
 
@@ -200,7 +222,7 @@ export default function CustomerActivityForm({ onSuccess }: { onSuccess?: () => 
               <FormField
                 key={name}
                 control={form.control}
-                name={name as keyof CustomerRecordFormData}
+                name={name as keyof CustomerRecordFormInput}
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>{label}</FormLabel>
@@ -317,7 +339,10 @@ export default function CustomerActivityForm({ onSuccess }: { onSuccess?: () => 
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Customer Status *</FormLabel>
-                  <Select value={field.value} onValueChange={field.onChange}>
+                  <Select
+                    value={(field.value as string | undefined) ?? ""}
+                    onValueChange={field.onChange}
+                  >
                     <FormControl>
                       <SelectTrigger className="rounded-xl border-soft-gold/40">
                         <SelectValue placeholder="Select status" />
@@ -341,7 +366,10 @@ export default function CustomerActivityForm({ onSuccess }: { onSuccess?: () => 
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Customer Type *</FormLabel>
-                  <Select value={field.value} onValueChange={field.onChange}>
+                  <Select
+                    value={(field.value as string | undefined) ?? ""}
+                    onValueChange={field.onChange}
+                  >
                     <FormControl>
                       <SelectTrigger className="rounded-xl border-soft-gold/40">
                         <SelectValue placeholder="Select type" />
@@ -389,7 +417,11 @@ export default function CustomerActivityForm({ onSuccess }: { onSuccess?: () => 
                 <FormItem>
                   <FormLabel>Date of Service Commenced</FormLabel>
                   <FormControl>
-                    <Input type="date" {...field} value={field.value ?? ""} className="rounded-xl border-soft-gold/40" />
+                    <DatePickerField
+                      value={(field.value as string | undefined) ?? ""}
+                      onChange={field.onChange}
+                      placeholder="Pick commencement date"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -402,7 +434,11 @@ export default function CustomerActivityForm({ onSuccess }: { onSuccess?: () => 
                 <FormItem>
                   <FormLabel>Expiry Date</FormLabel>
                   <FormControl>
-                    <Input type="date" {...field} value={field.value ?? ""} className="rounded-xl border-soft-gold/40" />
+                    <DatePickerField
+                      value={(field.value as string | undefined) ?? ""}
+                      onChange={field.onChange}
+                      placeholder="Pick expiry date"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

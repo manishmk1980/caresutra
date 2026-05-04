@@ -1,8 +1,8 @@
 "use client";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
+import { formatDateOnly, formatInrAmount } from "@/lib/formatDateTime";
 
 export type CustomerRecord = {
   id: number;
@@ -35,32 +35,24 @@ function typeClasses(type: CustomerRecord["customerType"]) {
   return "bg-green-100 text-green-800 border border-green-300";
 }
 
+const STATUS_LABELS: Record<CustomerRecord["customerStatus"], string> = {
+  ACTIVE: "Active",
+  INACTIVE: "Inactive",
+  PROSPECT: "Prospect",
+};
+
+const TYPE_LABELS: Record<CustomerRecord["customerType"], string> = {
+  INSURANCE: "Insurance",
+  LOAN: "Loan",
+  HEALTHCARE: "Healthcare",
+};
+
 function labelStatus(status: CustomerRecord["customerStatus"]) {
-  return status.charAt(0) + status.slice(1).toLowerCase();
+  return STATUS_LABELS[status];
 }
 
 function labelType(type: CustomerRecord["customerType"]) {
-  if (type === "HEALTHCARE") return "Healthcare";
-  if (type === "INSURANCE") return "Insurance";
-  return "Loan";
-}
-
-function formatCurrency(value: string | number | null | undefined) {
-  if (value === undefined || value === null || value === "") return "-";
-  const parsed = typeof value === "number" ? value : Number(value);
-  if (!Number.isFinite(parsed)) return "-";
-  return new Intl.NumberFormat("en-IN", {
-    style: "currency",
-    currency: "INR",
-    maximumFractionDigits: 2,
-  }).format(parsed);
-}
-
-function formatDate(value?: string | null) {
-  if (!value) return "-";
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return "-";
-  return date.toLocaleDateString();
+  return TYPE_LABELS[type];
 }
 
 export default function CustomerActivityTable({
@@ -74,14 +66,7 @@ export default function CustomerActivityTable({
 }) {
 
     return (
-        <Card className="shadow-xl border-soft-gold/30 rounded-3xl">
-            <CardHeader className="bg-gradient-to-r from-trust-blue/10 to-support-blue/10 rounded-t-3xl border-b border-soft-gold/20">
-                <CardTitle className="text-charcoal font-cormorant text-2xl">Customer Records</CardTitle>
-                <CardDescription className="text-charcoal/70">
-                  View, monitor, and track customer service records.
-                </CardDescription>
-            </CardHeader>
-            <CardContent>
+        <div className="px-4 md:px-6 py-6">
                 {loading ? (
                     <div className="text-center py-12">
                         <div className="inline-block animate-spin rounded-full h-10 w-10 border-b-2 border-trust-blue"></div>
@@ -165,18 +150,27 @@ export default function CustomerActivityTable({
                                             </Badge>
                                         </td>
                                         <td className="py-4 px-4 text-charcoal/80">{record.providerCompanyName || "-"}</td>
-                                        <td className="py-4 px-4 text-charcoal/80">{formatDate(record.serviceCommencedDate)}</td>
-                                        <td className="py-4 px-4 text-charcoal/80">{formatDate(record.expiryDate)}</td>
-                                        <td className="py-4 px-4 text-charcoal/80">{formatCurrency(record.premiumEmi)}</td>
-                                        <td className="py-4 px-4 text-charcoal/80">{formatCurrency(record.coverFinalPayout)}</td>
-                                        <td className="py-4 px-4 text-sm text-charcoal/80">{formatDate(record.createdAt)}</td>
+                                        <td className="py-4 px-4 text-charcoal/80">
+                                          {formatDateOnly(record.serviceCommencedDate)}
+                                        </td>
+                                        <td className="py-4 px-4 text-charcoal/80">
+                                          {formatDateOnly(record.expiryDate)}
+                                        </td>
+                                        <td className="py-4 px-4 text-charcoal/80">
+                                          {formatInrAmount(record.premiumEmi)}
+                                        </td>
+                                        <td className="py-4 px-4 text-charcoal/80">
+                                          {formatInrAmount(record.coverFinalPayout)}
+                                        </td>
+                                        <td className="py-4 px-4 text-sm text-charcoal/80">
+                                          {formatDateOnly(record.createdAt)}
+                                        </td>
                                     </tr>
                                 ))}
                             </tbody>
                         </table>
                     </div>
                 )}
-            </CardContent>
-        </Card>
+        </div>
     );
 }

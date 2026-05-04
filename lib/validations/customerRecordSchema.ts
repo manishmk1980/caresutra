@@ -49,7 +49,7 @@ export const customerRecordSchema = z.object({
     .string()
     .optional()
     .transform((v) => (v && v.trim().length > 0 ? v.trim() : undefined))
-    .refine((v) => !v || /^\d{12}$/.test(v), "AADHAR must be 12 digits."),
+    .refine((v) => !v || /^\d{12}$/.test(v), "Aadhaar must be 12 digits."),
 
   addressLine: z.string().min(1, "Home / Apartment / Flat is required."),
   floor: z.string().optional(),
