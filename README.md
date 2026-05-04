@@ -131,6 +131,24 @@ The main `CustomerActivity` model includes:
 - Current status, follow-up date, notes
 - Assigned to, created/updated timestamps
 
+## Customer Records (Phase 1)
+
+- New API: `GET/POST /api/customer-records` (admin session required)
+- Upload API: `POST /api/customer-records/upload` (admin session required)
+- Uploaded images are saved under `public/uploads/customers`
+- Supported image formats: `jpg`, `jpeg`, `png`, `webp`
+- Max upload size: `2MB`
+- Admin authentication uses httpOnly cookie session (`caresutra_admin_session`)
+
+### Prisma update
+
+When schema changes are made for customer records:
+
+```bash
+npx prisma generate
+npx prisma db push
+```
+
 ## License
 
 Proprietary - All rights reserved.

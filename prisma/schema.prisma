@@ -25,3 +25,51 @@ model CustomerActivity {
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 }
+
+model CustomerRecord {
+  id                   Int            @id @default(autoincrement())
+
+  firstName            String
+  middleName           String?
+  lastName             String
+  email                String?
+  mobile               String
+  alternativeMobile    String?
+  dateOfBirth          DateTime?
+  pan                  String?
+  aadhaar              String?
+
+  addressLine          String
+  floor                String?
+  street               String
+  city                 String
+  state                String
+  pinCode              String
+
+  customerPictureUrl   String?
+
+  customerStatus       CustomerStatus @default(PROSPECT)
+  customerType         CustomerType
+
+  providerCompanyName  String?
+  serviceCommencedDate DateTime?
+  expiryDate           DateTime?
+  insuranceLoanAmount  Decimal?       @db.Decimal(12, 2)
+  premiumEmi           Decimal?       @db.Decimal(12, 2)
+  coverFinalPayout     Decimal?       @db.Decimal(12, 2)
+
+  createdAt            DateTime       @default(now())
+  updatedAt            DateTime       @updatedAt
+}
+
+enum CustomerStatus {
+  ACTIVE
+  INACTIVE
+  PROSPECT
+}
+
+enum CustomerType {
+  INSURANCE
+  LOAN
+  HEALTHCARE
+}

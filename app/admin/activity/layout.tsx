@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Admin Dashboard | CareSutra",
-  description: "Manage customer activities and leads.",
+  title: "Customer Records | CareSutra Admin",
+  description: "Manage CareSutra customers, service details, and renewal follow-ups.",
   robots: { index: false, follow: false },
   openGraph: {
-    title: "Admin Dashboard | CareSutra",
-    description: "Manage customer activities and leads.",
+    title: "Customer Records | CareSutra Admin",
+    description: "Manage CareSutra customers, service details, and renewal follow-ups.",
     type: "website",
   },
 };

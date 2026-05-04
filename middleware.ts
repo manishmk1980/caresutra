@@ -23,7 +23,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  if (pathname.startsWith("/api/customer-activity")) {
+  if (pathname.startsWith("/api/customer-activity") || pathname.startsWith("/api/customer-records")) {
     if (!authed) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -34,5 +34,11 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/api/customer-activity", "/api/customer-activity/:path*"],
+  matcher: [
+    "/admin/:path*",
+    "/api/customer-activity",
+    "/api/customer-activity/:path*",
+    "/api/customer-records",
+    "/api/customer-records/:path*",
+  ],
 };

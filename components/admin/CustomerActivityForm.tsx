@@ -1,367 +1,493 @@
 "use client";
 
-import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useMemo, useRef, useState } from "react";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { customerActivitySchema, type CustomerActivityFormData } from "@/lib/validations/customerActivitySchema";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Upload, Link2, Camera, ImageIcon } from "lucide-react";
+import {
+  customerRecordSchema,
+  customerStatusOptions,
+  customerTypeOptions,
+  type CustomerRecordFormInput,
+  type CustomerRecordFormData,
+} from "@/lib/validations/customerRecordSchema";
+import { fetchWithTimeout } from "@/lib/fetchWithTimeout";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { fetchWithTimeout } from "@/lib/fetchWithTimeout";
 
-const serviceInterestOptions = [
-    "Home Nursing",
-    "Physiotherapy",
-    "Elderly Care",
-    "Post‑Operative Care",
-    "Newborn & Mother Care",
-    "Medical Equipment",
-    "Doctor Consultation",
-    "Lab Tests at Home",
-    "Other",
-];
+const defaultValues: CustomerRecordFormInput = {
+  firstName: "",
+  middleName: "",
+  lastName: "",
+  email: "",
+  mobile: "",
+  alternativeMobile: "",
+  dateOfBirth: "",
+  pan: "",
+  aadhaar: "",
+  addressLine: "",
+  floor: "",
+  street: "",
+  city: "",
+  state: "",
+  pinCode: "",
+  customerPictureUrl: "",
+  customerStatus: "PROSPECT",
+  customerType: "INSURANCE",
+  providerCompanyName: "",
+  serviceCommencedDate: "",
+  expiryDate: "",
+  insuranceLoanAmount: undefined,
+  premiumEmi: undefined,
+  coverFinalPayout: undefined,
+};
 
-const customerTypeOptions = ["New Lead", "Existing Customer", "Referral", "Corporate"];
-
-const leadSourceOptions = ["Website", "Phone Call", "WhatsApp", "Referral", "Social Media", "Walk‑In", "Other"];
-
-const currentStatusOptions = ["New", "Contacted", "Follow‑up Scheduled", "Converted", "Not Interested"];
+function Section({
+  title,
+  children,
+}: {
+  title: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <section className="rounded-2xl border border-soft-gold/35 bg-ivory/40 p-4 md:p-5 space-y-4">
+      <h3 className="font-serif text-xl font-semibold text-charcoal">{title}</h3>
+      {children}
+    </section>
+  );
+}
 
 export default function CustomerActivityForm({ onSuccess }: { onSuccess?: () => void }) {
-    const [submitting, setSubmitting] = useState(false);
-    const [submitError, setSubmitError] = useState<string | null>(null);
-    const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [submitSuccess, setSubmitSuccess] = useState<string | null>(null);
+  const [uploadState, setUploadState] = useState<string | null>(null);
+  const [urlInput, setUrlInput] = useState("");
+  const fileRef = useRef<HTMLInputElement>(null);
 
-    const form = useForm<CustomerActivityFormData>({
-        resolver: zodResolver(customerActivitySchema),
-        defaultValues: {
-            customerName: "",
-            mobile: "",
-            email: "",
-            city: "",
-            serviceInterest: "",
-            customerType: "",
-            leadSource: "",
-            currentStatus: "New",
-            followUpDate: "",
-            notes: "",
-            assignedTo: "",
-        },
-    });
+  const form = useForm<CustomerRecordFormInput>({
+    resolver: zodResolver(customerRecordSchema),
+    defaultValues,
+    mode: "onTouched",
+  });
 
-    const onSubmit = async (data: CustomerActivityFormData) => {
-        setSubmitting(true);
-        setSubmitError(null);
-        setSubmitSuccess(false);
+  const imagePreview = useWatch({
+    control: form.control,
+    name: "customerPictureUrl",
+  }) || "";
 
-        try {
-            const res = await fetchWithTimeout("/api/customer-activity", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(data),
-            });
+  async function uploadFile(file: File) {
+    setUploadState(null);
+    const formData = new FormData();
+    formData.append("file", file);
 
-            if (!res.ok) {
-                const errorText = await res.text();
-                throw new Error(errorText || "Failed to create activity");
-            }
+    try {
+      const res = await fetchWithTimeout("/api/customer-records/upload", {
+        method: "POST",
+        body: formData,
+      });
+      const data = (await res.json()) as { url?: string; error?: string };
+      if (!res.ok || !data.url) {
+        throw new Error(data.error || "Image upload failed.");
+      }
+      form.setValue("customerPictureUrl", data.url, { shouldValidate: true, shouldTouch: true });
+      setUploadState("Image uploaded successfully.");
+    } catch (error) {
+      setUploadState(error instanceof Error ? error.message : "Image upload failed.");
+    }
+  }
 
-            setSubmitSuccess(true);
-            form.reset();
-            if (onSuccess) onSuccess();
-        } catch (error) {
-            console.error("Submit error:", error);
-            setSubmitError(error instanceof Error ? error.message : "Unknown error");
-        } finally {
-            setSubmitting(false);
-        }
-    };
+  async function onSubmit(values: CustomerRecordFormInput) {
+    setSubmitting(true);
+    setSubmitError(null);
+    setSubmitSuccess(null);
+    try {
+      const res = await fetchWithTimeout("/api/customer-records", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(values),
+      });
+      const body = (await res.json().catch(() => ({}))) as { error?: string };
+      if (!res.ok) {
+        throw new Error(body.error || "Unable to save customer record. Please check details and try again.");
+      }
+      setSubmitSuccess("Customer record saved successfully.");
+      setUrlInput("");
+      form.reset(defaultValues);
+      onSuccess?.();
+    } catch (error) {
+      setSubmitError(
+        error instanceof Error
+          ? error.message
+          : "Unable to save customer record. Please check details and try again.",
+      );
+    } finally {
+      setSubmitting(false);
+    }
+  }
 
-    return (
-        <Card className="w-full max-w-4xl mx-auto shadow-xl border-soft-gold/30 rounded-3xl">
-            <CardHeader className="bg-gradient-to-r from-trust-blue/10 to-support-blue/10 rounded-t-3xl border-b border-soft-gold/20">
-                <CardTitle className="text-charcoal font-cormorant text-2xl">Add New Customer Activity</CardTitle>
-                <CardDescription className="text-charcoal/70">
-                    Fill in the details below to track a new customer lead or activity
-                </CardDescription>
-            </CardHeader>
-            <CardContent className="pt-6">
-                <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <FormField
-                                control={form.control}
-                                name="customerName"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel className="text-charcoal font-medium">Customer Name *</FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                placeholder="Enter full name"
-                                                {...field}
-                                                className="border-soft-gold/50 focus:border-trust-blue focus:ring-trust-blue/20 rounded-xl"
-                                            />
-                                        </FormControl>
-                                        <FormMessage className="text-support-blue" />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="mobile"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel className="text-charcoal font-medium">Mobile Number *</FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                placeholder="10-digit mobile number"
-                                                {...field}
-                                                className="border-soft-gold/50 focus:border-trust-blue focus:ring-trust-blue/20 rounded-xl"
-                                            />
-                                        </FormControl>
-                                        <FormMessage className="text-support-blue" />
-                                    </FormItem>
-                                )}
-                            />
-                        </div>
+  const statusLabels = useMemo(
+    () => ({
+      ACTIVE: "Active",
+      INACTIVE: "Inactive",
+      PROSPECT: "Prospect",
+    }),
+    [],
+  );
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <FormField
-                                control={form.control}
-                                name="email"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel className="text-charcoal font-medium">Email Address</FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                placeholder="customer@example.com"
-                                                type="email"
-                                                {...field}
-                                                className="border-soft-gold/50 focus:border-trust-blue focus:ring-trust-blue/20 rounded-xl"
-                                            />
-                                        </FormControl>
-                                        <FormMessage className="text-support-blue" />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="city"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel className="text-charcoal font-medium">City</FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                placeholder="Enter city"
-                                                {...field}
-                                                className="border-soft-gold/50 focus:border-trust-blue focus:ring-trust-blue/20 rounded-xl"
-                                            />
-                                        </FormControl>
-                                        <FormMessage className="text-support-blue" />
-                                    </FormItem>
-                                )}
-                            />
-                        </div>
+  const typeLabels = useMemo(
+    () => ({
+      INSURANCE: "Insurance",
+      LOAN: "Loan",
+      HEALTHCARE: "Healthcare",
+    }),
+    [],
+  );
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <FormField
-                                control={form.control}
-                                name="serviceInterest"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel className="text-charcoal font-medium">Service Interest *</FormLabel>
-                                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                            <FormControl>
-                                                <SelectTrigger className="border-soft-gold/50 focus:border-trust-blue focus:ring-trust-blue/20 rounded-xl">
-                                                    <SelectValue placeholder="Select a service" />
-                                                </SelectTrigger>
-                                            </FormControl>
-                                            <SelectContent className="rounded-xl border-soft-gold/30">
-                                                {serviceInterestOptions.map((option) => (
-                                                    <SelectItem key={option} value={option} className="focus:bg-trust-blue/10">
-                                                        {option}
-                                                    </SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
-                                        <FormMessage className="text-support-blue" />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="customerType"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel className="text-charcoal font-medium">Customer Type *</FormLabel>
-                                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                            <FormControl>
-                                                <SelectTrigger className="border-soft-gold/50 focus:border-trust-blue focus:ring-trust-blue/20 rounded-xl">
-                                                    <SelectValue placeholder="Select type" />
-                                                </SelectTrigger>
-                                            </FormControl>
-                                            <SelectContent className="rounded-xl border-soft-gold/30">
-                                                {customerTypeOptions.map((option) => (
-                                                    <SelectItem key={option} value={option} className="focus:bg-trust-blue/10">
-                                                        {option}
-                                                    </SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
-                                        <FormMessage className="text-support-blue" />
-                                    </FormItem>
-                                )}
-                            />
-                        </div>
+  return (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <Section title="1. Personal Details">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+            {[
+              ["firstName", "First Name *", "Ravi"],
+              ["middleName", "Middle Name", "Kumar"],
+              ["lastName", "Last Name *", "Sharma"],
+              ["email", "Email Address", "ravi@example.com"],
+              ["mobile", "Mobile *", "9876543210"],
+              ["alternativeMobile", "Alternative Mobile", "9123456789"],
+              ["dateOfBirth", "Date of Birth", ""],
+              ["pan", "PAN", "ABCDE1234F"],
+              ["aadhaar", "AADHAR", "123412341234"],
+            ].map(([name, label, placeholder]) => (
+              <FormField
+                key={name}
+                control={form.control}
+                name={name as keyof CustomerRecordFormData}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{label}</FormLabel>
+                    <FormControl>
+                      <Input
+                        type={name === "dateOfBirth" ? "date" : "text"}
+                        placeholder={placeholder}
+                        {...field}
+                        value={(field.value as string | number | undefined) ?? ""}
+                        className="rounded-xl border-soft-gold/40"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            ))}
+          </div>
+        </Section>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <FormField
-                                control={form.control}
-                                name="leadSource"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel className="text-charcoal font-medium">Lead Source</FormLabel>
-                                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                            <FormControl>
-                                                <SelectTrigger className="border-soft-gold/50 focus:border-trust-blue focus:ring-trust-blue/20 rounded-xl">
-                                                    <SelectValue placeholder="How did they find us?" />
-                                                </SelectTrigger>
-                                            </FormControl>
-                                            <SelectContent className="rounded-xl border-soft-gold/30">
-                                                {leadSourceOptions.map((option) => (
-                                                    <SelectItem key={option} value={option} className="focus:bg-trust-blue/10">
-                                                        {option}
-                                                    </SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
-                                        <FormMessage className="text-support-blue" />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="currentStatus"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel className="text-charcoal font-medium">Current Status *</FormLabel>
-                                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                            <FormControl>
-                                                <SelectTrigger className="border-soft-gold/50 focus:border-trust-blue focus:ring-trust-blue/20 rounded-xl">
-                                                    <SelectValue placeholder="Select status" />
-                                                </SelectTrigger>
-                                            </FormControl>
-                                            <SelectContent className="rounded-xl border-soft-gold/30">
-                                                {currentStatusOptions.map((option) => (
-                                                    <SelectItem key={option} value={option} className="focus:bg-trust-blue/10">
-                                                        {option}
-                                                    </SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
-                                        <FormMessage className="text-support-blue" />
-                                    </FormItem>
-                                )}
-                            />
-                        </div>
+        <Section title="2. Address Details">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+            {[
+              ["addressLine", "Home / Apartment / Flat *", "Flat 202, Sai Residency"],
+              ["floor", "Floor", "2"],
+              ["street", "Street / Locality *", "Andheri West"],
+              ["city", "City *", "Mumbai"],
+              ["state", "State *", "Maharashtra"],
+              ["pinCode", "PIN Code *", "400053"],
+            ].map(([name, label, placeholder]) => (
+              <FormField
+                key={name}
+                control={form.control}
+                name={name as keyof CustomerRecordFormData}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{label}</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder={placeholder}
+                        {...field}
+                        value={(field.value as string | number | undefined) ?? ""}
+                        className="rounded-xl border-soft-gold/40"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            ))}
+          </div>
+        </Section>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <FormField
-                                control={form.control}
-                                name="followUpDate"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel className="text-charcoal font-medium">Follow-up Date</FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                type="date"
-                                                {...field}
-                                                className="border-soft-gold/50 focus:border-trust-blue focus:ring-trust-blue/20 rounded-xl"
-                                            />
-                                        </FormControl>
-                                        <FormDescription className="text-charcoal/60">
-                                            Schedule a follow-up if needed
-                                        </FormDescription>
-                                        <FormMessage className="text-support-blue" />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="assignedTo"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel className="text-charcoal font-medium">Assigned To</FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                placeholder="Team member name"
-                                                {...field}
-                                                className="border-soft-gold/50 focus:border-trust-blue focus:ring-trust-blue/20 rounded-xl"
-                                            />
-                                        </FormControl>
-                                        <FormMessage className="text-support-blue" />
-                                    </FormItem>
-                                )}
-                            />
-                        </div>
+        <Section title="3. Customer Picture">
+          <div
+            className="rounded-xl border-2 border-dashed border-soft-gold/50 bg-white p-5 text-center"
+            onDragOver={(e) => e.preventDefault()}
+            onDrop={(e) => {
+              e.preventDefault();
+              const file = e.dataTransfer.files?.[0];
+              if (file) void uploadFile(file);
+            }}
+          >
+            <ImageIcon className="h-8 w-8 text-support-blue mx-auto mb-2" />
+            <p className="text-sm text-charcoal/70">
+              Drag and drop image here (JPG, JPEG, PNG, WEBP up to 2MB)
+            </p>
+            <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
+              <input
+                ref={fileRef}
+                type="file"
+                accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
+                className="hidden"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) void uploadFile(file);
+                }}
+              />
+              <Button type="button" variant="outline" onClick={() => fileRef.current?.click()}>
+                <Upload className="h-4 w-4 mr-2" />
+                Upload from device
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => {
+                  setUploadState("Camera capture will be enabled in next phase.");
+                }}
+              >
+                <Camera className="h-4 w-4 mr-2" />
+                Take picture
+              </Button>
+            </div>
+          </div>
 
-                        <FormField
-                            control={form.control}
-                            name="notes"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel className="text-charcoal font-medium">Notes</FormLabel>
-                                    <FormControl>
-                                        <Textarea
-                                            placeholder="Additional details, observations, or next steps..."
-                                            className="min-h-[120px] border-soft-gold/50 focus:border-trust-blue focus:ring-trust-blue/20 rounded-xl"
-                                            {...field}
-                                        />
-                                    </FormControl>
-                                    <FormMessage className="text-support-blue" />
-                                </FormItem>
-                            )}
-                        />
+          <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-3">
+            <Input
+              placeholder="Add image URL (https://...)"
+              value={urlInput}
+              onChange={(e) => setUrlInput(e.target.value)}
+              className="rounded-xl border-soft-gold/40"
+            />
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => {
+                form.setValue("customerPictureUrl", urlInput.trim(), {
+                  shouldValidate: true,
+                  shouldTouch: true,
+                });
+                setUploadState("Image URL added.");
+              }}
+            >
+              <Link2 className="h-4 w-4 mr-2" />
+              Add by URL
+            </Button>
+          </div>
 
-                        <div className="pt-4">
-                            {submitError && (
-                                <div className="mb-4 p-4 bg-support-blue/10 border border-support-blue/30 text-support-blue rounded-xl">
-                                    <p className="font-medium">Error submitting form</p>
-                                    <p className="text-sm">{submitError}</p>
-                                </div>
-                            )}
+          <FormField
+            control={form.control}
+            name="customerPictureUrl"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Picture URL / Path</FormLabel>
+                <FormControl>
+                  <Input {...field} value={field.value ?? ""} className="rounded-xl border-soft-gold/40" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-                            {submitSuccess && (
-                                <div className="mb-4 p-4 bg-heritage-gold/10 border border-heritage-gold/30 text-heritage-gold rounded-xl">
-                                    <p className="font-medium">✓ Activity created successfully!</p>
-                                    <p className="text-sm">The customer activity has been added to the system.</p>
-                                </div>
-                            )}
+          {uploadState ? <p className="text-sm text-support-blue">{uploadState}</p> : null}
 
-                            <Button
-                                type="submit"
-                                disabled={submitting}
-                                className="w-full md:w-auto bg-trust-blue hover:bg-support-blue text-white font-medium py-3 px-8 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
-                            >
-                                {submitting ? (
-                                    <>
-                                        <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                        </svg>
-                                        Creating...
-                                    </>
-                                ) : (
-                                    "Create Customer Activity"
-                                )}
-                            </Button>
-                        </div>
-                    </form>
-                </Form>
-            </CardContent>
-        </Card>
-    );
+          {imagePreview ? (
+            <div className="rounded-xl border border-soft-gold/35 bg-white p-3 w-fit">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={imagePreview} alt="Customer preview" className="h-28 w-28 object-cover rounded-lg" />
+            </div>
+          ) : null}
+        </Section>
+
+        <Section title="4. Customer Status & Type">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <FormField
+              control={form.control}
+              name="customerStatus"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Customer Status *</FormLabel>
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <FormControl>
+                      <SelectTrigger className="rounded-xl border-soft-gold/40">
+                        <SelectValue placeholder="Select status" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {customerStatusOptions.map((status) => (
+                        <SelectItem key={status} value={status}>
+                          {statusLabels[status]}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="customerType"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Customer Type *</FormLabel>
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <FormControl>
+                      <SelectTrigger className="rounded-xl border-soft-gold/40">
+                        <SelectValue placeholder="Select type" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {customerTypeOptions.map((type) => (
+                        <SelectItem key={type} value={type}>
+                          {typeLabels[type]}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+        </Section>
+
+        <Section title="5. Service Details">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+            <FormField
+              control={form.control}
+              name="providerCompanyName"
+              render={({ field }) => (
+                <FormItem className="xl:col-span-3">
+                  <FormLabel>Provider Company Name</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Company whose service is opted"
+                      {...field}
+                      value={field.value ?? ""}
+                      className="rounded-xl border-soft-gold/40"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="serviceCommencedDate"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Date of Service Commenced</FormLabel>
+                  <FormControl>
+                    <Input type="date" {...field} value={field.value ?? ""} className="rounded-xl border-soft-gold/40" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="expiryDate"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Expiry Date</FormLabel>
+                  <FormControl>
+                    <Input type="date" {...field} value={field.value ?? ""} className="rounded-xl border-soft-gold/40" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="insuranceLoanAmount"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Insurance / Loan Amount</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      step="0.01"
+                      placeholder="0.00"
+                      {...field}
+                      value={field.value ?? ""}
+                      className="rounded-xl border-soft-gold/40"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="premiumEmi"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Premium / EMI</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      step="0.01"
+                      placeholder="0.00"
+                      {...field}
+                      value={field.value ?? ""}
+                      className="rounded-xl border-soft-gold/40"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="coverFinalPayout"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Cover / Final Payout</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      step="0.01"
+                      placeholder="0.00"
+                      {...field}
+                      value={field.value ?? ""}
+                      className="rounded-xl border-soft-gold/40"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+        </Section>
+
+        {submitError ? (
+          <div className="rounded-xl border border-red-300 bg-red-50 p-3 text-sm text-red-700">{submitError}</div>
+        ) : null}
+        {submitSuccess ? (
+          <div className="rounded-xl border border-green-300 bg-green-50 p-3 text-sm text-green-700">
+            {submitSuccess}
+          </div>
+        ) : null}
+
+        <Button
+          type="submit"
+          disabled={submitting}
+          className="w-full md:w-auto bg-trust-blue hover:bg-support-blue text-white rounded-xl"
+        >
+          {submitting ? "Saving..." : "Save Customer Record"}
+        </Button>
+      </form>
+    </Form>
+  );
 }
