@@ -1,0 +1,42 @@
+---
+description: CareSutra project rules
+alwaysApply: true
+---
+
+This project is CareSutra.
+
+CareSutra is an Indian personal service brand for insurance, loans, and alternative health services.
+
+Use:
+- Next.js App Router
+- TypeScript
+- Tailwind CSS
+- shadcn/ui
+- Prisma
+- MySQL database: caresutra_db
+
+Git repo:
+https://github.com/manishmk1980/caresutra
+
+Do not reference:
+www.kreatorbox.com/caresutra
+
+Brand rules:
+- Do not redesign the logo.
+- Use existing CareSutra logo from public/images/brand/.
+- Tone should be trustworthy, simple, supportive, and Indian audience friendly.
+- Use clean blue/gold-inspired palette.
+- Avoid clutter and over-animation.
+
+SEO rules:
+- Every public page must have metadata.
+- Use semantic HTML.
+- Use only one H1 per page.
+- Add Open Graph metadata.
+- Keep public content indexable.
+
+Development rules:
+- Do not hardcode secrets.
+- Use .env and .env.example.
+- Keep components modular.
+- Keep Phase 1 simple but scalable.

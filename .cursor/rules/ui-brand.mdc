@@ -1,0 +1,33 @@
+---
+description: CareSutra UI brand rules
+alwaysApply: true
+---
+
+CareSutra UI must follow the approved web brand system.
+
+Palette:
+- Trust Blue: #1F4E79
+- Support Blue: #2E6AA6
+- Heritage Gold: #C8A24D
+- Soft Gold: #E3C77A
+- Ivory: #F7F4ED
+- Charcoal: #2E2E2E
+
+Typography:
+- Montserrat for body, navigation, buttons, forms, labels, admin UI
+- Cormorant Garamond for hero and premium section headings
+
+Design principles:
+- Minimal, premium, trustworthy, supportive
+- Prefer ivory/white backgrounds
+- Use blue and gold accents sparingly
+- Avoid harsh black borders
+- Avoid clutter
+- Avoid generic SaaS UI
+- Use soft shadows, rounded-2xl cards, readable spacing
+- Keep mobile-first responsiveness
+
+Logo:
+- Use /caresutra-hr-logo.svg unless a newer simplified SVG is added
+- Do not stretch, skew, recolor, or redesign the logo
+- Keep clear spacing around the logo
