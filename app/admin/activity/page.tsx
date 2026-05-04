@@ -1,14 +1,14 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import CustomerActivityForm from "@/components/admin/CustomerActivityForm";
+import { useState, useEffect, useCallback, useRef } from "react";
+import CustomerRecordWizard, { type CustomerRecordWizardHandle } from "@/components/admin/customer-records/CustomerRecordWizard";
 import CustomerActivityTable, { type CustomerRecord } from "@/components/admin/CustomerActivityTable";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { fetchWithTimeout } from "@/lib/fetchWithTimeout";
 import { formatTimeOnly } from "@/lib/formatDateTime";
-import { Users, Clock, ShieldCheck, CalendarClock, LogOut, RefreshCw } from "lucide-react";
+import { Users, BadgeCheck, FilePenLine, CalendarClock, LogOut, RefreshCw } from "lucide-react";
 
 export default function AdminActivityPage() {
     const [records, setRecords] = useState<CustomerRecord[]>([]);
@@ -16,6 +16,8 @@ export default function AdminActivityPage() {
     const [loggingOut, setLoggingOut] = useState(false);
     const [loadError, setLoadError] = useState<string | null>(null);
     const [refreshTick, setRefreshTick] = useState(0);
+    const [recordToLoad, setRecordToLoad] = useState<CustomerRecord | null>(null);
+    const wizardRef = useRef<CustomerRecordWizardHandle>(null);
 
     const handleLogout = async () => {
         setLoggingOut(true);
@@ -45,7 +47,7 @@ export default function AdminActivityPage() {
             }
             const payload = (await res.json().catch(() => null)) as
                 | CustomerRecord[]
-                | { success?: boolean; message?: string }
+                | { success?: boolean; message?: string; records?: CustomerRecord[] }
                 | null;
             if (!res.ok) {
                 const msg =
@@ -59,12 +61,17 @@ export default function AdminActivityPage() {
                 setRecords([]);
                 return;
             }
-            if (!Array.isArray(payload)) {
+            const recordsPayload = Array.isArray(payload)
+              ? payload
+              : payload && typeof payload === "object" && Array.isArray(payload.records)
+                ? payload.records
+                : null;
+            if (!recordsPayload) {
                 setLoadError("Unable to load customer records. Please refresh or check server logs.");
                 setRecords([]);
                 return;
             }
-            setRecords(payload);
+            setRecords(recordsPayload);
         } catch (error) {
             console.error("Failed to fetch customer records", error);
             setLoadError("Unable to load customer records. Please refresh or check server logs.");
@@ -80,14 +87,21 @@ export default function AdminActivityPage() {
         });
     }, [fetchRecords, refreshTick]);
 
-    const handleSuccess = () => {
+    const handleSuccess = useCallback(() => {
         setRefreshTick((prev) => prev + 1);
-    };
+        setRecordToLoad(null);
+    }, []);
 
-    const totalCustomers = records.length;
-    const activeCustomers = records.filter((r) => r.customerStatus === "ACTIVE").length;
-    const prospects = records.filter((r) => r.customerStatus === "PROSPECT").length;
+    const handleContinue = useCallback((record: CustomerRecord) => {
+        if (wizardRef.current && !wizardRef.current.confirmDiscardIfDirty()) return;
+        setRecordToLoad(record);
+    }, []);
+
+    const totalRecords = records.length;
+    const submittedCount = records.filter((r) => r.recordStatus === "SUBMITTED").length;
+    const draftCount = records.filter((r) => r.recordStatus === "DRAFT").length;
     const expiringSoon = records.filter((r) => {
+      if (r.recordStatus !== "SUBMITTED") return false;
       if (!r.expiryDate) return false;
       const expiry = new Date(r.expiryDate);
       if (Number.isNaN(expiry.getTime())) return false;
@@ -104,7 +118,7 @@ export default function AdminActivityPage() {
                     <div>
                         <h1 className="font-serif text-4xl md:text-5xl font-bold text-charcoal">Customer Records</h1>
                         <p className="text-charcoal/70 text-lg mt-2">
-                          Manage CareSutra customers, service details, and renewal follow-ups.
+                          Guided onboarding, drafts, and submitted CareSutra customer records.
                         </p>
                         <div className="w-24 h-1 bg-heritage-gold mt-4"></div>
                     </div>
@@ -136,13 +150,17 @@ export default function AdminActivityPage() {
                     <div className="lg:col-span-2">
                         <Card className="border-soft-gold/30 bg-white rounded-3xl shadow-xl">
                             <CardHeader className="pb-4 border-b border-soft-gold/20">
-                                <CardTitle className="text-2xl font-bold text-charcoal">Add Customer Record</CardTitle>
+                                <CardTitle className="text-2xl font-bold text-charcoal">Customer onboarding</CardTitle>
                                 <CardDescription className="text-charcoal/70">
-                                    Fill customer KYC and service details section-wise.
+                                    Step through KYC and service details. Save a draft anytime, or submit when everything is complete.
                                 </CardDescription>
                             </CardHeader>
                             <CardContent className="pt-6">
-                                <CustomerActivityForm onSuccess={handleSuccess} />
+                                <CustomerRecordWizard
+                                  ref={wizardRef}
+                                  initialRecord={recordToLoad}
+                                  onSuccess={handleSuccess}
+                                />
                             </CardContent>
                         </Card>
                     </div>
@@ -157,49 +175,45 @@ export default function AdminActivityPage() {
                                 </CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-6 pt-6">
-                                {/* Stat 1 */}
                                 <div className="flex items-center justify-between p-4 bg-ivory rounded-2xl border border-soft-gold/30">
                                     <div className="flex items-center gap-4">
                                         <div className="p-3 bg-trust-blue/10 rounded-xl">
                                             <Users className="h-6 w-6 text-trust-blue" />
                                         </div>
                                         <div>
-                                            <span className="font-medium text-charcoal">Total Customers</span>
-                                            <p className="text-charcoal/50 text-sm">All customer records</p>
+                                            <span className="font-medium text-charcoal">Total Records</span>
+                                            <p className="text-charcoal/50 text-sm">Drafts and submitted</p>
                                         </div>
                                     </div>
-                                    <span className="font-bold text-3xl text-trust-blue">{totalCustomers}</span>
+                                    <span className="font-bold text-3xl text-trust-blue">{totalRecords}</span>
                                 </div>
 
-                                {/* Stat 2 */}
                                 <div className="flex items-center justify-between p-4 bg-ivory rounded-2xl border border-soft-gold/30">
                                     <div className="flex items-center gap-4">
                                         <div className="p-3 bg-green-100 rounded-xl">
-                                            <ShieldCheck className="h-6 w-6 text-green-600" />
+                                            <BadgeCheck className="h-6 w-6 text-green-700" />
                                         </div>
                                         <div>
-                                            <span className="font-medium text-charcoal">Active Customers</span>
-                                            <p className="text-charcoal/50 text-sm">Current active accounts</p>
+                                            <span className="font-medium text-charcoal">Submitted Customers</span>
+                                            <p className="text-charcoal/50 text-sm">Final customer records</p>
                                         </div>
                                     </div>
-                                    <span className="font-bold text-3xl text-green-600">{activeCustomers}</span>
+                                    <span className="font-bold text-3xl text-green-700">{submittedCount}</span>
                                 </div>
 
-                                {/* Stat 3 */}
                                 <div className="flex items-center justify-between p-4 bg-ivory rounded-2xl border border-soft-gold/30">
                                     <div className="flex items-center gap-4">
-                                        <div className="p-3 bg-heritage-gold/10 rounded-xl">
-                                            <Clock className="h-6 w-6 text-heritage-gold" />
+                                        <div className="p-3 bg-soft-gold/25 rounded-xl">
+                                            <FilePenLine className="h-6 w-6 text-heritage-gold" />
                                         </div>
                                         <div>
-                                            <span className="font-medium text-charcoal">Prospects</span>
-                                            <p className="text-charcoal/50 text-sm">Potential customers</p>
+                                            <span className="font-medium text-charcoal">Drafts</span>
+                                            <p className="text-charcoal/50 text-sm">In progress</p>
                                         </div>
                                     </div>
-                                    <span className="font-bold text-3xl text-heritage-gold">{prospects}</span>
+                                    <span className="font-bold text-3xl text-heritage-gold">{draftCount}</span>
                                 </div>
 
-                                {/* Stat 4 */}
                                 <div className="flex items-center justify-between p-4 bg-ivory rounded-2xl border border-soft-gold/30">
                                     <div className="flex items-center gap-4">
                                         <div className="p-3 bg-support-blue/10 rounded-xl">
@@ -207,7 +221,7 @@ export default function AdminActivityPage() {
                                         </div>
                                         <div>
                                             <span className="font-medium text-charcoal">Expiring Soon</span>
-                                            <p className="text-charcoal/50 text-sm">Within next 30 days</p>
+                                            <p className="text-charcoal/50 text-sm">Submitted, within 30 days</p>
                                         </div>
                                     </div>
                                     <span className="font-bold text-3xl text-support-blue">{expiringSoon}</span>
@@ -235,11 +249,16 @@ export default function AdminActivityPage() {
                         <CardHeader className="bg-gradient-to-r from-trust-blue/5 to-support-blue/5 border-b border-soft-gold/20">
                             <CardTitle className="text-2xl font-bold text-charcoal">Customer Records</CardTitle>
                             <CardDescription className="text-charcoal/70">
-                                View customer KYC and service details in one place.
+                                Continue a draft or review submitted details.
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="p-0">
-                            <CustomerActivityTable records={records} loading={loading} loadError={loadError} />
+                            <CustomerActivityTable
+                              records={records}
+                              loading={loading}
+                              loadError={loadError}
+                              onContinue={handleContinue}
+                            />
                         </CardContent>
                     </Card>
                 </div>

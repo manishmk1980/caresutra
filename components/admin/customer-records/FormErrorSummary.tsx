@@ -12,7 +12,7 @@ type Props = {
 const MAX = 5;
 
 export function FormErrorSummary({
-  title = "Please fix the following before saving:",
+  title = "Please fix the following before moving ahead:",
   messages,
   className,
 }: Props) {

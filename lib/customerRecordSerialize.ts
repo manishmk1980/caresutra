@@ -31,6 +31,7 @@ export function serializeCustomerRecord(record: PrismaCustomerRecord) {
       record.insuranceLoanAmount != null ? String(record.insuranceLoanAmount) : null,
     premiumEmi: record.premiumEmi != null ? String(record.premiumEmi) : null,
     coverFinalPayout: record.coverFinalPayout != null ? String(record.coverFinalPayout) : null,
+    recordStatus: record.recordStatus,
     createdAt: record.createdAt.toISOString(),
     updatedAt: record.updatedAt.toISOString(),
   };
