@@ -1,9 +1,11 @@
 import { Button } from "@/components/ui/button";
 import { Mail, Phone, MapPin, ArrowRight } from "lucide-react";
+import Link from "next/link";
 
 export default function ContactSection() {
     return (
         <section id="contact" className="py-20 md:py-28 bg-trust-blue text-white">
+            <div id="appointment" className="scroll-mt-28" />
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="grid lg:grid-cols-2 gap-16 items-center">
                     {/* Left side - CTA content */}
@@ -19,13 +21,24 @@ export default function ContactSection() {
                         <p className="text-xl text-white/90 mb-10 max-w-2xl">
                             Speak with CareSutra for simple, supportive guidance across insurance, loans, and wellness services.
                         </p>
-                        <div className="space-y-6">
+                        <div className="space-y-4">
                             <Button
+                                asChild
                                 size="lg"
                                 className="bg-white text-trust-blue hover:bg-ivory rounded-full px-10 py-6 text-lg font-medium transition-all duration-300 hover:shadow-2xl"
                             >
-                                Talk to CareSutra
-                                <ArrowRight className="ml-3 h-5 w-5" />
+                                <Link href="/book-appointment">
+                                  Book an Appointment
+                                  <ArrowRight className="ml-3 h-5 w-5" />
+                                </Link>
+                            </Button>
+                            <Button
+                                asChild
+                                size="lg"
+                                variant="outline"
+                                className="border-white/70 bg-transparent text-white hover:bg-white/10 rounded-full px-10 py-6 text-lg font-medium"
+                            >
+                                <a href="tel:+919876543210">Call CareSutra</a>
                             </Button>
                             <p className="text-white/70 text-sm">
                                 Aapke saath, har kadam.

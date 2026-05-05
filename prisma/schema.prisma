@@ -80,3 +80,30 @@ enum CustomerType {
   LOAN
   HEALTHCARE
 }
+
+model AppointmentRequest {
+  id                     Int               @id @default(autoincrement())
+  fullName               String
+  email                  String
+  mobile                 String
+  whatsapp               String?
+  telegram               String?
+  city                   String?
+  serviceInterest        String
+  preferredContactMethod String
+  preferredDate          DateTime?
+  preferredTimeSlot      String?
+  message                String?
+  consentAccepted        Boolean           @default(false)
+  status                 AppointmentStatus @default(NEW)
+  createdAt              DateTime          @default(now())
+  updatedAt              DateTime          @updatedAt
+}
+
+enum AppointmentStatus {
+  NEW
+  CONTACTED
+  SCHEDULED
+  COMPLETED
+  CANCELLED
+}

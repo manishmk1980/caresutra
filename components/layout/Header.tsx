@@ -38,6 +38,8 @@ export default function Header() {
             { label: "Services", href: "/#services" },
             { label: "Why CareSutra", href: "/#why" },
             { label: "Contact", href: "/#contact" },
+            { label: "Book Appointment", href: "/book-appointment" },
+            ...(isAdminAuthenticated ? [{ label: "Appointment Requests", href: "/admin/appointments" }] : []),
             isAdminAuthenticated
                 ? { label: "Customer Records", href: "/admin/activity" }
                 : { label: "Admin Login", href: "/admin/login" },
@@ -106,7 +108,7 @@ export default function Header() {
                         asChild
                         className="bg-trust-blue hover:bg-support-blue text-white rounded-full px-6 py-2.5 font-medium transition-all duration-300 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-heritage-gold focus:ring-offset-2"
                     >
-                        <Link href="/#contact">Talk to CareSutra</Link>
+                        <Link href="/book-appointment">Book Appointment</Link>
                     </Button>
                 </div>
 
@@ -153,7 +155,7 @@ export default function Header() {
                                 className="w-full bg-trust-blue hover:bg-support-blue text-white rounded-xl py-3 font-medium"
                                 onClick={() => setMobileMenuOpen(false)}
                             >
-                                <Link href="/#contact">Talk to CareSutra</Link>
+                                <Link href="/book-appointment">Book Appointment</Link>
                             </Button>
                         </div>
                     </div>

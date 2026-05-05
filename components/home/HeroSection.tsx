@@ -21,17 +21,19 @@ export default function HeroSection() {
                         </p>
                         <div className="flex flex-col sm:flex-row gap-4 mb-12">
                             <Button
+                                asChild
                                 size="lg"
                                 className="bg-trust-blue hover:bg-support-blue text-white rounded-full px-8 py-3 font-medium transition-all duration-300 hover:shadow-lg"
                             >
-                                Talk to CareSutra
+                                <Link href="/book-appointment">Book Appointment</Link>
                             </Button>
                             <Button
+                                asChild
                                 size="lg"
                                 variant="outline"
                                 className="border-trust-blue text-trust-blue hover:bg-trust-blue/5 rounded-full px-8 py-3 font-medium"
                             >
-                                Explore Services
+                                <Link href="/#services">Explore Services</Link>
                             </Button>
                         </div>
                         <div className="flex items-center gap-6 text-sm text-charcoal/60">

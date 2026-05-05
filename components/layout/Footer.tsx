@@ -46,7 +46,7 @@ export default function Footer() {
                         <ul className="space-y-4">
                             <li>
                                 <Link
-                                    href="#services"
+                                    href="/#services"
                                     className="text-ivory/80 hover:text-heritage-gold hover:pl-2 transition-all duration-300 flex items-center"
                                 >
                                     <span className="w-1.5 h-1.5 bg-heritage-gold rounded-full mr-3 opacity-0 group-hover:opacity-100"></span>
@@ -55,7 +55,7 @@ export default function Footer() {
                             </li>
                             <li>
                                 <Link
-                                    href="#services"
+                                    href="/#services"
                                     className="text-ivory/80 hover:text-heritage-gold hover:pl-2 transition-all duration-300 flex items-center"
                                 >
                                     <span className="w-1.5 h-1.5 bg-heritage-gold rounded-full mr-3 opacity-0 group-hover:opacity-100"></span>
@@ -64,7 +64,7 @@ export default function Footer() {
                             </li>
                             <li>
                                 <Link
-                                    href="#services"
+                                    href="/#services"
                                     className="text-ivory/80 hover:text-heritage-gold hover:pl-2 transition-all duration-300 flex items-center"
                                 >
                                     <span className="w-1.5 h-1.5 bg-heritage-gold rounded-full mr-3 opacity-0 group-hover:opacity-100"></span>
@@ -82,7 +82,7 @@ export default function Footer() {
                         <ul className="space-y-4">
                             <li>
                                 <Link
-                                    href="#why"
+                                    href="/#why"
                                     className="text-ivory/80 hover:text-heritage-gold hover:pl-2 transition-all duration-300"
                                 >
                                     Why CareSutra
@@ -90,7 +90,7 @@ export default function Footer() {
                             </li>
                             <li>
                                 <Link
-                                    href="#contact"
+                                    href="/#contact"
                                     className="text-ivory/80 hover:text-heritage-gold hover:pl-2 transition-all duration-300"
                                 >
                                     Contact Us
@@ -98,7 +98,15 @@ export default function Footer() {
                             </li>
                             <li>
                                 <Link
-                                    href="/admin/activity"
+                                    href="/book-appointment"
+                                    className="text-ivory/80 hover:text-heritage-gold hover:pl-2 transition-all duration-300"
+                                >
+                                    Book an Appointment
+                                </Link>
+                            </li>
+                            <li>
+                                <Link
+                                    href="/admin/login"
                                     className="text-ivory/80 hover:text-heritage-gold hover:pl-2 transition-all duration-300"
                                 >
                                     Admin Login
@@ -131,10 +139,10 @@ export default function Footer() {
                                 Ready to choose with clarity?
                             </p>
                             <Link
-                                href="#contact"
+                                href="/book-appointment"
                                 className="inline-block mt-3 bg-heritage-gold hover:bg-soft-gold text-charcoal font-medium py-2.5 px-6 rounded-full transition-colors duration-300"
                             >
-                                Talk to CareSutra
+                                Book an Appointment
                             </Link>
                         </div>
                     </div>
