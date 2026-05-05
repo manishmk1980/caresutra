@@ -38,11 +38,16 @@ export async function POST(request: NextRequest) {
 
   const parsed = appointmentRequestSchema.safeParse(body);
   if (!parsed.success) {
+    const errors: Record<string, string> = {};
+    for (const issue of parsed.error.issues) {
+      const key = typeof issue.path?.[0] === "string" ? issue.path[0] : "form";
+      if (!errors[key]) errors[key] = issue.message;
+    }
     return NextResponse.json(
       {
         success: false,
-        message: "Validation failed.",
-        issues: parsed.error.flatten(),
+        message: "Please correct the highlighted fields.",
+        errors,
       },
       { status: 400 },
     );

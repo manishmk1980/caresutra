@@ -1,7 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useEffect, useMemo, useState } from "react";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -40,6 +40,7 @@ export default function BookAppointmentPageContent({ calendlyUrl }: Props) {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [showEmbed, setShowEmbed] = useState(false);
+  const [sameAsMobile, setSameAsMobile] = useState(false);
 
   const calendlyBookingUrl = useMemo(() => calendlyUrl?.trim() || "", [calendlyUrl]);
   const hasCalendly = useMemo(() => Boolean(calendlyBookingUrl), [calendlyBookingUrl]);
@@ -71,9 +72,24 @@ export default function BookAppointmentPageContent({ calendlyUrl }: Props) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(values),
       });
-      const payload = (await res.json().catch(() => null)) as { success?: boolean; message?: string } | null;
+      const payload = (await res.json().catch(() => null)) as {
+        success?: boolean;
+        message?: string;
+        errors?: Record<string, string>;
+      } | null;
       if (!res.ok || !payload?.success) {
-        setErrorMessage(payload?.message || "Unable to submit your appointment request. Please check details and try again.");
+        if (payload?.errors) {
+          Object.entries(payload.errors).forEach(([field, message]) => {
+            form.setError(field as keyof AppointmentRequestInput, { type: "server", message });
+          });
+          const firstServerField = Object.keys(payload.errors)[0] as keyof AppointmentRequestInput | undefined;
+          if (firstServerField) {
+            form.setFocus(firstServerField);
+            const el = document.querySelector<HTMLElement>(`[name="${String(firstServerField)}"]`);
+            el?.scrollIntoView({ behavior: "smooth", block: "center" });
+          }
+        }
+        setErrorMessage(payload?.message || "Please complete the required contact details before submitting.");
         return;
       }
       form.reset();
@@ -85,8 +101,18 @@ export default function BookAppointmentPageContent({ calendlyUrl }: Props) {
     }
   }
 
+  const preferredContactMethod = useWatch({ control: form.control, name: "preferredContactMethod" });
+  const mobile = useWatch({ control: form.control, name: "mobile" });
   const { errors, isSubmitting } = form.formState;
+
+  useEffect(() => {
+    if (!sameAsMobile) return;
+    form.setValue("whatsapp", mobile ?? "", { shouldValidate: true, shouldDirty: true });
+  }, [sameAsMobile, mobile, form]);
+
   const onInvalid = (formErrors: typeof errors) => {
+    setSuccessMessage(null);
+    setErrorMessage("Please complete the required contact details before submitting.");
     const firstErrorField = Object.keys(formErrors)[0] as keyof AppointmentRequestInput | undefined;
     if (!firstErrorField) return;
     form.setFocus(firstErrorField);
@@ -120,6 +146,9 @@ export default function BookAppointmentPageContent({ calendlyUrl }: Props) {
                 <div className="space-y-2">
                   <Label htmlFor="email">Email Address *</Label>
                   <Input id="email" type="email" {...form.register("email")} />
+                  {preferredContactMethod === "EMAIL" ? (
+                    <p className="text-xs text-charcoal/60">We&apos;ll use this email for appointment confirmation.</p>
+                  ) : null}
                   {errors.email ? <p className="text-xs text-red-700">{errors.email.message}</p> : null}
                 </div>
                 <div className="space-y-2">
@@ -130,11 +159,25 @@ export default function BookAppointmentPageContent({ calendlyUrl }: Props) {
                 <div className="space-y-2">
                   <Label htmlFor="whatsapp">WhatsApp Number</Label>
                   <Input id="whatsapp" inputMode="numeric" {...form.register("whatsapp")} />
+                  <label className="inline-flex items-center gap-2 text-xs text-charcoal/70">
+                    <input
+                      type="checkbox"
+                      checked={sameAsMobile}
+                      onChange={(e) => setSameAsMobile(e.target.checked)}
+                    />
+                    Same as mobile
+                  </label>
+                  {preferredContactMethod === "WHATSAPP" ? (
+                    <p className="text-xs text-charcoal/60">Required because WhatsApp is selected.</p>
+                  ) : null}
                   {errors.whatsapp ? <p className="text-xs text-red-700">{errors.whatsapp.message}</p> : null}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="telegram">Telegram Username / ID</Label>
                   <Input id="telegram" {...form.register("telegram")} />
+                  {preferredContactMethod === "TELEGRAM" ? (
+                    <p className="text-xs text-charcoal/60">Required because Telegram is selected.</p>
+                  ) : null}
                   {errors.telegram ? <p className="text-xs text-red-700">{errors.telegram.message}</p> : null}
                 </div>
                 <div className="space-y-2 md:col-span-2">
