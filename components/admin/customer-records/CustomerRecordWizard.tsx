@@ -1,6 +1,6 @@
 "use client";
 
-import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useState } from "react";
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import type { ZodIssue } from "zod";
 import {
@@ -67,6 +67,8 @@ const CustomerRecordWizard = forwardRef<CustomerRecordWizardHandle, Props>(funct
   const [savingDraft, setSavingDraft] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [reviewIssues, setReviewIssues] = useState<readonly ZodIssue[]>([]);
+  const [showActionBar, setShowActionBar] = useState(true);
+  const wizardRootRef = useRef<HTMLDivElement | null>(null);
 
   const form = useForm<CustomerRecordFormInput>({
     defaultValues: emptyWizardValues,
@@ -280,9 +282,27 @@ const CustomerRecordWizard = forwardRef<CustomerRecordWizardHandle, Props>(funct
 
   const stepTitle = ["Personal details", "Address", "Picture", "Status & service", "Review & save"][step];
 
+  useEffect(() => {
+    const checkVisibility = () => {
+      const el = wizardRootRef.current;
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      const viewport = window.innerHeight;
+      const visible = rect.top < viewport - 120 && rect.bottom > 220;
+      setShowActionBar(visible);
+    };
+    checkVisibility();
+    window.addEventListener("scroll", checkVisibility, { passive: true });
+    window.addEventListener("resize", checkVisibility);
+    return () => {
+      window.removeEventListener("scroll", checkVisibility);
+      window.removeEventListener("resize", checkVisibility);
+    };
+  }, []);
+
   return (
     <FormProvider {...form}>
-      <div className="space-y-5 pb-40">
+      <div ref={wizardRootRef} className="space-y-5 pb-40">
         <CustomerRecordStepper currentStep={step} maxReached={maxReached} />
 
         <div className="rounded-2xl border border-soft-gold/30 bg-ivory/30 px-3 py-2 md:px-4">
@@ -334,8 +354,9 @@ const CustomerRecordWizard = forwardRef<CustomerRecordWizardHandle, Props>(funct
           {step === 4 ? <StepReviewSubmit onEditStep={setStep} /> : null}
         </div>
 
-        <div className="pointer-events-none fixed inset-x-0 bottom-0 z-40 flex justify-center px-4 pb-3 pt-2 md:px-6">
-          <div className="pointer-events-auto flex w-full max-w-[820px] flex-wrap items-stretch justify-center gap-2 rounded-2xl border border-soft-gold/40 bg-white/95 p-2 shadow-xl backdrop-blur-sm md:gap-3 md:p-3">
+        {showActionBar ? (
+          <div className="pointer-events-none fixed inset-x-0 bottom-0 z-40 flex justify-center px-4 pb-3 pt-2 md:px-6">
+            <div className="pointer-events-auto flex w-full max-w-[820px] flex-wrap items-stretch justify-center gap-2 rounded-2xl border border-soft-gold/40 bg-white/95 p-2 shadow-xl backdrop-blur-sm md:gap-3 md:p-3">
             {step > 0 ? (
               <Button
                 type="button"
@@ -400,8 +421,9 @@ const CustomerRecordWizard = forwardRef<CustomerRecordWizardHandle, Props>(funct
             >
               Reset
             </Button>
+            </div>
           </div>
-        </div>
+        ) : null}
       </div>
     </FormProvider>
   );

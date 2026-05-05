@@ -6,6 +6,7 @@ import CustomerActivityTable, { type CustomerRecord } from "@/components/admin/C
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { fetchWithTimeout } from "@/lib/fetchWithTimeout";
 import { formatDateOnly, formatTimeOnly, formatInrAmount } from "@/lib/formatDateTime";
 import { Users, BadgeCheck, FilePenLine, CalendarClock, LogOut, RefreshCw, X } from "lucide-react";
@@ -23,6 +24,7 @@ const TYPE_LABEL: Record<string, string> = {
 };
 
 export default function AdminActivityPage() {
+    const router = useRouter();
     const [records, setRecords] = useState<CustomerRecord[]>([]);
     const [loading, setLoading] = useState(true);
     const [loggingOut, setLoggingOut] = useState(false);
@@ -35,8 +37,9 @@ export default function AdminActivityPage() {
     const handleLogout = async () => {
         setLoggingOut(true);
         try {
-            await fetch("/api/admin/logout", { method: "POST" });
-            window.location.assign("/admin/login");
+            await fetchWithTimeout("/api/admin/logout", { method: "POST" });
+            router.push("/admin/login");
+            router.refresh();
         } catch (e) {
             console.error("Logout failed", e);
         } finally {
@@ -278,7 +281,7 @@ export default function AdminActivityPage() {
                 </div>
 
                 {/* Footer note */}
-                <div className="mt-8 pb-32 md:pb-40 text-center text-charcoal/50 text-sm">
+                <div className="mt-8 pb-40 md:pb-48 text-center text-charcoal/50 text-sm">
                     <p>
                       Data updates in real-time. Last refreshed:{" "}
                       <span suppressHydrationWarning>{formatTimeOnly(new Date())}</span>
