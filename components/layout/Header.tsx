@@ -38,8 +38,6 @@ export default function Header() {
             { label: "Services", href: "/#services" },
             { label: "Why CareSutra", href: "/#why" },
             { label: "Contact", href: "/#contact" },
-            { label: "Book Appointment", href: "/book-appointment" },
-            ...(isAdminAuthenticated ? [{ label: "Appointment Requests", href: "/admin/appointments" }] : []),
             isAdminAuthenticated
                 ? { label: "Customer Records", href: "/admin/activity" }
                 : { label: "Admin Login", href: "/admin/login" },
@@ -90,20 +88,21 @@ export default function Header() {
                             <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-heritage-gold group-hover:w-full transition-all duration-300"></span>
                         </Link>
                     ))}
+                </nav>
+
+                <div className="hidden lg:flex items-center gap-4">
                     {isAdminAuthenticated ? (
                         <button
                             type="button"
                             onClick={() => void handleLogout()}
                             disabled={isLoggingOut}
-                            className="inline-flex items-center gap-2 text-sm font-medium text-charcoal hover:text-trust-blue transition-colors disabled:opacity-60"
+                            aria-label="Logout"
+                            title="Logout"
+                            className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-soft-gold/50 text-charcoal hover:text-trust-blue hover:border-trust-blue/50 transition-colors disabled:opacity-60"
                         >
                             <LogOut className="h-4 w-4" />
-                            {isLoggingOut ? "Logging out..." : "Logout"}
                         </button>
                     ) : null}
-                </nav>
-
-                <div className="hidden lg:flex items-center gap-4">
                     <Button
                         asChild
                         className="bg-trust-blue hover:bg-support-blue text-white rounded-full px-6 py-2.5 font-medium transition-all duration-300 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-heritage-gold focus:ring-offset-2"

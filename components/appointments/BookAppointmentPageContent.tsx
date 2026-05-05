@@ -39,8 +39,10 @@ type Props = {
 export default function BookAppointmentPageContent({ calendlyUrl }: Props) {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [showEmbed, setShowEmbed] = useState(false);
 
-  const hasCalendly = useMemo(() => Boolean(calendlyUrl?.trim()), [calendlyUrl]);
+  const calendlyBookingUrl = useMemo(() => calendlyUrl?.trim() || "", [calendlyUrl]);
+  const hasCalendly = useMemo(() => Boolean(calendlyBookingUrl), [calendlyBookingUrl]);
 
   const form = useForm<AppointmentRequestInput>({
     resolver: zodResolver(appointmentRequestSchema),
@@ -84,6 +86,13 @@ export default function BookAppointmentPageContent({ calendlyUrl }: Props) {
   }
 
   const { errors, isSubmitting } = form.formState;
+  const onInvalid = (formErrors: typeof errors) => {
+    const firstErrorField = Object.keys(formErrors)[0] as keyof AppointmentRequestInput | undefined;
+    if (!firstErrorField) return;
+    form.setFocus(firstErrorField);
+    const el = document.querySelector<HTMLElement>(`[name="${String(firstErrorField)}"]`);
+    el?.scrollIntoView({ behavior: "smooth", block: "center" });
+  };
 
   return (
     <section id="appointment" className="bg-ivory pb-16 pt-10 md:pb-20 md:pt-14">
@@ -97,11 +106,11 @@ export default function BookAppointmentPageContent({ calendlyUrl }: Props) {
         </div>
 
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-          <div className="rounded-3xl border border-soft-gold/35 bg-white p-5 shadow-sm md:p-7">
+          <div className="rounded-3xl border border-trust-blue/25 bg-white p-5 shadow-md md:p-7">
             <h2 className="font-serif text-2xl text-charcoal">Appointment Request Form</h2>
             <p className="mt-1 text-sm text-charcoal/70">No login required. Fields marked * are mandatory.</p>
 
-            <form onSubmit={form.handleSubmit(onSubmit)} className="mt-5 space-y-4">
+            <form onSubmit={form.handleSubmit(onSubmit, onInvalid)} className="mt-5 space-y-4">
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <div className="space-y-2 md:col-span-2">
                   <Label htmlFor="fullName">Full Name *</Label>
@@ -172,6 +181,7 @@ export default function BookAppointmentPageContent({ calendlyUrl }: Props) {
                 <div className="space-y-2">
                   <Label htmlFor="preferredDate">Preferred Date</Label>
                   <Input id="preferredDate" type="date" {...form.register("preferredDate")} />
+                  <p className="text-xs text-charcoal/60">Choose your preferred date. Our team will confirm availability.</p>
                   {errors.preferredDate ? <p className="text-xs text-red-700">{errors.preferredDate.message}</p> : null}
                 </div>
                 <div className="space-y-2">
@@ -222,31 +232,46 @@ export default function BookAppointmentPageContent({ calendlyUrl }: Props) {
 
           <div className="space-y-6">
             <div className="rounded-3xl border border-soft-gold/35 bg-white p-5 shadow-sm md:p-7">
-              <h2 className="font-serif text-2xl text-charcoal">Book directly on Calendly</h2>
+              <h2 className="font-serif text-2xl text-charcoal">Prefer choosing a slot yourself?</h2>
               <p className="mt-2 text-sm text-charcoal/70">
-                Prefer direct scheduling? Use our Calendly slot booking option.
+                Book directly on Calendly in a new secure tab.
               </p>
               {hasCalendly ? (
                 <>
-                  <div className="mt-4 hidden md:block">
-                    <iframe
-                      src={calendlyUrl}
-                      title="Book a CareSutra appointment"
-                      className="h-[700px] w-full rounded-2xl border border-soft-gold/30 bg-white"
-                    />
-                  </div>
-                  <div className="mt-4 md:hidden">
+                  <div className="mt-4 space-y-3">
                     <Button asChild className="w-full rounded-xl bg-trust-blue hover:bg-support-blue text-white">
-                      <a href={calendlyUrl} target="_blank" rel="noreferrer">
-                        Book on Calendly
+                      <a href={calendlyBookingUrl} target="_blank" rel="noopener noreferrer">
+                      Book on Calendly
                       </a>
                     </Button>
+                    {!showEmbed ? (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="w-full rounded-xl border-soft-gold/50"
+                        onClick={() => setShowEmbed(true)}
+                      >
+                        Show calendar on this page
+                      </Button>
+                    ) : null}
                   </div>
+                  {showEmbed ? (
+                    <div className="mt-4">
+                      <p className="mb-2 text-xs text-charcoal/60">
+                        Calendly may load third-party scheduling scripts.
+                      </p>
+                      <iframe
+                        src={calendlyBookingUrl}
+                        title="Book a CareSutra appointment"
+                        className="h-[700px] w-full rounded-2xl border border-soft-gold/30 bg-white"
+                      />
+                    </div>
+                  ) : null}
                 </>
               ) : (
                 <div className="mt-4 rounded-xl border border-soft-gold/30 bg-ivory/40 p-4">
                   <p className="text-sm text-charcoal/75">
-                    Calendly link is not configured yet. Please submit the form or contact us directly.
+                    Calendly link will be added soon. Please use the appointment form.
                   </p>
                 </div>
               )}
