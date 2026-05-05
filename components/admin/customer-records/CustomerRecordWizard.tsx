@@ -282,7 +282,7 @@ const CustomerRecordWizard = forwardRef<CustomerRecordWizardHandle, Props>(funct
 
   return (
     <FormProvider {...form}>
-      <div className="space-y-5 pb-32">
+      <div className="space-y-5 pb-40">
         <CustomerRecordStepper currentStep={step} maxReached={maxReached} />
 
         <div className="rounded-2xl border border-soft-gold/30 bg-ivory/30 px-3 py-2 md:px-4">
@@ -334,8 +334,8 @@ const CustomerRecordWizard = forwardRef<CustomerRecordWizardHandle, Props>(funct
           {step === 4 ? <StepReviewSubmit onEditStep={setStep} /> : null}
         </div>
 
-        <div className="pointer-events-none fixed inset-x-0 bottom-0 z-40 flex justify-center px-2 pb-3 pt-2 md:px-6">
-          <div className="pointer-events-auto flex w-full max-w-3xl flex-wrap items-stretch justify-center gap-2 rounded-2xl border border-soft-gold/40 bg-white/95 p-2 shadow-lg backdrop-blur-sm md:gap-3 md:p-3">
+        <div className="pointer-events-none fixed inset-x-0 bottom-0 z-40 flex justify-center px-4 pb-3 pt-2 md:px-6">
+          <div className="pointer-events-auto flex w-full max-w-[820px] flex-wrap items-stretch justify-center gap-2 rounded-2xl border border-soft-gold/40 bg-white/95 p-2 shadow-xl backdrop-blur-sm md:gap-3 md:p-3">
             {step > 0 ? (
               <Button
                 type="button"

@@ -7,8 +7,20 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { fetchWithTimeout } from "@/lib/fetchWithTimeout";
-import { formatTimeOnly } from "@/lib/formatDateTime";
-import { Users, BadgeCheck, FilePenLine, CalendarClock, LogOut, RefreshCw } from "lucide-react";
+import { formatDateOnly, formatTimeOnly, formatInrAmount } from "@/lib/formatDateTime";
+import { Users, BadgeCheck, FilePenLine, CalendarClock, LogOut, RefreshCw, X } from "lucide-react";
+
+const STATUS_LABEL: Record<string, string> = {
+    ACTIVE: "Active",
+    INACTIVE: "Inactive",
+    PROSPECT: "Prospect",
+};
+
+const TYPE_LABEL: Record<string, string> = {
+    INSURANCE: "Insurance",
+    LOAN: "Loan",
+    HEALTHCARE: "Healthcare",
+};
 
 export default function AdminActivityPage() {
     const [records, setRecords] = useState<CustomerRecord[]>([]);
@@ -17,6 +29,7 @@ export default function AdminActivityPage() {
     const [loadError, setLoadError] = useState<string | null>(null);
     const [refreshTick, setRefreshTick] = useState(0);
     const [recordToLoad, setRecordToLoad] = useState<CustomerRecord | null>(null);
+    const [recordToView, setRecordToView] = useState<CustomerRecord | null>(null);
     const wizardRef = useRef<CustomerRecordWizardHandle>(null);
 
     const handleLogout = async () => {
@@ -111,7 +124,7 @@ export default function AdminActivityPage() {
     }).length;
 
     return (
-        <div className="min-h-screen bg-ivory p-4 md:p-8">
+        <div className="min-h-screen bg-ivory p-4 pt-8 md:p-8 md:pt-10">
             <div className="max-w-7xl mx-auto">
                 {/* Header */}
                 <div className="mb-10 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
@@ -244,7 +257,7 @@ export default function AdminActivityPage() {
                 </div>
 
                 {/* Table Section */}
-                <div className="mt-12">
+                <div className="mt-12 scroll-mt-28">
                     <Card className="border-soft-gold/30 bg-white rounded-3xl shadow-xl overflow-hidden">
                         <CardHeader className="bg-gradient-to-r from-trust-blue/5 to-support-blue/5 border-b border-soft-gold/20">
                             <CardTitle className="text-2xl font-bold text-charcoal">Customer Records</CardTitle>
@@ -257,20 +270,80 @@ export default function AdminActivityPage() {
                               records={records}
                               loading={loading}
                               loadError={loadError}
-                              onContinue={handleContinue}
+                              onEdit={handleContinue}
+                              onView={setRecordToView}
                             />
                         </CardContent>
                     </Card>
                 </div>
 
                 {/* Footer note */}
-                <div className="mt-8 text-center text-charcoal/50 text-sm">
+                <div className="mt-8 pb-32 md:pb-40 text-center text-charcoal/50 text-sm">
                     <p>
                       Data updates in real-time. Last refreshed:{" "}
                       <span suppressHydrationWarning>{formatTimeOnly(new Date())}</span>
                     </p>
                 </div>
             </div>
+            {recordToView ? (
+              <div className="fixed inset-0 z-[70] bg-charcoal/45 p-4 md:p-8">
+                <div className="mx-auto max-h-[92vh] w-full max-w-3xl overflow-y-auto rounded-3xl border border-soft-gold/40 bg-white shadow-2xl">
+                  <div className="sticky top-0 z-10 flex items-center justify-between border-b border-soft-gold/30 bg-white/95 px-5 py-4 backdrop-blur-sm md:px-6">
+                    <h2 className="font-serif text-xl font-semibold text-charcoal">Customer record details</h2>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      aria-label="Close record view"
+                      onClick={() => setRecordToView(null)}
+                    >
+                      <X className="h-5 w-5" aria-hidden />
+                    </Button>
+                  </div>
+                  <div className="space-y-5 p-5 md:p-6">
+                    <div className="grid grid-cols-1 gap-4 rounded-2xl border border-soft-gold/30 bg-ivory/40 p-4 md:grid-cols-[110px_1fr]">
+                      <div className="h-24 w-24 overflow-hidden rounded-xl border border-soft-gold/40 bg-white">
+                        {recordToView.customerPictureUrl ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img src={recordToView.customerPictureUrl} alt="Customer picture" className="h-full w-full object-cover" />
+                        ) : (
+                          <div className="flex h-full w-full items-center justify-center text-xs text-charcoal/60">No image</div>
+                        )}
+                      </div>
+                      <div className="space-y-1 text-sm text-charcoal/85">
+                        <p className="text-lg font-semibold text-charcoal">
+                          {[recordToView.firstName, recordToView.middleName, recordToView.lastName].filter(Boolean).join(" ") || "—"}
+                        </p>
+                        <p>Email: {recordToView.email || "—"}</p>
+                        <p>Mobile: {recordToView.mobile || "—"}</p>
+                        <p>Address: {[recordToView.addressLine, recordToView.floor, recordToView.street, recordToView.city, recordToView.state, recordToView.pinCode].filter(Boolean).join(", ") || "—"}</p>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-1 gap-4 text-sm md:grid-cols-2">
+                      <div className="rounded-2xl border border-soft-gold/30 bg-ivory/30 p-4">
+                        <p className="text-xs font-semibold uppercase tracking-wide text-charcoal/55">Customer Status & Type</p>
+                        <p className="mt-2">Customer Status: {STATUS_LABEL[recordToView.customerStatus] ?? "—"}</p>
+                        <p>Customer Type: {recordToView.customerType ? TYPE_LABEL[recordToView.customerType] : "—"}</p>
+                        <p>Record Status: {recordToView.recordStatus === "SUBMITTED" ? "Submitted" : "Draft"}</p>
+                      </div>
+                      <div className="rounded-2xl border border-soft-gold/30 bg-ivory/30 p-4">
+                        <p className="text-xs font-semibold uppercase tracking-wide text-charcoal/55">Service Details</p>
+                        <p className="mt-2">Provider Company: {recordToView.providerCompanyName || "—"}</p>
+                        <p>Service Commenced: {formatDateOnly(recordToView.serviceCommencedDate) || "—"}</p>
+                        <p>Expiry Date: {formatDateOnly(recordToView.expiryDate) || "—"}</p>
+                        <p>Insurance / Loan Amount: {formatInrAmount(recordToView.insuranceLoanAmount)}</p>
+                        <p>Premium / EMI: {formatInrAmount(recordToView.premiumEmi)}</p>
+                        <p>Cover / Final Payout: {formatInrAmount(recordToView.coverFinalPayout)}</p>
+                      </div>
+                    </div>
+                    <div className="rounded-2xl border border-soft-gold/30 bg-ivory/30 p-4 text-sm">
+                      <p>Created: {formatDateOnly(recordToView.createdAt)}</p>
+                      <p>Updated: {formatDateOnly(recordToView.updatedAt)}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ) : null}
         </div>
     );
 }

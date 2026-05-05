@@ -38,62 +38,95 @@ export function StepCustomerPicture() {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-5">
       <p className="text-sm text-charcoal/70">Optional — add a customer photo for easier recognition.</p>
-      <div
-        className="rounded-xl border-2 border-dashed border-soft-gold/50 bg-white p-5 text-center"
-        onDragOver={(e) => e.preventDefault()}
-        onDrop={(e) => {
-          e.preventDefault();
-          const file = e.dataTransfer.files?.[0];
-          if (file) void uploadFile(file);
-        }}
-      >
-        <ImageIcon className="h-8 w-8 text-support-blue mx-auto mb-2" />
-        <p className="text-sm text-charcoal/70">Drag and drop (JPG, PNG, WEBP up to 2MB)</p>
-        <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
-          <input
-            ref={fileRef}
-            type="file"
-            accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
-            className="hidden"
-            onChange={(e) => {
-              const file = e.target.files?.[0];
-              if (file) void uploadFile(file);
-            }}
-          />
-          <Button type="button" variant="outline" onClick={() => fileRef.current?.click()}>
-            <Upload className="h-4 w-4 mr-2" />
-            Upload from device
-          </Button>
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => setUploadState("Camera capture will be enabled in a later phase.")}
-          >
-            <Camera className="h-4 w-4 mr-2" />
-            Take picture
-          </Button>
-        </div>
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-3">
-        <Input
-          placeholder="Add image URL (https://...)"
-          value={urlInput}
-          onChange={(e) => setUrlInput(e.target.value)}
-          className="rounded-xl border-soft-gold/40"
-        />
-        <Button
-          type="button"
-          variant="outline"
-          onClick={() => {
-            setValue("customerPictureUrl", urlInput.trim(), { shouldValidate: true, shouldTouch: true });
-            setUploadState("Image URL added.");
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1.2fr_0.8fr]">
+        <div
+          className="rounded-xl border-2 border-dashed border-soft-gold/50 bg-white p-5 text-center"
+          onDragOver={(e) => e.preventDefault()}
+          onDrop={(e) => {
+            e.preventDefault();
+            const file = e.dataTransfer.files?.[0];
+            if (file) void uploadFile(file);
           }}
         >
-          <Link2 className="h-4 w-4 mr-2" />
-          Add by URL
-        </Button>
+          <ImageIcon className="h-8 w-8 text-support-blue mx-auto mb-2" />
+          <p className="text-sm text-charcoal/70">Drag and drop (JPG, PNG, WEBP up to 2MB)</p>
+          <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
+            <input
+              ref={fileRef}
+              type="file"
+              accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
+              className="hidden"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) void uploadFile(file);
+              }}
+            />
+            <Button type="button" variant="outline" onClick={() => fileRef.current?.click()}>
+              <Upload className="h-4 w-4 mr-2" />
+              Upload from device
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setUploadState("Camera capture coming soon.")}
+            >
+              <Camera className="h-4 w-4 mr-2" />
+              Take picture
+            </Button>
+          </div>
+          <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-[1fr_auto]">
+            <Input
+              placeholder="Add image URL (https://...)"
+              value={urlInput}
+              onChange={(e) => setUrlInput(e.target.value)}
+              className="rounded-xl border-soft-gold/40"
+            />
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => {
+                setValue("customerPictureUrl", urlInput.trim(), { shouldValidate: true, shouldTouch: true });
+                setUploadState("Image URL added.");
+              }}
+            >
+              <Link2 className="h-4 w-4 mr-2" />
+              Add URL
+            </Button>
+          </div>
+        </div>
+        <div className="rounded-xl border border-soft-gold/35 bg-white p-4">
+          <p className="text-sm font-medium text-charcoal">Preview</p>
+          {imagePreview ? (
+            <>
+              <div className="mt-3 rounded-lg border border-soft-gold/35 bg-ivory/40 p-2 w-fit">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={imagePreview} alt="Customer preview" className="h-28 w-28 object-cover rounded-lg" />
+              </div>
+              <p className="mt-3 break-all text-xs text-charcoal/65">{imagePreview}</p>
+              <div className="mt-3 flex flex-wrap gap-2">
+                <Button type="button" variant="outline" size="sm" onClick={() => fileRef.current?.click()}>
+                  Replace image
+                </Button>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="text-charcoal/75"
+                  onClick={() => {
+                    setValue("customerPictureUrl", "", { shouldValidate: true, shouldTouch: true });
+                    setUploadState("Image removed.");
+                  }}
+                >
+                  Remove image
+                </Button>
+              </div>
+            </>
+          ) : (
+            <p className="mt-2 text-xs text-charcoal/60">No image selected yet.</p>
+          )}
+        </div>
       </div>
       <FormField
         control={control}
@@ -113,12 +146,6 @@ export function StepCustomerPicture() {
         )}
       />
       {uploadState ? <p className="text-sm text-support-blue">{uploadState}</p> : null}
-      {imagePreview ? (
-        <div className="rounded-xl border border-soft-gold/35 bg-white p-3 w-fit">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={imagePreview} alt="Customer preview" className="h-28 w-28 object-cover rounded-lg" />
-        </div>
-      ) : null}
     </div>
   );
 }

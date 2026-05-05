@@ -92,7 +92,12 @@ export function StepReviewSubmit({ onEditStep }: Props) {
           )}
         </div>
         <div className="space-y-2">
-          <p className="text-xs font-semibold uppercase tracking-wide text-charcoal/55">Section 4: Customer Status & Type</p>
+          <div className="flex items-center justify-between gap-2">
+            <p className="text-xs font-semibold uppercase tracking-wide text-charcoal/55">Section 4: Customer Status & Type</p>
+            <Button type="button" size="sm" variant="outline" className="rounded-lg" onClick={() => onEditStep(3)}>
+              Edit
+            </Button>
+          </div>
           <p>Customer Status: {displayValue(STATUS[v.customerStatus] ?? v.customerStatus)}</p>
           <p>Customer Type: {displayValue(TYPE[v.customerType] ?? v.customerType)}</p>
         </div>

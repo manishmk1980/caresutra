@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { formatDateOnly, formatInrAmount } from "@/lib/formatDateTime";
 import type { ApiCustomerRecord } from "@/lib/customerRecordLoadRecord";
+import { Eye, Pencil } from "lucide-react";
 
 export type CustomerRecord = ApiCustomerRecord;
 
@@ -50,12 +51,14 @@ export default function CustomerActivityTable({
   records,
   loading,
   loadError,
-  onContinue,
+  onEdit,
+  onView,
 }: {
   records: CustomerRecord[];
   loading: boolean;
   loadError: string | null;
-  onContinue?: (record: CustomerRecord) => void;
+  onEdit?: (record: CustomerRecord) => void;
+  onView?: (record: CustomerRecord) => void;
 }) {
   return (
     <div className="px-4 md:px-6 py-6">
@@ -85,35 +88,35 @@ export default function CustomerActivityTable({
         </div>
       ) : (
         <div className="overflow-x-auto -mx-2 px-2">
-          <table className="w-full border-collapse min-w-[1520px]">
+          <table className="w-full border-collapse min-w-[1560px]">
             <thead>
               <tr className="border-b bg-ivory">
-                <th className="text-left py-4 px-4 font-medium text-charcoal">Record</th>
-                <th className="text-left py-4 px-4 font-medium text-charcoal">Picture</th>
-                <th className="text-left py-4 px-4 font-medium text-charcoal">Name</th>
-                <th className="text-left py-4 px-4 font-medium text-charcoal">Mobile</th>
-                <th className="text-left py-4 px-4 font-medium text-charcoal">Email</th>
-                <th className="text-left py-4 px-4 font-medium text-charcoal">City</th>
-                <th className="text-left py-4 px-4 font-medium text-charcoal">Customer Type</th>
-                <th className="text-left py-4 px-4 font-medium text-charcoal">Status</th>
-                <th className="text-left py-4 px-4 font-medium text-charcoal">Provider Company</th>
-                <th className="text-left py-4 px-4 font-medium text-charcoal">Service Commenced</th>
-                <th className="text-left py-4 px-4 font-medium text-charcoal">Expiry Date</th>
-                <th className="text-left py-4 px-4 font-medium text-charcoal">Premium / EMI</th>
-                <th className="text-left py-4 px-4 font-medium text-charcoal">Cover / Final Payout</th>
-                <th className="text-left py-4 px-4 font-medium text-charcoal">Updated</th>
-                <th className="text-left py-4 px-4 font-medium text-charcoal">Actions</th>
+                <th className="text-left py-3.5 px-4 font-semibold text-charcoal align-middle">Record</th>
+                <th className="text-left py-3.5 px-4 font-semibold text-charcoal align-middle">Picture</th>
+                <th className="text-left py-3.5 px-4 font-semibold text-charcoal align-middle">Name</th>
+                <th className="text-left py-3.5 px-4 font-semibold text-charcoal align-middle">Mobile</th>
+                <th className="min-w-[220px] text-left py-3.5 px-4 font-semibold text-charcoal align-middle">Email</th>
+                <th className="min-w-[120px] text-left py-3.5 px-4 font-semibold text-charcoal align-middle">City</th>
+                <th className="min-w-[130px] text-left py-3.5 px-4 font-semibold text-charcoal align-middle">Customer Type</th>
+                <th className="min-w-[120px] text-left py-3.5 px-4 font-semibold text-charcoal align-middle">Status</th>
+                <th className="min-w-[160px] text-left py-3.5 px-4 font-semibold text-charcoal align-middle">Provider Company</th>
+                <th className="text-left py-3.5 px-4 font-semibold text-charcoal align-middle">Service Commenced</th>
+                <th className="text-left py-3.5 px-4 font-semibold text-charcoal align-middle">Expiry Date</th>
+                <th className="text-left py-3.5 px-4 font-semibold text-charcoal align-middle">Premium / EMI</th>
+                <th className="text-left py-3.5 px-4 font-semibold text-charcoal align-middle">Cover / Final Payout</th>
+                <th className="min-w-[110px] text-left py-3.5 px-4 font-semibold text-charcoal align-middle">Updated</th>
+                <th className="sticky right-0 z-10 min-w-[100px] text-left py-3.5 px-4 font-semibold text-charcoal align-middle bg-ivory">Actions</th>
               </tr>
             </thead>
             <tbody>
               {records.map((record) => (
                 <tr key={record.id} className="border-b hover:bg-ivory/50 even:bg-ivory/30">
-                  <td className="py-4 px-4">
+                  <td className="py-3.5 px-4 align-middle">
                     <Badge variant="outline" className={`${recordStatusClasses(record.recordStatus)} font-medium`}>
                       {record.recordStatus === "DRAFT" ? "Draft" : "Submitted"}
                     </Badge>
                   </td>
-                  <td className="py-4 px-4">
+                  <td className="py-3.5 px-4 align-middle">
                     {record.customerPictureUrl ? (
                       // eslint-disable-next-line @next/next/no-img-element -- arbitrary admin URLs
                       <img
@@ -129,15 +132,15 @@ export default function CustomerActivityTable({
                       </div>
                     )}
                   </td>
-                  <td className="py-4 px-4">
+                  <td className="py-3.5 px-4 align-middle">
                     <div className="font-medium text-charcoal">
                       {[record.firstName, record.middleName, record.lastName].filter(Boolean).join(" ") || "—"}
                     </div>
                   </td>
-                  <td className="py-4 px-4 font-mono text-sm text-charcoal">{record.mobile || "—"}</td>
-                  <td className="py-4 px-4 text-charcoal/80">{record.email || "-"}</td>
-                  <td className="py-4 px-4 text-charcoal/80">{record.city || "—"}</td>
-                  <td className="py-4 px-4">
+                  <td className="py-3.5 px-4 align-middle font-mono text-sm text-charcoal whitespace-nowrap">{record.mobile || "—"}</td>
+                  <td className="py-3.5 px-4 align-middle text-charcoal/80 break-words">{record.email || "—"}</td>
+                  <td className="py-3.5 px-4 align-middle text-charcoal/80">{record.city || "—"}</td>
+                  <td className="py-3.5 px-4 align-middle">
                     {record.customerType ? (
                       <Badge variant="outline" className={typeClasses(record.customerType)}>
                         {labelType(record.customerType)}
@@ -146,7 +149,7 @@ export default function CustomerActivityTable({
                       "—"
                     )}
                   </td>
-                  <td className="py-4 px-4">
+                  <td className="py-3.5 px-4 align-middle">
                     {record.customerStatus ? (
                       <Badge className={`${statusClasses(record.customerStatus)} font-medium`}>
                         {labelStatus(record.customerStatus)}
@@ -155,24 +158,41 @@ export default function CustomerActivityTable({
                       "—"
                     )}
                   </td>
-                  <td className="py-4 px-4 text-charcoal/80">{record.providerCompanyName || "-"}</td>
-                  <td className="py-4 px-4 text-charcoal/80">{formatDateOnly(record.serviceCommencedDate)}</td>
-                  <td className="py-4 px-4 text-charcoal/80">{formatDateOnly(record.expiryDate)}</td>
-                  <td className="py-4 px-4 text-charcoal/80">{formatInrAmount(record.premiumEmi)}</td>
-                  <td className="py-4 px-4 text-charcoal/80">{formatInrAmount(record.coverFinalPayout)}</td>
-                  <td className="py-4 px-4 text-sm text-charcoal/80">{formatDateOnly(record.updatedAt)}</td>
-                  <td className="py-4 px-4">
-                    {onContinue ? (
-                      <Button
-                        type="button"
-                        size="sm"
-                        variant="outline"
-                        className="rounded-lg border-trust-blue/40 text-trust-blue hover:bg-trust-blue/10"
-                        onClick={() => onContinue(record)}
-                      >
-                        {record.recordStatus === "DRAFT" ? "Continue" : "Edit"}
-                      </Button>
-                    ) : null}
+                  <td className="py-3.5 px-4 align-middle text-charcoal/80 break-words">{record.providerCompanyName || "—"}</td>
+                  <td className="py-3.5 px-4 align-middle text-charcoal/80 whitespace-nowrap">{formatDateOnly(record.serviceCommencedDate)}</td>
+                  <td className="py-3.5 px-4 align-middle text-charcoal/80 whitespace-nowrap">{formatDateOnly(record.expiryDate)}</td>
+                  <td className="py-3.5 px-4 align-middle text-charcoal/80 whitespace-nowrap">{formatInrAmount(record.premiumEmi)}</td>
+                  <td className="py-3.5 px-4 align-middle text-charcoal/80 whitespace-nowrap">{formatInrAmount(record.coverFinalPayout)}</td>
+                  <td className="py-3.5 px-4 align-middle text-sm text-charcoal/80 whitespace-nowrap">{formatDateOnly(record.updatedAt)}</td>
+                  <td className="sticky right-0 z-[1] py-3.5 px-4 align-middle bg-white/95 backdrop-blur-sm">
+                    <div className="flex items-center gap-2">
+                      {onView ? (
+                        <Button
+                          type="button"
+                          size="icon"
+                          variant="outline"
+                          className="h-8 w-8 rounded-lg border-soft-gold/50 text-support-blue hover:bg-support-blue/10"
+                          aria-label="View customer record"
+                          title="View"
+                          onClick={() => onView(record)}
+                        >
+                          <Eye className="h-4 w-4" aria-hidden />
+                        </Button>
+                      ) : null}
+                      {onEdit ? (
+                        <Button
+                          type="button"
+                          size="icon"
+                          variant="outline"
+                          className="h-8 w-8 rounded-lg border-trust-blue/40 text-trust-blue hover:bg-trust-blue/10"
+                          aria-label="Edit customer record"
+                          title="Edit"
+                          onClick={() => onEdit(record)}
+                        >
+                          <Pencil className="h-4 w-4" aria-hidden />
+                        </Button>
+                      ) : null}
+                    </div>
                   </td>
                 </tr>
               ))}

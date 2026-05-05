@@ -7,18 +7,18 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const MONTHS: { value: string; label: string }[] = [
-  { value: "01", label: "Jan" },
-  { value: "02", label: "Feb" },
-  { value: "03", label: "Mar" },
-  { value: "04", label: "Apr" },
+  { value: "01", label: "January" },
+  { value: "02", label: "February" },
+  { value: "03", label: "March" },
+  { value: "04", label: "April" },
   { value: "05", label: "May" },
-  { value: "06", label: "Jun" },
-  { value: "07", label: "Jul" },
-  { value: "08", label: "Aug" },
-  { value: "09", label: "Sep" },
+  { value: "06", label: "June" },
+  { value: "07", label: "July" },
+  { value: "08", label: "August" },
+  { value: "09", label: "September" },
   { value: "10", label: "Oct" },
-  { value: "11", label: "Nov" },
-  { value: "12", label: "Dec" },
+  { value: "11", label: "November" },
+  { value: "12", label: "December" },
 ];
 
 function daysInMonth(year: number, month1to12: number): number {
@@ -176,12 +176,12 @@ export const DateSelect = React.forwardRef<HTMLDivElement, DateSelectProps>(func
         </Label>
       ) : null}
       {helperText ? <p className="text-xs text-charcoal/65">{helperText}</p> : null}
-      <div className="grid grid-cols-3 gap-2">
+      <div className="flex flex-wrap gap-2">
         <Select value={d || ""} onValueChange={handleDay}>
           <SelectTrigger
             id={id ? `${id}-day` : undefined}
             className={cn(
-              "rounded-xl border-soft-gold/40 bg-white",
+              "w-[90px] rounded-xl border-soft-gold/40 bg-white",
               error && "border-amber-600 ring-1 ring-amber-500/50 focus-visible:ring-amber-500",
             )}
           >
@@ -199,7 +199,7 @@ export const DateSelect = React.forwardRef<HTMLDivElement, DateSelectProps>(func
           <SelectTrigger
             id={id ? `${id}-month` : undefined}
             className={cn(
-              "rounded-xl border-soft-gold/40 bg-white",
+              "w-[130px] rounded-xl border-soft-gold/40 bg-white",
               error && "border-amber-600 ring-1 ring-amber-500/50 focus-visible:ring-amber-500",
             )}
           >
@@ -217,7 +217,7 @@ export const DateSelect = React.forwardRef<HTMLDivElement, DateSelectProps>(func
           <SelectTrigger
             id={id ? `${id}-year` : undefined}
             className={cn(
-              "rounded-xl border-soft-gold/40 bg-white",
+              "w-[110px] rounded-xl border-soft-gold/40 bg-white",
               error && "border-amber-600 ring-1 ring-amber-500/50 focus-visible:ring-amber-500",
             )}
           >

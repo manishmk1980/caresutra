@@ -51,7 +51,7 @@ export const emptyWizardValues: CustomerRecordFormInput = {
   pinCode: "",
   customerPictureUrl: "",
   customerStatus: "PROSPECT",
-  customerType: "" as CustomerRecordFormInput["customerType"],
+  customerType: "INSURANCE",
   providerCompanyName: "",
   serviceCommencedDate: "",
   expiryDate: "",

@@ -25,9 +25,11 @@ export function StepServiceDetails() {
   );
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <p className="text-sm text-charcoal/70">Status, type, and policy / loan details.</p>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="space-y-3">
+        <h3 className="text-sm font-semibold text-trust-blue">Service classification</h3>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <FormField
           control={control}
           name="customerStatus"
@@ -63,7 +65,7 @@ export function StepServiceDetails() {
           render={({ field, fieldState }) => (
             <FormItem data-rhf-field="customerType">
               <FormLabel>Customer Type *</FormLabel>
-              <Select value={(field.value as string | undefined) ?? ""} onValueChange={field.onChange}>
+              <Select value={(field.value as string | undefined) ?? "INSURANCE"} onValueChange={field.onChange}>
                 <FormControl>
                   <SelectTrigger
                     className={cn(
@@ -86,13 +88,16 @@ export function StepServiceDetails() {
             </FormItem>
           )}
         />
+        </div>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+      <div className="space-y-3">
+        <h3 className="text-sm font-semibold text-trust-blue">Provider and dates</h3>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
         <FormField
           control={control}
           name="providerCompanyName"
           render={({ field, fieldState }) => (
-            <FormItem className="xl:col-span-3" data-rhf-field="providerCompanyName">
+            <FormItem className="md:col-span-2 xl:col-span-3" data-rhf-field="providerCompanyName">
               <FormLabel>Provider Company Name</FormLabel>
               <FormControl>
                 <Input
@@ -156,6 +161,11 @@ export function StepServiceDetails() {
             </FormItem>
           )}
         />
+        </div>
+      </div>
+      <div className="space-y-3">
+        <h3 className="text-sm font-semibold text-trust-blue">Financial details</h3>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
         <FormField
           control={control}
           name="insuranceLoanAmount"
@@ -216,6 +226,7 @@ export function StepServiceDetails() {
             </FormItem>
           )}
         />
+        </div>
       </div>
     </div>
   );
