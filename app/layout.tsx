@@ -21,6 +21,29 @@ export const metadata: Metadata = {
   title: "CareSutra - Insurance, Loans & Health Services Guidance in India",
   description:
     "CareSutra helps individuals and families choose the right insurance, loan, and health service options with simple, trustworthy, and personalized guidance.",
+  icons: {
+    icon: [
+      { url: "/favicon_io/favicon.ico" },
+      {
+        url: "/favicon_io/favicon-16x16.png",
+        sizes: "16x16",
+        type: "image/png",
+      },
+      {
+        url: "/favicon_io/favicon-32x32.png",
+        sizes: "32x32",
+        type: "image/png",
+      },
+    ],
+    apple: [
+      {
+        url: "/favicon_io/apple-touch-icon.png",
+        sizes: "180x180",
+        type: "image/png",
+      },
+    ],
+  },
+  manifest: "/favicon_io/site.webmanifest",
   keywords: ["insurance", "loans", "health services", "India", "guidance", "personalized"],
   authors: [{ name: "CareSutra" }],
   openGraph: {
