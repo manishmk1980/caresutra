@@ -10,29 +10,29 @@ export default function Footer() {
     const [currentYear] = useState(() => new Date().getFullYear());
 
     return (
-        <footer className="bg-charcoal text-ivory mt-auto">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-12">
+        <footer className="mt-auto min-w-0 bg-charcoal text-ivory">
+            <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 md:py-12 lg:px-8 lg:py-16">
+                <div className="grid grid-cols-1 gap-8 md:grid-cols-2 md:gap-10 lg:grid-cols-4 lg:gap-12">
                     {/* Brand column */}
-                    <div className="space-y-6">
-                        <div className="relative w-[215px] h-14">
+                    <div className="space-y-4 md:space-y-6">
+                        <div className="relative h-11 w-[168px] sm:h-12 sm:w-[190px] md:h-14 md:w-[215px]">
                             <Image
                                 src="/logo-main-white.svg"
                                 alt="CareSutra Logo"
                                 fill
-                                className="object-contain"
-                                sizes="215px"
+                                className="object-contain object-left"
+                                sizes="(max-width: 768px) 170px, 215px"
                             />
                         </div>
-                        <div className="space-y-3">
-                            <p className="text-soft-gold text-lg font-serif font-medium">
+                        <div className="space-y-2 md:space-y-3">
+                            <p className="font-serif text-base font-medium text-soft-gold md:text-lg">
                                 Har Zarurat Ka Sahi Margdarshan
                             </p>
                             <p className="text-ivory/80 text-sm">
                                 Aapke saath, har kadam.
                             </p>
                         </div>
-                        <div className="pt-4 border-t border-soft-gold/20">
+                        <div className="border-t border-soft-gold/20 pt-3 md:pt-4">
                             <p className="text-ivory/70 text-sm">
                                 Simple, trustworthy guidance for insurance, loans, and wellness services.
                             </p>
@@ -41,10 +41,10 @@ export default function Footer() {
 
                     {/* Services column */}
                     <div>
-                        <h3 className="font-serif text-xl font-medium text-ivory mb-6 pb-2 border-b border-heritage-gold/30">
+                        <h3 className="mb-4 border-b border-heritage-gold/30 pb-2 font-serif text-lg font-medium text-ivory md:mb-6 md:text-xl">
                             Services
                         </h3>
-                        <ul className="space-y-4">
+                        <ul className="space-y-3 md:space-y-4">
                             <li>
                                 <Link
                                     href="/#services"
@@ -77,10 +77,10 @@ export default function Footer() {
 
                     {/* Company column */}
                     <div>
-                        <h3 className="font-serif text-xl font-medium text-ivory mb-6 pb-2 border-b border-heritage-gold/30">
+                        <h3 className="mb-4 border-b border-heritage-gold/30 pb-2 font-serif text-lg font-medium text-ivory md:mb-6 md:text-xl">
                             Company
                         </h3>
-                        <ul className="space-y-4">
+                        <ul className="space-y-3 md:space-y-4">
                             <li>
                                 <Link
                                     href="/#why"
@@ -119,24 +119,24 @@ export default function Footer() {
 
                     {/* Contact column */}
                     <div>
-                        <h3 className="font-serif text-xl font-medium text-ivory mb-6 pb-2 border-b border-heritage-gold/30">
+                        <h3 className="mb-4 border-b border-heritage-gold/30 pb-2 font-serif text-lg font-medium text-ivory md:mb-6 md:text-xl">
                             Contact
                         </h3>
-                        <ul className="space-y-4 text-ivory/80">
-                            <li className="flex items-start">
-                                <span className="font-medium text-heritage-gold mr-2">Email:</span>
-                                info@caresutra.com
+                        <ul className="min-w-0 space-y-3 text-ivory/80 md:space-y-4">
+                            <li className="flex min-w-0 flex-wrap items-start gap-x-2 gap-y-1">
+                                <span className="shrink-0 font-medium text-heritage-gold">Email:</span>
+                                <span className="min-w-0 break-all">info@caresutra.com</span>
                             </li>
-                            <li className="flex items-start">
-                                <span className="font-medium text-heritage-gold mr-2">Phone:</span>
-                                +91 98765 43210
+                            <li className="flex min-w-0 flex-wrap items-start gap-x-2 gap-y-1">
+                                <span className="shrink-0 font-medium text-heritage-gold">Phone:</span>
+                                <span className="min-w-0 break-words">+91 98765 43210</span>
                             </li>
-                            <li className="flex items-start">
-                                <span className="font-medium text-heritage-gold mr-2">Address:</span>
-                                Delhi, India
+                            <li className="flex min-w-0 flex-wrap items-start gap-x-2 gap-y-1">
+                                <span className="shrink-0 font-medium text-heritage-gold">Address:</span>
+                                <span className="min-w-0">Delhi, India</span>
                             </li>
                         </ul>
-                        <div className="mt-8 pt-6 border-t border-soft-gold/20">
+                        <div className="mt-6 border-t border-soft-gold/20 pt-4 md:mt-8 md:pt-6">
                             <p className="text-ivory/60 text-sm">
                                 Ready to choose with clarity?
                             </p>
@@ -152,20 +152,20 @@ export default function Footer() {
                 </div>
 
                 {/* Bottom bar */}
-                <div className="mt-12 pt-8 border-t border-soft-gold/20 flex flex-col md:flex-row justify-between items-center gap-4">
-                    <p className="text-ivory/60 text-sm">
+                <div className="mt-8 flex flex-col items-center gap-4 border-t border-soft-gold/20 pt-6 text-center md:mt-12 md:flex-row md:justify-between md:gap-4 md:pt-8 md:text-left">
+                    <p className="text-sm text-ivory/60">
                         &copy; {currentYear} CareSutra. All rights reserved.
                     </p>
-                    <div className="flex items-center gap-6 text-sm text-ivory/60">
+                    <div className="flex w-full max-w-sm flex-col items-center gap-3 text-sm text-ivory/60 sm:max-w-none sm:flex-row sm:flex-wrap sm:justify-center md:w-auto md:justify-end md:gap-6">
                         <Link href="#" className="hover:text-heritage-gold transition-colors">
                             Privacy Policy
                         </Link>
                         <Link href="#" className="hover:text-heritage-gold transition-colors">
                             Terms of Service
                         </Link>
-                        <div className="flex items-center gap-1">
-                            <Heart size={14} className="text-heritage-gold" />
-                            <span>Made with care in India</span>
+                        <div className="flex items-center justify-center gap-1.5">
+                            <Heart className="h-3.5 w-3.5 shrink-0 text-heritage-gold md:h-4 md:w-4" />
+                            <span className="leading-snug">Made with care in India</span>
                         </div>
                     </div>
                 </div>

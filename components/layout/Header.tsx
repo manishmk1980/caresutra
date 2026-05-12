@@ -62,17 +62,17 @@ export default function Header() {
     }
 
     return (
-        <header className="sticky top-0 z-50 w-full border-b border-soft-gold/30 bg-ivory/95 backdrop-blur supports-[backdrop-filter]:bg-ivory/80">
-            <div className="max-w-7xl mx-auto flex h-20 items-center justify-between px-4 sm:px-6 lg:px-8">
-                <Link href="/" className="flex items-center">
-                    <div className="relative w-[200px] h-14 md:w-[250px] md:h-17">
+        <header className="sticky top-0 z-50 w-full min-w-0 border-b border-soft-gold/30 bg-ivory/95 backdrop-blur supports-[backdrop-filter]:bg-ivory/80">
+            <div className="mx-auto flex h-16 min-w-0 max-w-7xl items-center justify-between gap-2 px-3 sm:h-20 sm:gap-3 sm:px-6 lg:px-8">
+                <Link href="/" className="flex min-w-0 shrink items-center">
+                    <div className="relative h-10 w-[132px] shrink-0 sm:h-12 sm:w-[168px] md:h-14 md:w-[220px] lg:h-16 lg:w-[250px]">
                         <Image
                             src="/caresutra-hr-logo.svg"
                             alt="CareSutra Logo"
                             fill
-                            className="object-contain"
+                            className="object-contain object-left"
                             priority
-                            sizes="(max-width: 768px) 200px, 250px"
+                            sizes="(max-width: 640px) 140px, (max-width: 1024px) 200px, 250px"
                         />
                     </div>
                 </Link>
@@ -116,18 +116,19 @@ export default function Header() {
 
                 {/* Mobile menu button */}
                 <button
-                    className="lg:hidden p-2 text-charcoal hover:text-trust-blue"
+                    type="button"
+                    className="shrink-0 p-2 text-charcoal hover:text-trust-blue lg:hidden"
                     onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                     aria-label="Toggle menu"
                 >
-                    {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+                    {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
                 </button>
             </div>
 
             {/* Mobile menu */}
             {mobileMenuOpen && (
-                <div className="lg:hidden border-t border-soft-gold/20 bg-ivory">
-                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-4">
+                <div className="border-t border-soft-gold/20 bg-ivory lg:hidden">
+                    <div className="mx-auto max-w-7xl space-y-3 px-3 py-4 sm:px-6 sm:py-6 lg:px-8">
                         {navItems.map((item) => (
                             <Link
                                 key={item.label}

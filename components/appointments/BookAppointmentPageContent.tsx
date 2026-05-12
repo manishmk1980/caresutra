@@ -121,19 +121,21 @@ export default function BookAppointmentPageContent({ calendlyUrl }: Props) {
   };
 
   return (
-    <section id="appointment" className="bg-ivory pb-16 pt-10 md:pb-20 md:pt-14">
+    <section id="appointment" className="min-w-0 bg-ivory pb-12 pt-8 md:pb-20 md:pt-14">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="mb-8 rounded-3xl border border-soft-gold/35 bg-white p-6 shadow-sm md:p-8">
+        <div className="mb-6 rounded-2xl border border-soft-gold/35 bg-white p-4 shadow-sm sm:mb-8 sm:rounded-3xl sm:p-6 md:p-8">
           <p className="text-xs font-semibold uppercase tracking-wide text-trust-blue">Book an Appointment</p>
-          <h1 className="mt-2 font-serif text-4xl font-semibold text-charcoal md:text-5xl">Book an Appointment</h1>
-          <p className="mt-3 max-w-3xl text-charcoal/75">
+          <h1 className="mt-2 font-serif text-3xl font-semibold leading-tight text-charcoal sm:text-4xl md:text-5xl">
+            Book an Appointment
+          </h1>
+          <p className="mt-3 max-w-3xl text-sm leading-relaxed text-charcoal/75 sm:text-base">
             Share your details and preferred contact method. Our team will connect with you soon.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-          <div className="rounded-3xl border border-trust-blue/25 bg-white p-5 shadow-md md:p-7">
-            <h2 className="font-serif text-2xl text-charcoal">Appointment Request Form</h2>
+        <div className="grid grid-cols-1 gap-5 lg:grid-cols-2 lg:gap-6">
+          <div className="rounded-2xl border border-trust-blue/25 bg-white p-4 shadow-md sm:rounded-3xl sm:p-5 md:p-7">
+            <h2 className="font-serif text-xl text-charcoal sm:text-2xl">Appointment Request Form</h2>
             <p className="mt-1 text-sm text-charcoal/70">No login required. Fields marked * are mandatory.</p>
 
             <form onSubmit={form.handleSubmit(onSubmit, onInvalid)} className="mt-5 space-y-4">
@@ -266,16 +268,16 @@ export default function BookAppointmentPageContent({ calendlyUrl }: Props) {
               <Button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full rounded-xl bg-trust-blue text-white hover:bg-support-blue md:w-auto"
+                className="h-11 w-full rounded-xl bg-trust-blue text-white hover:bg-support-blue md:h-10 md:w-auto"
               >
                 {isSubmitting ? "Submitting..." : "Submit Appointment Request"}
               </Button>
             </form>
           </div>
 
-          <div className="space-y-6">
-            <div className="rounded-3xl border border-soft-gold/35 bg-white p-5 shadow-sm md:p-7">
-              <h2 className="font-serif text-2xl text-charcoal">Prefer choosing a slot yourself?</h2>
+          <div className="min-w-0 space-y-5 lg:space-y-6">
+            <div className="rounded-2xl border border-soft-gold/35 bg-white p-4 shadow-sm sm:rounded-3xl sm:p-5 md:p-7">
+              <h2 className="font-serif text-xl text-charcoal sm:text-2xl">Prefer choosing a slot yourself?</h2>
               <p className="mt-2 text-sm text-charcoal/70">
                 Book directly on Calendly in a new secure tab.
               </p>
@@ -306,7 +308,7 @@ export default function BookAppointmentPageContent({ calendlyUrl }: Props) {
                       <iframe
                         src={calendlyBookingUrl}
                         title="Book a CareSutra appointment"
-                        className="h-[700px] w-full rounded-2xl border border-soft-gold/30 bg-white"
+                        className="h-[min(70vh,520px)] w-full rounded-2xl border border-soft-gold/30 bg-white sm:h-[600px] md:h-[700px]"
                       />
                     </div>
                   ) : null}
@@ -320,8 +322,8 @@ export default function BookAppointmentPageContent({ calendlyUrl }: Props) {
               )}
             </div>
 
-            <div className="rounded-3xl border border-soft-gold/35 bg-white p-5 shadow-sm md:p-7">
-              <h3 className="font-serif text-xl text-charcoal">Why book with CareSutra</h3>
+            <div className="rounded-2xl border border-soft-gold/35 bg-white p-4 shadow-sm sm:rounded-3xl sm:p-5 md:p-7">
+              <h3 className="font-serif text-lg text-charcoal sm:text-xl">Why book with CareSutra</h3>
               <div className="mt-4 grid grid-cols-1 gap-3 text-sm text-charcoal/80 sm:grid-cols-2">
                 <p className="rounded-xl bg-ivory/50 p-3">No obligation</p>
                 <p className="rounded-xl bg-ivory/50 p-3">Simple guidance</p>
@@ -329,7 +331,7 @@ export default function BookAppointmentPageContent({ calendlyUrl }: Props) {
                 <p className="rounded-xl bg-ivory/50 p-3">Response within 24 hours</p>
               </div>
               <div className="mt-5">
-                <Button asChild variant="outline" className="rounded-xl border-soft-gold/50">
+                <Button asChild variant="outline" className="h-11 w-full rounded-xl border-soft-gold/50 sm:h-10 sm:w-auto">
                   <Link href="/#contact">Call CareSutra</Link>
                 </Button>
               </div>

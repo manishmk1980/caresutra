@@ -3,37 +3,37 @@ import { Users, Target, Shield, Heart, Handshake, CheckCircle } from "lucide-rea
 
 const trustPoints = [
     {
-        icon: <Shield className="h-10 w-10" />,
+        icon: <Shield className="h-8 w-8 md:h-10 md:w-10" />,
         title: "Transparent Guidance",
         description: "No hidden charges, no confusing jargon. We explain everything in simple terms.",
         color: "trust-blue",
     },
     {
-        icon: <Handshake className="h-10 w-10" />,
+        icon: <Handshake className="h-8 w-8 md:h-10 md:w-10" />,
         title: "Human‑First Advisory",
         description: "We prioritize long‑term relationships over short‑term sales.",
         color: "heritage-gold",
     },
     {
-        icon: <Users className="h-10 w-10" />,
+        icon: <Users className="h-8 w-8 md:h-10 md:w-10" />,
         title: "Multi‑Domain Support",
         description: "From insurance to loans to health—we cover all your essential needs.",
         color: "support-blue",
     },
     {
-        icon: <Target className="h-10 w-10" />,
+        icon: <Target className="h-8 w-8 md:h-10 md:w-10" />,
         title: "Long‑Term Relationship",
         description: "We stay with you even after the purchase, helping with claims, renewals, and queries.",
         color: "heritage-gold",
     },
     {
-        icon: <Heart className="h-10 w-10" />,
+        icon: <Heart className="h-8 w-8 md:h-10 md:w-10" />,
         title: "Right Option Before Quick Selling",
         description: "We don't push products; we help you select what's genuinely best for you.",
         color: "trust-blue",
     },
     {
-        icon: <CheckCircle className="h-10 w-10" />,
+        icon: <CheckCircle className="h-8 w-8 md:h-10 md:w-10" />,
         title: "Local Indian Context",
         description: "Solutions tailored for Indian families, regulations, and cultural nuances.",
         color: "support-blue",
@@ -42,21 +42,21 @@ const trustPoints = [
 
 export default function TrustSection() {
     return (
-        <section id="why" className="py-20 md:py-28 bg-white">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="text-center mb-16">
-                    <div className="inline-flex items-center gap-2 bg-ivory text-trust-blue font-medium text-sm px-4 py-2 rounded-full mb-6">
-                        <span className="w-2 h-2 bg-heritage-gold rounded-full"></span>
+        <section id="why" className="bg-white py-12 md:py-28">
+            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                <div className="mb-10 text-center md:mb-16">
+                    <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-ivory px-3 py-1.5 text-xs font-medium text-trust-blue sm:mb-6 sm:px-4 sm:py-2 sm:text-sm">
+                        <span className="h-2 w-2 rounded-full bg-heritage-gold"></span>
                         Our Values
                     </div>
-                    <h2 className="font-serif text-4xl md:text-5xl font-bold text-charcoal mb-6">
+                    <h2 className="mb-4 font-serif text-3xl font-bold text-charcoal md:mb-6 md:text-5xl">
                         Why Trust CareSutra?
                     </h2>
-                    <p className="text-lg text-charcoal/80 max-w-3xl mx-auto">
+                    <p className="mx-auto max-w-3xl text-base text-charcoal/80 md:text-lg">
                         Our values and practices are designed to earn your confidence every step of the way.
                     </p>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div className="grid grid-cols-1 gap-5 md:grid-cols-2 md:gap-8 lg:grid-cols-3">
                     {trustPoints.map((point, index) => {
                         const colorMap = {
                             "trust-blue": "bg-trust-blue/10 text-trust-blue",
@@ -71,24 +71,24 @@ export default function TrustSection() {
                         return (
                             <Card
                                 key={index}
-                                className={`border ${borderMap[point.color as keyof typeof borderMap]} bg-white rounded-3xl shadow-lg hover:shadow-xl transition-all duration-300 hover:border-heritage-gold/50 group`}
+                                className={`group min-w-0 border ${borderMap[point.color as keyof typeof borderMap]} rounded-2xl bg-white shadow-lg transition-all duration-300 hover:border-heritage-gold/50 hover:shadow-xl md:rounded-3xl`}
                             >
-                                <CardHeader className="pb-4">
-                                    <div className="flex items-start gap-5">
-                                        <div className={`flex-shrink-0 p-3 ${colorMap[point.color as keyof typeof colorMap]} rounded-xl`}>
+                                <CardHeader className="space-y-1 p-4 pb-3 sm:p-5 md:p-6 md:pb-4">
+                                    <div className="flex items-start gap-3 sm:gap-4 md:gap-5">
+                                        <div className={`flex shrink-0 rounded-lg p-2 sm:p-2.5 md:rounded-xl md:p-3 ${colorMap[point.color as keyof typeof colorMap]}`}>
                                             {point.icon}
                                         </div>
-                                        <div>
-                                            <CardTitle className="text-xl font-bold text-charcoal mb-2">
+                                        <div className="min-w-0 flex-1">
+                                            <CardTitle className="mb-1.5 text-lg font-bold text-charcoal md:mb-2 md:text-xl">
                                                 {point.title}
                                             </CardTitle>
-                                            <p className="text-charcoal/70">
+                                            <p className="text-sm leading-relaxed text-charcoal/70 md:text-base">
                                                 {point.description}
                                             </p>
                                         </div>
                                     </div>
                                 </CardHeader>
-                                <CardContent className="pt-0">
+                                <CardContent className="min-w-0 p-4 pt-0 sm:p-5 sm:pt-0 md:p-6 md:pt-0">
                                     <div className="flex items-center text-sm text-charcoal/50">
                                         <CheckCircle className="h-4 w-4 mr-2 text-heritage-gold" />
                                         <span>Trust‑building practice</span>
@@ -98,12 +98,12 @@ export default function TrustSection() {
                         );
                     })}
                 </div>
-                <div className="mt-16 text-center">
-                    <div className="inline-block bg-ivory rounded-2xl p-8 max-w-3xl mx-auto border border-soft-gold/30">
-                        <p className="text-xl text-charcoal/80 mb-4">
+                <div className="mt-10 text-center md:mt-16">
+                    <div className="mx-auto inline-block max-w-3xl rounded-2xl border border-soft-gold/30 bg-ivory p-5 sm:p-6 md:p-8">
+                        <p className="mb-3 text-base leading-relaxed text-charcoal/80 md:mb-4 md:text-xl">
                             Thousands of families across India have trusted CareSutra for their insurance, loan, and health service decisions.
                         </p>
-                        <p className="text-lg font-medium text-heritage-gold">
+                        <p className="text-base font-medium text-heritage-gold md:text-lg">
                             Join them today for simple, supportive guidance.
                         </p>
                     </div>

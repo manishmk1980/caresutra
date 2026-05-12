@@ -3,21 +3,21 @@ import { CheckCircle, MessageSquare, FileText, Handshake } from "lucide-react";
 const steps = [
     {
         number: "01",
-        icon: <MessageSquare className="h-10 w-10" />,
+        icon: <MessageSquare className="h-7 w-7 md:h-10 md:w-10" />,
         title: "Understand Your Need",
         description: "We listen carefully to your situation, goals, and concerns through a personalized conversation.",
         color: "trust-blue",
     },
     {
         number: "02",
-        icon: <FileText className="h-10 w-10" />,
+        icon: <FileText className="h-7 w-7 md:h-10 md:w-10" />,
         title: "Explain Suitable Options",
         description: "We present clear, unbiased options with pros, cons, and costs—no jargon, just simple explanations.",
         color: "heritage-gold",
     },
     {
         number: "03",
-        icon: <Handshake className="h-10 w-10" />,
+        icon: <Handshake className="h-7 w-7 md:h-10 md:w-10" />,
         title: "Support Your Next Step",
         description: "We assist with paperwork, follow‑ups, and ongoing support to ensure a smooth journey.",
         color: "support-blue",
@@ -26,17 +26,17 @@ const steps = [
 
 export default function USPSection() {
     return (
-        <section className="py-20 md:py-28 bg-ivory">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="text-center mb-16">
-                    <div className="inline-flex items-center gap-2 bg-white text-trust-blue font-medium text-sm px-4 py-2 rounded-full mb-6">
-                        <span className="w-2 h-2 bg-heritage-gold rounded-full"></span>
+        <section className="bg-ivory py-12 md:py-28">
+            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                <div className="mb-10 text-center md:mb-16">
+                    <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-white px-3 py-1.5 text-xs font-medium text-trust-blue sm:mb-6 sm:px-4 sm:py-2 sm:text-sm">
+                        <span className="h-2 w-2 rounded-full bg-heritage-gold"></span>
                         How CareSutra Helps
                     </div>
-                    <h2 className="font-serif text-4xl md:text-5xl font-bold text-charcoal mb-6">
+                    <h2 className="mb-4 font-serif text-3xl font-bold text-charcoal md:mb-6 md:text-5xl">
                         Simple, Supportive Process
                     </h2>
-                    <p className="text-lg text-charcoal/80 max-w-3xl mx-auto">
+                    <p className="mx-auto max-w-3xl text-base text-charcoal/80 md:text-lg">
                         Our three‑step approach ensures you receive clear guidance and confident decisions.
                     </p>
                 </div>
@@ -46,7 +46,7 @@ export default function USPSection() {
                     {/* Connecting line for desktop */}
                     <div className="hidden lg:block absolute top-16 left-1/2 transform -translate-x-1/2 w-2/3 h-0.5 bg-soft-gold/30 z-0"></div>
                     
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 lg:gap-8 relative z-10">
+                    <div className="relative z-10 grid grid-cols-1 gap-6 lg:grid-cols-3 lg:gap-8">
                         {steps.map((step, index) => {
                             const colorMap = {
                                 "trust-blue": "bg-trust-blue/10 text-trust-blue",
@@ -61,22 +61,22 @@ export default function USPSection() {
                             return (
                                 <div
                                     key={index}
-                                    className="relative bg-white rounded-3xl p-8 border border-soft-gold/30 shadow-lg hover:shadow-2xl transition-all duration-300 group"
+                                    className="group relative min-w-0 rounded-2xl border border-soft-gold/30 bg-white p-5 pt-7 shadow-lg transition-all duration-300 hover:shadow-2xl sm:p-6 sm:pt-8 md:rounded-3xl md:p-8"
                                 >
                                     {/* Number badge */}
-                                    <div className="absolute -top-5 left-1/2 transform -translate-x-1/2 w-12 h-12 bg-heritage-gold text-white rounded-full flex items-center justify-center font-bold text-xl">
+                                    <div className="absolute -top-4 left-1/2 flex h-10 w-10 -translate-x-1/2 transform items-center justify-center rounded-full bg-heritage-gold text-base font-bold text-white md:-top-5 md:h-12 md:w-12 md:text-xl">
                                         {step.number}
                                     </div>
                                     
-                                    <div className={`flex items-center justify-center w-20 h-20 ${colorMap[step.color as keyof typeof colorMap]} rounded-2xl mb-6 mx-auto`}>
+                                    <div className={`mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-xl ${colorMap[step.color as keyof typeof colorMap]} sm:mb-5 md:mb-6 md:h-20 md:w-20 md:rounded-2xl`}>
                                         {step.icon}
                                     </div>
                                     
-                                    <h3 className="text-2xl font-bold text-charcoal text-center mb-4">
+                                    <h3 className="mb-3 text-center text-xl font-bold text-charcoal md:mb-4 md:text-2xl">
                                         {step.title}
                                     </h3>
                                     
-                                    <p className="text-charcoal/70 text-center mb-6">
+                                    <p className="mb-4 text-center text-sm leading-relaxed text-charcoal/70 md:mb-6 md:text-base">
                                         {step.description}
                                     </p>
                                     
@@ -98,21 +98,21 @@ export default function USPSection() {
                 </div>
 
                 {/* Bottom testimonial */}
-                <div className="mt-20 text-center">
-                    <div className="inline-block max-w-3xl mx-auto">
+                <div className="mt-12 text-center md:mt-20">
+                    <div className="mx-auto inline-block max-w-3xl px-1">
                         <div className="relative">
-                            <div className="absolute -top-3 -left-3 text-6xl text-heritage-gold/20" aria-hidden>
+                            <div className="absolute -left-1 -top-2 hidden text-5xl text-heritage-gold/20 md:block md:text-6xl" aria-hidden>
                                 {"\u201c"}
                             </div>
-                            <p className="text-2xl font-serif text-charcoal/80 italic mb-6 relative z-10">
+                            <p className="relative z-10 mb-4 font-serif text-lg italic leading-snug text-charcoal/80 md:mb-6 md:text-2xl">
                                 We believe in building long‑term relationships, not just transactions. Your trust is our biggest asset.
                             </p>
-                            <div className="absolute -bottom-3 -right-3 text-6xl text-heritage-gold/20" aria-hidden>
+                            <div className="absolute -bottom-2 -right-1 hidden text-5xl text-heritage-gold/20 md:block md:text-6xl" aria-hidden>
                                 {"\u201d"}
                             </div>
                         </div>
-                        <div className="mt-6">
-                            <div className="w-16 h-1 bg-heritage-gold mx-auto mb-4"></div>
+                        <div className="mt-4 md:mt-6">
+                            <div className="mx-auto mb-3 h-1 w-14 bg-heritage-gold md:mb-4 md:w-16"></div>
                             <p className="text-charcoal/60">
                                 — CareSutra Team
                             </p>
