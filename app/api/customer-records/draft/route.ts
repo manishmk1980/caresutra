@@ -44,12 +44,32 @@ export async function POST(request: NextRequest) {
   }
 
   const data = parsed.data;
-  const prismaData = draftToPrismaUnchecked(data);
 
+const rawDraftId =
+  typeof body === "object" && body !== null && "id" in body
+    ? body.id
+    : undefined;
+
+const draftId =
+  typeof rawDraftId === "number"
+    ? rawDraftId
+    : typeof rawDraftId === "string" && rawDraftId.trim()
+      ? Number(rawDraftId)
+      : undefined;
+
+if (draftId !== undefined && !Number.isInteger(draftId)) {
+  return NextResponse.json(
+    { success: false, message: "Invalid draft id." },
+    { status: 400 },
+  );
+}
+
+const prismaData = draftToPrismaUnchecked(data);
+  
   try {
-    if (data.id) {
+    if (draftId) {
       const existing = await prisma.customerRecord.findUnique({
-        where: { id: data.id },
+        where: { id: draftId },
       });
       if (!existing) {
         return NextResponse.json({ success: false, message: "Draft not found." }, { status: 404 });
@@ -62,7 +82,7 @@ export async function POST(request: NextRequest) {
       }
       const updated = await withTimeout(
         prisma.customerRecord.update({
-          where: { id: data.id },
+          where: { id: draftId },
           data: prismaData,
         }),
         DB_MS,

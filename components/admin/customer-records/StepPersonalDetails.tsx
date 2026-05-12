@@ -12,9 +12,9 @@ export function StepPersonalDetails() {
   const { control } = useFormContext<CustomerRecordFormInput>();
 
   return (
-    <div className="space-y-4">
-      <p className="text-sm text-charcoal/70">Tell us who the customer is. Fields marked * are required before submit.</p>
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+    <div className="space-y-3 md:space-y-4">
+      <p className="hidden text-sm leading-snug text-charcoal/70 md:block">Tell us who the customer is. Fields marked * are required before submit.</p>
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-4 xl:grid-cols-3">
         <FormField
           control={control}
           name="firstName"
@@ -26,7 +26,10 @@ export function StepPersonalDetails() {
                   placeholder="Ravi"
                   {...field}
                   value={field.value ?? ""}
-                  className={cn("rounded-xl border-soft-gold/40", fieldState.invalid && invalidFieldRing)}
+                  className={cn(
+                    "h-11 rounded-xl border-soft-gold/40 py-2.5 md:h-9 md:py-1",
+                    fieldState.invalid && invalidFieldRing,
+                  )}
                 />
               </FormControl>
               <FormMessage className="text-amber-900" />
@@ -44,7 +47,10 @@ export function StepPersonalDetails() {
                   placeholder="Kumar"
                   {...field}
                   value={field.value ?? ""}
-                  className={cn("rounded-xl border-soft-gold/40", fieldState.invalid && invalidFieldRing)}
+                  className={cn(
+                    "h-11 rounded-xl border-soft-gold/40 py-2.5 md:h-9 md:py-1",
+                    fieldState.invalid && invalidFieldRing,
+                  )}
                 />
               </FormControl>
               <FormMessage className="text-amber-900" />
@@ -62,7 +68,10 @@ export function StepPersonalDetails() {
                   placeholder="Sharma"
                   {...field}
                   value={field.value ?? ""}
-                  className={cn("rounded-xl border-soft-gold/40", fieldState.invalid && invalidFieldRing)}
+                  className={cn(
+                    "h-11 rounded-xl border-soft-gold/40 py-2.5 md:h-9 md:py-1",
+                    fieldState.invalid && invalidFieldRing,
+                  )}
                 />
               </FormControl>
               <FormMessage className="text-amber-900" />
@@ -81,7 +90,10 @@ export function StepPersonalDetails() {
                   placeholder="ravi@example.com"
                   {...field}
                   value={field.value ?? ""}
-                  className={cn("rounded-xl border-soft-gold/40", fieldState.invalid && invalidFieldRing)}
+                  className={cn(
+                    "h-11 rounded-xl border-soft-gold/40 py-2.5 md:h-9 md:py-1",
+                    fieldState.invalid && invalidFieldRing,
+                  )}
                 />
               </FormControl>
               <FormMessage className="text-amber-900" />
@@ -101,7 +113,10 @@ export function StepPersonalDetails() {
                   value={String(field.value ?? "")}
                   inputMode="numeric"
                   autoComplete="tel"
-                  className={cn("rounded-xl border-soft-gold/40", fieldState.invalid && invalidFieldRing)}
+                  className={cn(
+                    "h-11 rounded-xl border-soft-gold/40 py-2.5 md:h-9 md:py-1",
+                    fieldState.invalid && invalidFieldRing,
+                  )}
                 />
               </FormControl>
               <p className="text-xs text-charcoal/60">10 digits — spaces or dashes are removed when you save.</p>
@@ -121,52 +136,17 @@ export function StepPersonalDetails() {
                   {...field}
                   value={field.value ?? ""}
                   inputMode="numeric"
-                  className={cn("rounded-xl border-soft-gold/40", fieldState.invalid && invalidFieldRing)}
+                  className={cn(
+                    "h-11 rounded-xl border-soft-gold/40 py-2.5 md:h-9 md:py-1",
+                    fieldState.invalid && invalidFieldRing,
+                  )}
                 />
               </FormControl>
               <FormMessage className="text-amber-900" />
             </FormItem>
           )}
         />
-        <FormField
-          control={control}
-          name="pan"
-          render={({ field, fieldState }) => (
-            <FormItem data-rhf-field="pan">
-              <FormLabel>PAN</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="ABCDE1234F"
-                  {...field}
-                  value={(field.value as string | undefined) ?? ""}
-                  onChange={(e) => field.onChange(e.target.value.toUpperCase())}
-                  className={cn("rounded-xl border-soft-gold/40 font-mono", fieldState.invalid && invalidFieldRing)}
-                />
-              </FormControl>
-              <FormMessage className="text-amber-900" />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={control}
-          name="aadhaar"
-          render={({ field, fieldState }) => (
-            <FormItem data-rhf-field="aadhaar">
-              <FormLabel>AADHAAR</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="1234 1234 1234"
-                  {...field}
-                  value={(field.value as string | undefined) ?? ""}
-                  inputMode="numeric"
-                  className={cn("rounded-xl border-soft-gold/40", fieldState.invalid && invalidFieldRing)}
-                />
-              </FormControl>
-              <p className="text-xs text-charcoal/60">Optional — 12 digits.</p>
-              <FormMessage className="text-amber-900" />
-            </FormItem>
-          )}
-        />
+       
         <FormField
           control={control}
           name="dateOfBirth"

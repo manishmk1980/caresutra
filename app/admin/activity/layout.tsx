@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Customer Records | CareSutra Admin",
+  title: { absolute: "Customer Records | CareSutra Admin" },
   description: "Manage CareSutra customers, service details, and renewal follow-ups.",
   robots: { index: false, follow: false },
   openGraph: {

@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import TrackedBookAppointmentLink from "@/components/analytics/TrackedBookAppointmentLink";
 import { ShieldCheck, IndianRupee, HeartPulse } from "lucide-react";
 
 export default function HeroSection() {
@@ -25,7 +26,9 @@ export default function HeroSection() {
                                 size="lg"
                                 className="bg-trust-blue hover:bg-support-blue text-white rounded-full px-8 py-3 font-medium transition-all duration-300 hover:shadow-lg"
                             >
-                                <Link href="/book-appointment">Book Appointment</Link>
+                                <TrackedBookAppointmentLink location="hero">
+                                    Book Appointment
+                                </TrackedBookAppointmentLink>
                             </Button>
                             <Button
                                 asChild

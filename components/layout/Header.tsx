@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import TrackedBookAppointmentLink from "@/components/analytics/TrackedBookAppointmentLink";
 import { Button } from "@/components/ui/button";
 import { LogOut, Menu, X } from "lucide-react";
 import { fetchWithTimeout } from "@/lib/fetchWithTimeout";
@@ -107,7 +108,9 @@ export default function Header() {
                         asChild
                         className="bg-trust-blue hover:bg-support-blue text-white rounded-full px-6 py-2.5 font-medium transition-all duration-300 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-heritage-gold focus:ring-offset-2"
                     >
-                        <Link href="/book-appointment">Book Appointment</Link>
+                        <TrackedBookAppointmentLink location="header">
+                            Book Appointment
+                        </TrackedBookAppointmentLink>
                     </Button>
                 </div>
 
@@ -152,9 +155,13 @@ export default function Header() {
                             <Button
                                 asChild
                                 className="w-full bg-trust-blue hover:bg-support-blue text-white rounded-xl py-3 font-medium"
-                                onClick={() => setMobileMenuOpen(false)}
                             >
-                                <Link href="/book-appointment">Book Appointment</Link>
+                                <TrackedBookAppointmentLink
+                                    location="header"
+                                    onClick={() => setMobileMenuOpen(false)}
+                                >
+                                    Book Appointment
+                                </TrackedBookAppointmentLink>
                             </Button>
                         </div>
                     </div>

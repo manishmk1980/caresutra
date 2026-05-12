@@ -20,9 +20,9 @@ export function StepAddressDetails() {
   const { control } = useFormContext<CustomerRecordFormInput>();
 
   return (
-    <div className="space-y-4">
-      <p className="text-sm text-charcoal/70">Where the customer stays. Required fields are marked *.</p>
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+    <div className="space-y-3 md:space-y-4">
+      <p className="hidden text-sm leading-snug text-charcoal/70 md:block">Where the customer stays. Required fields are marked *.</p>
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-4 xl:grid-cols-3">
         {ROWS.map(([name, label, placeholder]) => (
           <FormField
             key={name}
@@ -36,7 +36,10 @@ export function StepAddressDetails() {
                     placeholder={placeholder}
                     {...field}
                     value={(field.value as string | number | undefined) ?? ""}
-                    className={cn("rounded-xl border-soft-gold/40", fieldState.invalid && invalidFieldRing)}
+                    className={cn(
+                      "h-11 rounded-xl border-soft-gold/40 py-2.5 md:h-9 md:py-1",
+                      fieldState.invalid && invalidFieldRing,
+                    )}
                   />
                 </FormControl>
                 <FormMessage className="text-amber-900" />

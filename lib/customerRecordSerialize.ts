@@ -34,5 +34,12 @@ export function serializeCustomerRecord(record: PrismaCustomerRecord) {
     recordStatus: record.recordStatus,
     createdAt: record.createdAt.toISOString(),
     updatedAt: record.updatedAt.toISOString(),
+    documents: {
+      customerPhoto: !!record.customerPictureUrl,
+      pan: !!record.panDocumentUrl,
+      aadhaarFront: !!record.aadharFrontUrl,
+      aadhaarBack: !!record.aadharBackUrl,
+      otherDocument: !!record.otherDocumentUrl,
+    },
   };
 }

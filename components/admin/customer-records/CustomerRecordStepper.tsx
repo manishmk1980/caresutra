@@ -4,11 +4,11 @@ import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const STEPS = [
-  { n: 1, title: "Personal" },
-  { n: 2, title: "Address" },
-  { n: 3, title: "Picture" },
-  { n: 4, title: "Service" },
-  { n: 5, title: "Review" },
+  { n: 1, title: "Personal", short: "Personal" },
+  { n: 2, title: "Address", short: "Address" },
+  { n: 3, title: "Documents", short: "Docs" },
+  { n: 4, title: "Service", short: "Service" },
+  { n: 5, title: "Review", short: "Review" },
 ] as const;
 
 type Props = {
@@ -17,7 +17,7 @@ type Props = {
   maxReached: number;
 };
 
-export function CustomerRecordStepper({ currentStep }: Props) {
+export function CustomerRecordStepper({ currentStep, maxReached: _maxReached }: Props) {
   return (
     <div className="w-full">
       <div className="hidden md:flex items-center justify-between gap-2">
@@ -66,36 +66,56 @@ export function CustomerRecordStepper({ currentStep }: Props) {
           );
         })}
       </div>
-      <div className="md:hidden overflow-x-auto pb-1 -mx-1 px-1">
-        <div className="flex items-center gap-2 min-w-min">
-          {STEPS.map((s, idx) => {
-            const active = idx === currentStep;
-            const complete = idx < currentStep;
-            return (
-              <div key={s.title} className="flex items-center gap-2">
+      <div className="md:hidden -mx-1 border-b border-soft-gold/25 pb-3">
+        <div
+          className="overflow-x-auto px-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+          role="navigation"
+          aria-label="Form steps"
+        >
+          <div className="flex w-max min-w-full items-center gap-1.5">
+            {STEPS.map((s, idx) => {
+              const active = idx === currentStep;
+              const complete = idx < currentStep;
+              return (
                 <div
+                  key={s.title}
                   className={cn(
-                    "shrink-0 rounded-full border px-3 py-1.5 text-xs font-medium",
-                    complete && "border-green-500 bg-green-100 text-green-700",
-                    active && !complete && "border-trust-blue bg-trust-blue text-white",
-                    !active && !complete && "border-soft-gold/50 bg-white text-charcoal/55",
+                    "flex min-w-max shrink-0 items-center rounded-full border",
+                    active &&
+                      !complete &&
+                      "gap-1.5 border-trust-blue bg-trust-blue px-2 py-1 text-white shadow-md",
+                    !active &&
+                      "h-8 w-8 justify-center border-soft-gold/40 bg-white p-0 text-charcoal/55",
+                    complete &&
+                      !active &&
+                      "border-trust-blue/35 bg-soft-gold/15 text-trust-blue",
                   )}
+                  aria-current={active ? "step" : undefined}
+                  aria-label={`${s.title}${active ? " (current)" : ""}${complete ? " (completed)" : ""}`}
                 >
-                  {s.n}. {s.title}
-                </div>
-                {idx < STEPS.length - 1 ? (
-                  <div
+                  <span
                     className={cn(
-                      "h-[2px] w-6 rounded-full",
-                      idx < currentStep - 1 && "bg-green-500",
-                      idx === currentStep - 1 && "bg-trust-blue",
-                      idx >= currentStep && "bg-soft-gold/45",
+                      "flex shrink-0 items-center justify-center rounded-full text-[11px] font-bold",
+                      active && !complete && "h-6 w-6 bg-white/20",
+                      !active && "h-full w-full",
+                      complete &&
+                        !active &&
+                        "h-full w-full bg-transparent [&>svg]:mx-auto",
                     )}
-                  />
-                ) : null}
-              </div>
-            );
-          })}
+                  >
+                    {complete && !active ? (
+                      <Check className="h-3.5 w-3.5 shrink-0" strokeWidth={2.5} aria-hidden />
+                    ) : (
+                      <span className={cn(active && !complete ? "leading-none" : "")}>{s.n}</span>
+                    )}
+                  </span>
+                  {active && !complete ? (
+                    <span className="whitespace-nowrap pr-1 text-xs font-semibold">{s.short}</span>
+                  ) : null}
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
     </div>

@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { formatDateOnly, formatInrAmount } from "@/lib/formatDateTime";
 import type { ApiCustomerRecord } from "@/lib/customerRecordLoadRecord";
 import { Eye, Pencil } from "lucide-react";
+import { SafeCustomerImage } from "@/components/admin/SafeCustomerImage";
 
 export type CustomerRecord = ApiCustomerRecord;
 
@@ -61,7 +62,7 @@ export default function CustomerActivityTable({
   onView?: (record: CustomerRecord) => void;
 }) {
   return (
-    <div className="px-4 md:px-6 py-6">
+    <div className="px-2 py-4 md:px-6 md:py-6">
       {loading ? (
         <div className="text-center py-12">
           <div className="inline-block animate-spin rounded-full h-10 w-10 border-b-2 border-trust-blue"></div>
@@ -118,16 +119,15 @@ export default function CustomerActivityTable({
                   </td>
                   <td className="py-3.5 px-4 align-middle">
                     {record.customerPictureUrl ? (
-                      // eslint-disable-next-line @next/next/no-img-element -- arbitrary admin URLs
-                      <img
+                      <SafeCustomerImage
                         src={record.customerPictureUrl}
                         alt={`${record.firstName ?? "Customer"} picture`}
-                        width={44}
-                        height={44}
-                        className="h-11 w-11 rounded-full object-cover border border-soft-gold/30"
+                        className="h-11 w-11 rounded-full border border-soft-gold/30 object-cover"
+                        fallbackClassName="h-11 w-11 rounded-full"
+                        fallbackText="N/A"
                       />
                     ) : (
-                      <div className="h-11 w-11 rounded-full bg-ivory border border-soft-gold/30 flex items-center justify-center text-xs text-charcoal/50">
+                      <div className="flex h-11 w-11 items-center justify-center rounded-full border border-soft-gold/30 bg-ivory text-xs text-charcoal/50">
                         N/A
                       </div>
                     )}

@@ -1,15 +1,43 @@
 import type { Metadata } from "next";
 import BookAppointmentPageContent from "@/components/appointments/BookAppointmentPageContent";
 
+const pageTitle = "Book Appointment";
+const pageDescription =
+  "Book an appointment with CareSutra for insurance, loan, or health service guidance.";
+
 export const metadata: Metadata = {
-  title: "Book an Appointment with CareSutra",
-  description:
-    "Book a CareSutra appointment for guidance on insurance, loans, and health services. Share your contact details or schedule directly through Calendly.",
+  title: {
+    absolute: pageTitle,
+  },
+  description: pageDescription,
+  alternates: {
+    canonical: "/book-appointment",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
   openGraph: {
-    title: "Book an Appointment with CareSutra",
-    description:
-      "Book a CareSutra appointment for guidance on insurance, loans, and health services. Share your contact details or schedule directly through Calendly.",
+    title: pageTitle,
+    description: pageDescription,
+    url: "/book-appointment",
     type: "website",
+    locale: "en_IN",
+    siteName: "CareSutra",
+    images: [
+      {
+        url: "/caresutra-hr-logo.png",
+        width: 1200,
+        height: 630,
+        alt: "CareSutra",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: pageTitle,
+    description: pageDescription,
+    images: ["/caresutra-hr-logo.png"],
   },
 };
 

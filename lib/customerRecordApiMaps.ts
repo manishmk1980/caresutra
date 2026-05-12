@@ -1,5 +1,5 @@
 import type { Prisma } from "@prisma/client";
-import type { CustomerRecordFormData } from "@/lib/validations/customerRecordSchema";
+import type { CustomerRecordFormInput } from "@/lib/validations/customerRecordSchema";
 import { emptyToNull, nullableDate, nullableDecimal } from "@/lib/customerRecordNormalize";
 import type { z } from "zod";
 import { customerRecordDraftSchema } from "@/lib/validations/customerRecordSchema";
@@ -24,7 +24,7 @@ export function draftToPrismaUnchecked(data: DraftData): Prisma.CustomerRecordUn
     middleName: emptyToNull(data.middleName),
     lastName: emptyToNull(data.lastName),
     email: emptyToNull(data.email),
-    mobile: emptyToNull(onlyDigits(String(data.mobile ?? ""))),
+    mobile: onlyDigits(String(data.mobile ?? "")),
     alternativeMobile: emptyToNull(onlyDigits(String(data.alternativeMobile ?? ""))),
     dateOfBirth: nullableDate(data.dateOfBirth),
     pan: emptyToNull(typeof data.pan === "string" ? data.pan.toUpperCase() : data.pan),
@@ -48,7 +48,7 @@ export function draftToPrismaUnchecked(data: DraftData): Prisma.CustomerRecordUn
 }
 
 /** Prisma payload for SUBMITTED from full validation */
-export function submitToPrismaUnchecked(data: CustomerRecordFormData): Prisma.CustomerRecordUncheckedCreateInput {
+export function submitToPrismaUnchecked(data: CustomerRecordFormInput): Prisma.CustomerRecordUncheckedCreateInput {
   const customerStatus = normalizeEnum<"ACTIVE" | "INACTIVE" | "PROSPECT">(data.customerStatus) ?? "PROSPECT";
   const customerType = normalizeEnum<"INSURANCE" | "LOAN" | "HEALTHCARE">(data.customerType);
 
@@ -58,7 +58,7 @@ export function submitToPrismaUnchecked(data: CustomerRecordFormData): Prisma.Cu
     middleName: emptyToNull(data.middleName),
     lastName: emptyToNull(data.lastName) ?? "",
     email: emptyToNull(data.email),
-    mobile: onlyDigits(data.mobile),
+    mobile: onlyDigits(String(data.mobile ?? "")),
     alternativeMobile: emptyToNull(onlyDigits(String(data.alternativeMobile ?? ""))),
     dateOfBirth: nullableDate(data.dateOfBirth),
     pan: emptyToNull(typeof data.pan === "string" ? data.pan.toUpperCase() : data.pan),
@@ -68,7 +68,7 @@ export function submitToPrismaUnchecked(data: CustomerRecordFormData): Prisma.Cu
     street: emptyToNull(data.street) ?? "",
     city: emptyToNull(data.city) ?? "",
     state: emptyToNull(data.state) ?? "",
-    pinCode: onlyDigits(data.pinCode),
+    pinCode: onlyDigits(String(data.pinCode ?? "")),
     customerPictureUrl: emptyToNull(data.customerPictureUrl),
     customerStatus,
     customerType,

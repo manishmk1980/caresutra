@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
+import TrackedBookAppointmentLink from "@/components/analytics/TrackedBookAppointmentLink";
 import { Heart } from "lucide-react";
 
 export default function Footer() {
@@ -97,12 +98,13 @@ export default function Footer() {
                                 </Link>
                             </li>
                             <li>
-                                <Link
+                                <TrackedBookAppointmentLink
+                                    location="footer"
                                     href="/book-appointment"
                                     className="text-ivory/80 hover:text-heritage-gold hover:pl-2 transition-all duration-300"
                                 >
                                     Book an Appointment
-                                </Link>
+                                </TrackedBookAppointmentLink>
                             </li>
                             <li>
                                 <Link
@@ -138,12 +140,13 @@ export default function Footer() {
                             <p className="text-ivory/60 text-sm">
                                 Ready to choose with clarity?
                             </p>
-                            <Link
+                            <TrackedBookAppointmentLink
+                                location="footer"
                                 href="/book-appointment"
                                 className="inline-block mt-3 bg-heritage-gold hover:bg-soft-gold text-charcoal font-medium py-2.5 px-6 rounded-full transition-colors duration-300"
                             >
                                 Book an Appointment
-                            </Link>
+                            </TrackedBookAppointmentLink>
                         </div>
                     </div>
                 </div>

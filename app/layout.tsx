@@ -3,6 +3,9 @@ import { Montserrat, Cormorant_Garamond } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
+import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
+import PageViewTracker from "@/components/analytics/PageViewTracker";
+import { getSiteOrigin } from "@/lib/site-url";
 
 const montserrat = Montserrat({
   subsets: ["latin"],
@@ -17,10 +20,38 @@ const cormorantGaramond = Cormorant_Garamond({
   display: "swap",
 });
 
+const siteTitleDefault = "CareSutra | Insurance, Loans & Health Services Guidance";
+const siteDescription =
+  "CareSutra helps individuals and families find the right guidance for insurance, loans, and alternative health services.";
+const keywords = [
+  "CareSutra",
+  "insurance guidance India",
+  "loan assistance India",
+  "health services",
+  "alternative health services",
+  "financial guidance",
+  "customer support",
+  "Har Zarurat Ka Sahi Margdarshan",
+];
+
+const siteOrigin = getSiteOrigin();
+
 export const metadata: Metadata = {
-  title: "CareSutra - Insurance, Loans & Health Services Guidance in India",
-  description:
-    "CareSutra helps individuals and families choose the right insurance, loan, and health service options with simple, trustworthy, and personalized guidance.",
+  metadataBase: new URL(siteOrigin),
+  title: {
+    default: siteTitleDefault,
+    template: "%s | CareSutra",
+  },
+  description: siteDescription,
+  applicationName: "CareSutra",
+  keywords,
+  authors: [{ name: "CareSutra", url: siteOrigin }],
+  creator: "CareSutra",
+  publisher: "CareSutra",
+  robots: {
+    index: true,
+    follow: true,
+  },
   icons: {
     icon: [
       { url: "/favicon_io/favicon.ico" },
@@ -44,14 +75,27 @@ export const metadata: Metadata = {
     ],
   },
   manifest: "/favicon_io/site.webmanifest",
-  keywords: ["insurance", "loans", "health services", "India", "guidance", "personalized"],
-  authors: [{ name: "CareSutra" }],
   openGraph: {
-    title: "CareSutra - Insurance, Loans & Health Services Guidance in India",
-    description:
-      "CareSutra helps individuals and families choose the right insurance, loan, and health service options with simple, trustworthy, and personalized guidance.",
     type: "website",
+    siteName: "CareSutra",
     locale: "en_IN",
+    url: siteOrigin,
+    title: siteTitleDefault,
+    description: siteDescription,
+    images: [
+      {
+        url: "/caresutra-hr-logo.png",
+        width: 1200,
+        height: 630,
+        alt: "CareSutra",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: siteTitleDefault,
+    description: siteDescription,
+    images: ["/caresutra-hr-logo.png"],
   },
 };
 
@@ -64,6 +108,7 @@ export default function RootLayout({
     <html
       lang="en"
       className={`h-full ${montserrat.variable} ${cormorantGaramond.variable}`}
+      suppressHydrationWarning
     >
       <body
         className="font-sans min-h-full flex flex-col"
@@ -72,6 +117,8 @@ export default function RootLayout({
         <Header />
         <main className="flex-1">{children}</main>
         <Footer />
+        <GoogleAnalytics />
+        <PageViewTracker />
       </body>
     </html>
   );

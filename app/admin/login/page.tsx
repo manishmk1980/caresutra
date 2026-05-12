@@ -35,7 +35,7 @@ function LoginForm() {
         setError("Sign in failed.");
         return;
       }
-      const dest = searchParams.get("from");
+      const dest = searchParams?.get("from");
       router.push(dest && dest.startsWith("/admin") && !dest.startsWith("/admin/login") ? dest : "/admin/activity");
       router.refresh();
     } catch {

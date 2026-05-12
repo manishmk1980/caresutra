@@ -24,11 +24,11 @@ import {
 import { orderedValidationMessagesForStep, focusFirstZodPath } from "@/lib/customerRecordFormErrors";
 import { formatTimeOnly } from "@/lib/formatDateTime";
 import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
+import { Loader2, ArrowLeft, Save, ArrowRight, RotateCcw } from "lucide-react";
 import { CustomerRecordStepper } from "./CustomerRecordStepper";
 import { StepPersonalDetails } from "./StepPersonalDetails";
 import { StepAddressDetails } from "./StepAddressDetails";
-import { StepCustomerPicture } from "./StepCustomerPicture";
+import { StepDocuments } from "./StepDocuments";
 import { StepServiceDetails } from "./StepServiceDetails";
 import { StepReviewSubmit } from "./StepReviewSubmit";
 import { FormErrorSummary } from "./FormErrorSummary";
@@ -280,7 +280,7 @@ const CustomerRecordWizard = forwardRef<CustomerRecordWizardHandle, Props>(funct
     window.requestAnimationFrame(() => focusFirstZodPath(reviewIssues));
   }, [reviewIssues]);
 
-  const stepTitle = ["Personal details", "Address", "Picture", "Status & service", "Review & save"][step];
+  const stepTitle = ["Personal details", "Address", "Documents", "Status & service", "Review & save"][step];
 
   useEffect(() => {
     const checkVisibility = () => {
@@ -302,12 +302,12 @@ const CustomerRecordWizard = forwardRef<CustomerRecordWizardHandle, Props>(funct
 
   return (
     <FormProvider {...form}>
-      <div ref={wizardRootRef} className="space-y-5 pb-40">
+      <div ref={wizardRootRef} className="space-y-3 pb-32 md:space-y-5 md:pb-44">
         <CustomerRecordStepper currentStep={step} maxReached={maxReached} />
 
-        <div className="rounded-2xl border border-soft-gold/30 bg-ivory/30 px-3 py-2 md:px-4">
-          <p className="text-xs font-semibold text-trust-blue uppercase tracking-wide">Step {step + 1} of 5</p>
-          <h2 className="font-serif text-lg md:text-xl font-semibold text-charcoal">{stepTitle}</h2>
+        <div className="rounded-2xl border border-soft-gold/30 bg-ivory/30 px-2 py-1.5 md:px-4">
+          <p className="text-[10px] font-semibold text-trust-blue uppercase tracking-wide md:text-xs">Step {step + 1} of 5</p>
+          <h2 className="font-serif text-base font-semibold leading-snug text-charcoal md:text-xl">{stepTitle}</h2>
         </div>
 
         <div id="wizard-validation-summary" className="space-y-2 scroll-mt-20">
@@ -346,34 +346,65 @@ const CustomerRecordWizard = forwardRef<CustomerRecordWizardHandle, Props>(funct
           ) : null}
         </div>
 
-        <div className="rounded-2xl border border-soft-gold/35 bg-white p-4 md:p-6 shadow-sm">
+        <div className="rounded-2xl border border-soft-gold/35 bg-white p-2 shadow-sm sm:p-3 md:p-6">
           {step === 0 ? <StepPersonalDetails /> : null}
           {step === 1 ? <StepAddressDetails /> : null}
-          {step === 2 ? <StepCustomerPicture /> : null}
+          {step === 2 ? <StepDocuments /> : null}
           {step === 3 ? <StepServiceDetails /> : null}
           {step === 4 ? <StepReviewSubmit onEditStep={setStep} /> : null}
         </div>
 
         {showActionBar ? (
-          <div className="pointer-events-none fixed inset-x-0 bottom-0 z-40 flex justify-center px-4 pb-3 pt-2 md:px-6">
-            <div className="pointer-events-auto flex w-full max-w-[820px] flex-wrap items-stretch justify-center gap-2 rounded-2xl border border-soft-gold/40 bg-white/95 p-2 shadow-xl backdrop-blur-sm md:gap-3 md:p-3">
+          <div className="pointer-events-none fixed inset-x-0 bottom-0 z-40 flex justify-center px-1.5 pb-[max(0.25rem,env(safe-area-inset-bottom))] pt-1 sm:px-6 sm:pb-3 sm:pt-2">
+            <div className="pointer-events-auto flex w-full max-w-[820px] flex-nowrap items-center gap-1.5 rounded-xl border border-soft-gold/40 bg-white/95 px-1.5 py-1 shadow-lg backdrop-blur-sm sm:flex-wrap sm:items-stretch sm:justify-center sm:gap-3 sm:rounded-2xl sm:p-3 sm:shadow-xl">
             {step > 0 ? (
-              <Button
-                type="button"
-                variant="outline"
-                className="min-h-11 flex-1 rounded-xl border-soft-gold/50 md:flex-none md:min-w-[100px]"
-                onClick={goBack}
-                disabled={savingDraft || submitting}
-              >
-                Back
-              </Button>
+              <>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="icon"
+                  className="h-11 min-h-11 w-11 min-w-11 shrink-0 rounded-xl border-soft-gold/50 sm:hidden"
+                  onClick={goBack}
+                  disabled={savingDraft || submitting}
+                  aria-label="Go back"
+                >
+                  <ArrowLeft className="h-4 w-4" aria-hidden />
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="hidden min-h-11 rounded-xl border-soft-gold/50 sm:flex sm:min-w-[100px] sm:flex-none"
+                  onClick={goBack}
+                  disabled={savingDraft || submitting}
+                >
+                  Back
+                </Button>
+              </>
             ) : (
-              <div className="hidden md:block md:w-[100px]" aria-hidden />
+              <>
+                <div className="h-11 w-11 shrink-0 sm:hidden" aria-hidden />
+                <div className="hidden sm:block sm:w-[100px]" aria-hidden />
+              </>
             )}
             <Button
               type="button"
               variant="outline"
-              className="min-h-11 flex-1 rounded-xl border-heritage-gold/60 text-charcoal md:flex-none md:min-w-[120px]"
+              size="icon"
+              className="h-11 min-h-11 w-11 min-w-11 shrink-0 rounded-xl border-heritage-gold/60 text-charcoal sm:hidden"
+              onClick={() => void saveDraft()}
+              disabled={savingDraft || submitting}
+              aria-label="Save draft"
+            >
+              {savingDraft ? (
+                <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
+              ) : (
+                <Save className="h-4 w-4" aria-hidden />
+              )}
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              className="hidden min-h-11 rounded-xl border-heritage-gold/60 text-charcoal sm:flex sm:min-w-[120px] sm:flex-none"
               onClick={() => void saveDraft()}
               disabled={savingDraft || submitting}
             >
@@ -389,33 +420,48 @@ const CustomerRecordWizard = forwardRef<CustomerRecordWizardHandle, Props>(funct
             {step < 4 ? (
               <Button
                 type="button"
-                className="min-h-11 flex-1 rounded-xl bg-trust-blue hover:bg-support-blue text-white md:flex-none md:min-w-[120px]"
+                className="h-11 min-h-11 min-w-0 flex-1 gap-1 rounded-xl bg-trust-blue px-2.5 text-sm font-semibold text-white hover:bg-support-blue sm:h-auto sm:min-h-11 sm:flex-none sm:min-w-[120px] sm:gap-1.5 sm:px-4"
                 onClick={goNext}
                 disabled={savingDraft || submitting}
               >
                 Next
+                <ArrowRight className="hidden h-4 w-4 shrink-0 opacity-90 sm:block" aria-hidden />
               </Button>
             ) : (
               <Button
                 type="button"
-                className="min-h-11 flex-1 rounded-xl bg-trust-blue hover:bg-support-blue text-white md:flex-none md:min-w-[160px]"
+                className="h-11 min-h-11 min-w-0 flex-1 gap-1 rounded-xl bg-trust-blue px-2.5 text-sm font-semibold text-white hover:bg-support-blue sm:h-auto sm:min-h-11 sm:flex-none sm:min-w-[160px] sm:gap-1.5 sm:px-4"
                 onClick={() => void submitFinal()}
                 disabled={savingDraft || submitting}
               >
                 {submitting ? (
                   <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden />
-                    Submitting…
+                    <Loader2 className="h-4 w-4 shrink-0 animate-spin" aria-hidden />
+                    <span className="truncate">Submitting…</span>
                   </>
                 ) : (
-                  "Submit Customer Record"
+                  <>
+                    <span className="truncate sm:hidden">Submit</span>
+                    <span className="hidden truncate sm:inline">Submit Customer Record</span>
+                  </>
                 )}
               </Button>
             )}
             <Button
               type="button"
               variant="ghost"
-              className="min-h-11 w-full text-charcoal/70 md:w-auto md:px-3"
+              size="icon"
+              className="h-11 min-h-11 w-11 min-w-11 shrink-0 rounded-xl text-charcoal/70 sm:hidden"
+              onClick={resetForm}
+              disabled={savingDraft || submitting}
+              aria-label="Reset form"
+            >
+              <RotateCcw className="h-4 w-4" aria-hidden />
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              className="hidden min-h-11 text-charcoal/70 sm:flex sm:w-auto sm:px-3"
               onClick={resetForm}
               disabled={savingDraft || submitting}
             >

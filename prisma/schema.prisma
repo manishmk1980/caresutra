@@ -46,7 +46,11 @@ model CustomerRecord {
   state                String?
   pinCode              String?
 
-  customerPictureUrl   String?
+customerPictureUrl   String?
+  panDocumentUrl        String?
+  aadharFrontUrl        String?
+  aadharBackUrl         String?
+  otherDocumentUrl      String?
 
   customerStatus       CustomerStatus        @default(PROSPECT)
   customerType         CustomerType?

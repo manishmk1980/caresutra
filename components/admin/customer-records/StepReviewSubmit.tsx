@@ -4,6 +4,7 @@ import { useFormContext, useWatch } from "react-hook-form";
 import type { CustomerRecordFormInput } from "@/lib/validations/customerRecordSchema";
 import { formatDateOnly, formatInrAmount } from "@/lib/formatDateTime";
 import { Button } from "@/components/ui/button";
+import { SafeCustomerImage } from "@/components/admin/SafeCustomerImage";
 
 const STATUS: Record<string, string> = {
   ACTIVE: "Active",
@@ -36,12 +37,12 @@ export function StepReviewSubmit({ onEditStep }: Props) {
     .join(", ");
 
   return (
-    <div className="space-y-6">
-      <p className="text-sm text-charcoal/70">
+    <div className="space-y-4 md:space-y-6">
+      <p className="hidden text-sm text-charcoal/70 md:block">
         Review everything below. Use <strong>Back</strong> to edit a step, <strong>Save Draft</strong> to save progress,
         or <strong>Submit</strong> to finalize the record.
       </p>
-      <div className="rounded-2xl border border-soft-gold/35 bg-ivory/50 p-4 md:p-5 space-y-5 text-sm">
+      <div className="space-y-4 rounded-2xl border border-soft-gold/35 bg-ivory/50 p-3 text-sm md:space-y-5 md:p-5">
         <div className="space-y-2">
           <div className="flex items-center justify-between gap-2">
             <p className="text-xs font-semibold uppercase tracking-wide text-charcoal/55">Section 1: Personal Details</p>
@@ -83,9 +84,14 @@ export function StepReviewSubmit({ onEditStep }: Props) {
             </Button>
           </div>
           {v.customerPictureUrl?.trim() ? (
-            <div className="h-24 w-24 rounded-xl overflow-hidden border border-soft-gold/40">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={v.customerPictureUrl} alt="Customer" className="h-full w-full object-cover" />
+            <div className="h-24 w-24 overflow-hidden rounded-xl border border-soft-gold/40">
+              <SafeCustomerImage
+                src={v.customerPictureUrl.trim()}
+                alt="Customer"
+                className="h-full w-full object-cover"
+                fallbackClassName="h-full w-full"
+                fallbackText="Unavailable"
+              />
             </div>
           ) : (
             <p>No picture added</p>
@@ -93,7 +99,77 @@ export function StepReviewSubmit({ onEditStep }: Props) {
         </div>
         <div className="space-y-2">
           <div className="flex items-center justify-between gap-2">
-            <p className="text-xs font-semibold uppercase tracking-wide text-charcoal/55">Section 4: Customer Status & Type</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-charcoal/55">Section 3a: Uploaded Documents</p>
+            <Button type="button" size="sm" variant="outline" className="rounded-lg" onClick={() => onEditStep(2)}>
+              Edit
+            </Button>
+          </div>
+          <div className="grid grid-cols-1 gap-2 text-sm sm:grid-cols-2 sm:gap-3">
+            <p>
+              Customer Photo:{" "}
+              <span className={v.customerPictureUrl?.trim() ? "text-green-600 font-medium" : "text-red-500"}>
+                {v.customerPictureUrl?.trim() ? "Uploaded" : "Not Uploaded"}
+              </span>
+            </p>
+            <p>
+              PAN:{" "}
+              <span className={v.panDocumentUrl?.trim() ? "text-green-600 font-medium" : "text-red-500"}>
+                {v.panDocumentUrl?.trim() ? "Uploaded" : "Not Uploaded"}
+              </span>
+            </p>
+            <p>
+              Aadhaar Front:{" "}
+              <span className={v.aadhaarFrontUrl?.trim() ? "text-green-600 font-medium" : "text-red-500"}>
+                {v.aadhaarFrontUrl?.trim() ? "Uploaded" : "Not Uploaded"}
+              </span>
+            </p>
+            <p>
+              Aadhaar Back:{" "}
+              <span className={v.aadhaarBackUrl?.trim() ? "text-green-600 font-medium" : "text-red-500"}>
+                {v.aadhaarBackUrl?.trim() ? "Uploaded" : "Not Uploaded"}
+              </span>
+            </p>
+            <p>
+              Other Document:{" "}
+              <span className={v.otherDocumentUrl?.trim() ? "text-green-600 font-medium" : "text-red-500"}>
+                {v.otherDocumentUrl?.trim() ? "Uploaded" : "Not Uploaded"}
+              </span>
+            </p>
+          </div>
+        </div>
+        <div className="space-y-2">
+          <div className="flex items-center justify-between gap-2">
+            <p className="text-xs font-semibold uppercase tracking-wide text-charcoal/55">Section 4: Uploaded Documents</p>
+            <Button type="button" size="sm" variant="outline" className="rounded-lg" onClick={() => onEditStep(2)}>
+              Edit
+            </Button>
+          </div>
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-2">
+            <span className="text-charcoal/65">Customer Photo:</span>
+            <span className={v.customerPictureUrl?.trim() ? "text-green-700 font-medium" : "text-red-600"}>
+              {v.customerPictureUrl?.trim() ? "Uploaded" : "Not Uploaded"}
+            </span>
+            <span className="text-charcoal/65">PAN:</span>
+            <span className={v.panDocumentUrl?.trim() ? "text-green-700 font-medium" : "text-red-600"}>
+              {v.panDocumentUrl?.trim() ? "Uploaded" : "Not Uploaded"}
+            </span>
+            <span className="text-charcoal/65">Aadhaar Front:</span>
+            <span className={v.aadhaarFrontUrl?.trim() ? "text-green-700 font-medium" : "text-red-600"}>
+              {v.aadhaarFrontUrl?.trim() ? "Uploaded" : "Not Uploaded"}
+            </span>
+            <span className="text-charcoal/65">Aadhaar Back:</span>
+            <span className={v.aadhaarBackUrl?.trim() ? "text-green-700 font-medium" : "text-red-600"}>
+              {v.aadhaarBackUrl?.trim() ? "Uploaded" : "Not Uploaded"}
+            </span>
+            <span className="text-charcoal/65">Other Document:</span>
+            <span className={v.otherDocumentUrl?.trim() ? "text-green-700 font-medium" : "text-red-600"}>
+              {v.otherDocumentUrl?.trim() ? "Uploaded" : "Not Uploaded"}
+            </span>
+          </div>
+        </div>
+        <div className="space-y-2">
+          <div className="flex items-center justify-between gap-2">
+            <p className="text-xs font-semibold uppercase tracking-wide text-charcoal/55">Section 5: Customer Status & Type</p>
             <Button type="button" size="sm" variant="outline" className="rounded-lg" onClick={() => onEditStep(3)}>
               Edit
             </Button>
@@ -101,7 +177,7 @@ export function StepReviewSubmit({ onEditStep }: Props) {
           <p>Customer Status: {displayValue(STATUS[v.customerStatus] ?? v.customerStatus)}</p>
           <p>Customer Type: {displayValue(TYPE[v.customerType] ?? v.customerType)}</p>
         </div>
-        <div className="space-y-2">
+<div className="space-y-2">
           <div className="flex items-center justify-between gap-2">
             <p className="text-xs font-semibold uppercase tracking-wide text-charcoal/55">Section 5: Service Details</p>
             <Button type="button" size="sm" variant="outline" className="rounded-lg" onClick={() => onEditStep(3)}>
@@ -129,6 +205,14 @@ export function StepReviewSubmit({ onEditStep }: Props) {
               ? formatInrAmount(v.coverFinalPayout)
               : "—"}
           </p>
+        </div>
+        <div className="space-y-2">
+          <p className="text-xs font-semibold uppercase tracking-wide text-charcoal/55">Section 6: Documents</p>
+          <p>Customer Photo: {v.customerPictureUrl?.trim() ? "Uploaded" : "Not Uploaded"}</p>
+          <p>PAN: {v.panDocumentUrl?.trim() ? "Uploaded" : "Not Uploaded"}</p>
+          <p>Aadhaar Front: {v.aadhaarFrontUrl?.trim() ? "Uploaded" : "Not Uploaded"}</p>
+          <p>Aadhaar Back: {v.aadhaarBackUrl?.trim() ? "Uploaded" : "Not Uploaded"}</p>
+          <p>Other Document: {v.otherDocumentUrl?.trim() ? "Uploaded" : "Not Uploaded"}</p>
         </div>
       </div>
     </div>

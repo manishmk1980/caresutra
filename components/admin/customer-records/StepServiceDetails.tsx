@@ -25,11 +25,11 @@ export function StepServiceDetails() {
   );
 
   return (
-    <div className="space-y-6">
-      <p className="text-sm text-charcoal/70">Status, type, and policy / loan details.</p>
-      <div className="space-y-3">
-        <h3 className="text-sm font-semibold text-trust-blue">Service classification</h3>
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+    <div className="space-y-4 md:space-y-6">
+      <p className="hidden text-sm leading-snug text-charcoal/70 md:block">Status, type, and policy / loan details.</p>
+      <div className="space-y-2 md:space-y-3">
+        <h3 className="text-xs font-semibold text-trust-blue md:text-sm">Service classification</h3>
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-4">
         <FormField
           control={control}
           name="customerStatus"
@@ -40,7 +40,7 @@ export function StepServiceDetails() {
                 <FormControl>
                   <SelectTrigger
                     className={cn(
-                      "rounded-xl border-soft-gold/40 bg-white",
+                      "h-11 min-h-[2.75rem] rounded-xl border-soft-gold/40 bg-white py-2.5 md:h-9 md:min-h-0 md:py-2",
                       fieldState.invalid && invalidFieldRing,
                     )}
                   >
@@ -69,7 +69,7 @@ export function StepServiceDetails() {
                 <FormControl>
                   <SelectTrigger
                     className={cn(
-                      "rounded-xl border-soft-gold/40 bg-white",
+                      "h-11 min-h-[2.75rem] rounded-xl border-soft-gold/40 bg-white py-2.5 md:h-9 md:min-h-0 md:py-2",
                       fieldState.invalid && invalidFieldRing,
                     )}
                   >
@@ -90,9 +90,9 @@ export function StepServiceDetails() {
         />
         </div>
       </div>
-      <div className="space-y-3">
-        <h3 className="text-sm font-semibold text-trust-blue">Provider and dates</h3>
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+      <div className="space-y-2 md:space-y-3">
+        <h3 className="text-xs font-semibold text-trust-blue md:text-sm">Provider and dates</h3>
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-4 xl:grid-cols-3">
         <FormField
           control={control}
           name="providerCompanyName"
@@ -104,7 +104,10 @@ export function StepServiceDetails() {
                   placeholder="Company whose service is opted"
                   {...field}
                   value={field.value ?? ""}
-                  className={cn("rounded-xl border-soft-gold/40", fieldState.invalid && invalidFieldRing)}
+                  className={cn(
+                    "h-11 rounded-xl border-soft-gold/40 py-2.5 md:h-9 md:py-1",
+                    fieldState.invalid && invalidFieldRing,
+                  )}
                 />
               </FormControl>
               <FormMessage className="text-amber-900" />
@@ -117,7 +120,7 @@ export function StepServiceDetails() {
           render={({ field, fieldState }) => (
             <FormItem data-rhf-field="serviceCommencedDate">
               <FormLabel>Date of Service Commenced</FormLabel>
-              <p className="text-xs text-charcoal/65">Format: DD-MM-YYYY (calendar below).</p>
+              <p className="mt-0.5 text-[11px] leading-snug text-charcoal/65 md:mt-1 md:text-xs">Format: DD-MM-YYYY (calendar below).</p>
               <FormControl>
                 <DateSelect
                   label="Service commenced"
@@ -142,7 +145,7 @@ export function StepServiceDetails() {
           render={({ field, fieldState }) => (
             <FormItem data-rhf-field="expiryDate">
               <FormLabel>Expiry Date</FormLabel>
-              <p className="text-xs text-charcoal/65">Must be on or after service start.</p>
+              <p className="mt-0.5 text-[11px] leading-snug text-charcoal/65 md:mt-1 md:text-xs">Must be on or after service start.</p>
               <FormControl>
                 <DateSelect
                   label="Expiry"
@@ -163,9 +166,9 @@ export function StepServiceDetails() {
         />
         </div>
       </div>
-      <div className="space-y-3">
-        <h3 className="text-sm font-semibold text-trust-blue">Financial details</h3>
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+      <div className="space-y-2 md:space-y-3">
+        <h3 className="text-xs font-semibold text-trust-blue md:text-sm">Financial details</h3>
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-4 xl:grid-cols-3">
         <FormField
           control={control}
           name="insuranceLoanAmount"
@@ -179,7 +182,10 @@ export function StepServiceDetails() {
                   placeholder="0.00"
                   {...field}
                   value={field.value ?? ""}
-                  className={cn("rounded-xl border-soft-gold/40", fieldState.invalid && invalidFieldRing)}
+                  className={cn(
+                    "h-11 rounded-xl border-soft-gold/40 py-2.5 md:h-9 md:py-1",
+                    fieldState.invalid && invalidFieldRing,
+                  )}
                 />
               </FormControl>
               <FormMessage className="text-amber-900" />
@@ -199,7 +205,10 @@ export function StepServiceDetails() {
                   placeholder="0.00"
                   {...field}
                   value={field.value ?? ""}
-                  className={cn("rounded-xl border-soft-gold/40", fieldState.invalid && invalidFieldRing)}
+                  className={cn(
+                    "h-11 rounded-xl border-soft-gold/40 py-2.5 md:h-9 md:py-1",
+                    fieldState.invalid && invalidFieldRing,
+                  )}
                 />
               </FormControl>
               <FormMessage className="text-amber-900" />
@@ -219,7 +228,10 @@ export function StepServiceDetails() {
                   placeholder="0.00"
                   {...field}
                   value={field.value ?? ""}
-                  className={cn("rounded-xl border-soft-gold/40", fieldState.invalid && invalidFieldRing)}
+                  className={cn(
+                    "h-11 rounded-xl border-soft-gold/40 py-2.5 md:h-9 md:py-1",
+                    fieldState.invalid && invalidFieldRing,
+                  )}
                 />
               </FormControl>
               <FormMessage className="text-amber-900" />

@@ -10,6 +10,7 @@ import { Upload, Link2, Camera, ImageIcon } from "lucide-react";
 import { fetchWithTimeout } from "@/lib/fetchWithTimeout";
 import { cn } from "@/lib/utils";
 import { invalidFieldRing } from "./fieldStyles";
+import { SafeCustomerImage } from "@/components/admin/SafeCustomerImage";
 
 export function StepCustomerPicture() {
   const { control, setValue } = useFormContext<CustomerRecordFormInput>();
@@ -100,9 +101,14 @@ export function StepCustomerPicture() {
           <p className="text-sm font-medium text-charcoal">Preview</p>
           {imagePreview ? (
             <>
-              <div className="mt-3 rounded-lg border border-soft-gold/35 bg-ivory/40 p-2 w-fit">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={imagePreview} alt="Customer preview" className="h-28 w-28 object-cover rounded-lg" />
+              <div className="mt-3 w-fit rounded-lg border border-soft-gold/35 bg-ivory/40 p-2">
+                <SafeCustomerImage
+                  src={imagePreview}
+                  alt="Customer preview"
+                  className="h-28 w-28 rounded-lg object-cover"
+                  fallbackClassName="h-28 w-28 rounded-lg"
+                  fallbackText="Preview unavailable"
+                />
               </div>
               <p className="mt-3 break-all text-xs text-charcoal/65">{imagePreview}</p>
               <div className="mt-3 flex flex-wrap gap-2">
