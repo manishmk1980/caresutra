@@ -32,6 +32,7 @@ import { StepDocuments } from "./StepDocuments";
 import { StepServiceDetails } from "./StepServiceDetails";
 import { StepReviewSubmit } from "./StepReviewSubmit";
 import { FormErrorSummary } from "./FormErrorSummary";
+import { WIZARD_STEP_META } from "./wizardStepMeta";
 
 const STEP_SCHEMAS = [
   customerRecordStep1Schema,
@@ -200,7 +201,7 @@ const CustomerRecordWizard = forwardRef<CustomerRecordWizardHandle, Props>(funct
       }
       setCurrentRecordId(result.record.id);
       const time = formatTimeOnly(new Date());
-      setDraftBanner(`Draft saved successfully.\nDraft saved at ${time}`);
+      setDraftBanner(`DRAFT_OK|${time}`);
       onSuccess?.();
     } catch (e) {
       setErrorBanner(e instanceof Error ? e.message : "Unable to save draft. Please try again.");
@@ -280,8 +281,6 @@ const CustomerRecordWizard = forwardRef<CustomerRecordWizardHandle, Props>(funct
     window.requestAnimationFrame(() => focusFirstZodPath(reviewIssues));
   }, [reviewIssues]);
 
-  const stepTitle = ["Personal details", "Address", "Documents", "Status & service", "Review & save"][step];
-
   useEffect(() => {
     const checkVisibility = () => {
       const el = wizardRootRef.current;
@@ -307,20 +306,37 @@ const CustomerRecordWizard = forwardRef<CustomerRecordWizardHandle, Props>(funct
 
         <div className="rounded-2xl border border-soft-gold/30 bg-ivory/30 px-2 py-1.5 md:px-4">
           <p className="text-[10px] font-semibold text-trust-blue uppercase tracking-wide md:text-xs">Step {step + 1} of 5</p>
-          <h2 className="font-serif text-base font-semibold leading-snug text-charcoal md:text-xl">{stepTitle}</h2>
+          <h2 className="font-serif text-base font-semibold leading-snug text-charcoal md:text-xl">
+            {WIZARD_STEP_META[step].title}
+          </h2>
+          <p className="mt-0.5 text-[11px] leading-snug text-charcoal/60 md:mt-1 md:text-sm md:text-charcoal/65">
+            {WIZARD_STEP_META[step].description}
+          </p>
         </div>
 
         <div id="wizard-validation-summary" className="space-y-2 scroll-mt-20">
           {errorBanner ? (
-            <div className="rounded-2xl border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-900">{errorBanner}</div>
+            <div
+              role="alert"
+              className="rounded-2xl border border-amber-200/90 bg-amber-50/90 px-4 py-3 text-sm text-charcoal shadow-sm"
+            >
+              {errorBanner}
+            </div>
           ) : null}
           {draftBanner ? (
-            <div className="rounded-2xl border border-green-300 bg-green-50 px-4 py-3 text-sm text-green-900 whitespace-pre-line">
-              {draftBanner}
+            <div className="rounded-2xl border border-green-200/90 bg-green-50/90 px-4 py-3 text-sm text-charcoal shadow-sm">
+              {draftBanner.startsWith("DRAFT_OK|") ? (
+                <>
+                  <p className="font-medium text-green-900">Draft saved successfully.</p>
+                  <p className="mt-0.5 text-xs text-charcoal/60">Saved at {draftBanner.slice("DRAFT_OK|".length)}</p>
+                </>
+              ) : (
+                draftBanner
+              )}
             </div>
           ) : null}
           {submitBanner ? (
-            <div className="rounded-2xl border border-green-300 bg-green-50 px-4 py-3 text-sm text-green-900">
+            <div className="rounded-2xl border border-green-200/90 bg-green-50/90 px-4 py-3 text-sm font-medium text-green-900 shadow-sm">
               {submitBanner}
             </div>
           ) : null}
@@ -331,7 +347,13 @@ const CustomerRecordWizard = forwardRef<CustomerRecordWizardHandle, Props>(funct
                 title="Please fix the following before final submit:"
                 messages={reviewIssues.map((issue) => issue.message)}
               />
-              <Button type="button" variant="outline" className="rounded-xl" onClick={goToFirstIssue}>
+              <Button
+                type="button"
+                variant="outline"
+                className="rounded-xl"
+                onClick={goToFirstIssue}
+                aria-label="Go to first validation issue"
+              >
                 Go to first issue
               </Button>
             </div>
@@ -390,7 +412,7 @@ const CustomerRecordWizard = forwardRef<CustomerRecordWizardHandle, Props>(funct
               type="button"
               variant="outline"
               size="icon"
-              className="h-11 min-h-11 w-11 min-w-11 shrink-0 rounded-xl border-heritage-gold/60 text-charcoal sm:hidden"
+              className="h-11 min-h-11 w-11 min-w-11 shrink-0 rounded-xl border-charcoal/15 bg-white text-charcoal/80 hover:bg-ivory sm:hidden"
               onClick={() => void saveDraft()}
               disabled={savingDraft || submitting}
               aria-label="Save draft"
@@ -404,7 +426,7 @@ const CustomerRecordWizard = forwardRef<CustomerRecordWizardHandle, Props>(funct
             <Button
               type="button"
               variant="outline"
-              className="hidden min-h-11 rounded-xl border-heritage-gold/60 text-charcoal sm:flex sm:min-w-[120px] sm:flex-none"
+              className="hidden min-h-11 rounded-xl border-charcoal/15 bg-white text-charcoal/80 hover:bg-ivory sm:flex sm:min-w-[120px] sm:flex-none"
               onClick={() => void saveDraft()}
               disabled={savingDraft || submitting}
             >
@@ -420,9 +442,10 @@ const CustomerRecordWizard = forwardRef<CustomerRecordWizardHandle, Props>(funct
             {step < 4 ? (
               <Button
                 type="button"
-                className="h-11 min-h-11 min-w-0 flex-1 gap-1 rounded-xl bg-trust-blue px-2.5 text-sm font-semibold text-white hover:bg-support-blue sm:h-auto sm:min-h-11 sm:flex-none sm:min-w-[120px] sm:gap-1.5 sm:px-4"
+                className="h-11 min-h-11 min-w-0 flex-1 gap-1 rounded-xl bg-trust-blue px-2.5 text-sm font-semibold text-white shadow-sm hover:bg-support-blue sm:h-auto sm:min-h-11 sm:flex-none sm:min-w-[120px] sm:gap-1.5 sm:px-4"
                 onClick={goNext}
                 disabled={savingDraft || submitting}
+                aria-label="Go to next step"
               >
                 Next
                 <ArrowRight className="hidden h-4 w-4 shrink-0 opacity-90 sm:block" aria-hidden />
@@ -430,9 +453,10 @@ const CustomerRecordWizard = forwardRef<CustomerRecordWizardHandle, Props>(funct
             ) : (
               <Button
                 type="button"
-                className="h-11 min-h-11 min-w-0 flex-1 gap-1 rounded-xl bg-trust-blue px-2.5 text-sm font-semibold text-white hover:bg-support-blue sm:h-auto sm:min-h-11 sm:flex-none sm:min-w-[160px] sm:gap-1.5 sm:px-4"
+                className="h-11 min-h-11 min-w-0 flex-1 gap-1 rounded-xl bg-trust-blue px-2.5 text-sm font-semibold text-white shadow-sm hover:bg-support-blue sm:h-auto sm:min-h-11 sm:flex-none sm:min-w-[160px] sm:gap-1.5 sm:px-4"
                 onClick={() => void submitFinal()}
                 disabled={savingDraft || submitting}
+                aria-busy={submitting}
               >
                 {submitting ? (
                   <>

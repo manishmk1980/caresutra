@@ -25,12 +25,12 @@ export function FormErrorSummary({
     <div
       role="alert"
       className={cn(
-        "rounded-2xl border border-amber-300/90 bg-amber-50/95 px-4 py-3 text-charcoal shadow-sm",
+        "rounded-2xl border border-amber-200/70 bg-amber-50/70 px-4 py-3 text-charcoal shadow-sm",
         className,
       )}
     >
       <div className="flex gap-3">
-        <AlertCircle className="h-5 w-5 shrink-0 text-amber-700 mt-0.5" aria-hidden />
+        <AlertCircle className="h-5 w-5 shrink-0 text-amber-700/80 mt-0.5" aria-hidden />
         <div className="min-w-0 space-y-2">
           <p className="font-semibold text-charcoal text-sm">{title}</p>
           <ul className="list-disc pl-4 space-y-1 text-sm text-charcoal/90">

@@ -23,6 +23,19 @@ function displayValue(value: unknown): string {
   return String(value);
 }
 
+function docFilled(v: unknown): boolean {
+  return typeof v === "string" && v.trim().length > 0;
+}
+
+function DocStatus({ ok, label }: { ok: boolean; label: string }) {
+  return (
+    <span className="inline-flex items-center gap-1 rounded-lg border border-soft-gold/30 bg-white/80 px-2 py-0.5 text-[11px] md:text-xs">
+      <span className="text-charcoal/70">{label}</span>
+      <span className={ok ? "font-medium text-green-800" : "text-charcoal/45"}>{ok ? "Uploaded" : "Not uploaded"}</span>
+    </span>
+  );
+}
+
 type Props = {
   onEditStep: (step: number) => void;
 };
@@ -36,183 +49,208 @@ export function StepReviewSubmit({ onEditStep }: Props) {
     .filter((part) => Boolean(part?.trim()))
     .join(", ");
 
+  const optionalDocs: { label: string; ok: boolean }[] = [
+    { label: "Customer picture", ok: docFilled(v.customerPictureUrl) },
+    { label: "PAN document", ok: docFilled(v.panDocumentUrl) },
+    { label: "Aadhaar front", ok: docFilled(v.aadhaarFrontUrl) },
+    { label: "Aadhaar back", ok: docFilled(v.aadhaarBackUrl) },
+    { label: "Other document", ok: docFilled(v.otherDocumentUrl) },
+  ];
+  const missingOptional = optionalDocs.filter((d) => !d.ok);
+
   return (
     <div className="space-y-4 md:space-y-6">
-      <p className="hidden text-sm text-charcoal/70 md:block">
-        Review everything below. Use <strong>Back</strong> to edit a step, <strong>Save Draft</strong> to save progress,
-        or <strong>Submit</strong> to finalize the record.
-      </p>
+      <div
+        role="status"
+        className="rounded-2xl border border-trust-blue/20 bg-trust-blue/[0.06] px-3 py-2.5 text-[11px] leading-snug text-charcoal md:px-4 md:py-3 md:text-sm"
+      >
+        <p className="font-medium text-trust-blue">Please review details before final submission.</p>
+        <p className="mt-1 text-charcoal/75">
+          Use <strong className="font-semibold text-charcoal">Back</strong> to edit a step,{" "}
+          <strong className="font-semibold text-charcoal">Save draft</strong> to keep progress, or{" "}
+          <strong className="font-semibold text-charcoal">Submit</strong> when everything is correct.
+        </p>
+      </div>
+
+      {missingOptional.length > 0 ? (
+        <div className="rounded-2xl border border-soft-gold/40 bg-ivory/60 px-3 py-2.5 md:px-4 md:py-3">
+          <p className="text-xs font-semibold text-charcoal md:text-sm">Optional documents not yet added</p>
+          <ul className="mt-1.5 list-disc space-y-0.5 pl-4 text-[11px] text-charcoal/75 md:text-sm">
+            {missingOptional.map((d) => (
+              <li key={d.label}>{d.label}</li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
+
       <div className="space-y-4 rounded-2xl border border-soft-gold/35 bg-ivory/50 p-3 text-sm md:space-y-5 md:p-5">
         <div className="space-y-2">
           <div className="flex items-center justify-between gap-2">
-            <p className="text-xs font-semibold uppercase tracking-wide text-charcoal/55">Section 1: Personal Details</p>
-            <Button type="button" size="sm" variant="outline" className="rounded-lg" onClick={() => onEditStep(0)}>
+            <p className="text-xs font-semibold uppercase tracking-wide text-charcoal/55">Personal details</p>
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              className="rounded-lg"
+              onClick={() => onEditStep(0)}
+              aria-label="Edit personal details"
+            >
               Edit
             </Button>
           </div>
-          <p>Full Name: {displayValue(fullName)}</p>
-          <p>First Name: {displayValue(v.firstName)}</p>
-          <p>Middle Name: {displayValue(v.middleName)}</p>
-          <p>Last Name: {displayValue(v.lastName)}</p>
-          <p>Email Address: {displayValue(v.email)}</p>
-          <p>Mobile: {displayValue(v.mobile)}</p>
-          <p>Alternative Mobile: {displayValue(v.alternativeMobile)}</p>
-          <p>Date of Birth: {v.dateOfBirth ? formatDateOnly(v.dateOfBirth) : "—"}</p>
-          <p>PAN: {displayValue(v.pan)}</p>
-          <p>AADHAAR: {displayValue(v.aadhaar)}</p>
+          <p>
+            <span className="text-charcoal/65">Name: </span>
+            {displayValue(fullName)}
+          </p>
+          <p>
+            <span className="text-charcoal/65">Email: </span>
+            {displayValue(v.email)}
+          </p>
+          <p>
+            <span className="text-charcoal/65">Mobile: </span>
+            {displayValue(v.mobile)}
+          </p>
+          <p>
+            <span className="text-charcoal/65">Alternative mobile: </span>
+            {displayValue(v.alternativeMobile)}
+          </p>
+          <p>
+            <span className="text-charcoal/65">Date of birth: </span>
+            {v.dateOfBirth ? formatDateOnly(v.dateOfBirth) : "—"}
+          </p>
         </div>
-        <div className="space-y-2">
+
+        <div className="space-y-2 border-t border-soft-gold/25 pt-3 md:pt-4">
           <div className="flex items-center justify-between gap-2">
-            <p className="text-xs font-semibold uppercase tracking-wide text-charcoal/55">Section 2: Address Details</p>
-            <Button type="button" size="sm" variant="outline" className="rounded-lg" onClick={() => onEditStep(1)}>
+            <p className="text-xs font-semibold uppercase tracking-wide text-charcoal/55">Address details</p>
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              className="rounded-lg"
+              onClick={() => onEditStep(1)}
+              aria-label="Edit address details"
+            >
               Edit
             </Button>
           </div>
-          <p>Home / Apartment / Flat: {displayValue(v.addressLine)}</p>
-          <p>Floor: {displayValue(v.floor)}</p>
-          <p>Street / Locality: {displayValue(v.street)}</p>
-          <p>City: {displayValue(v.city)}</p>
-          <p>State: {displayValue(v.state)}</p>
-          <p>PIN Code: {displayValue(v.pinCode)}</p>
-          <p>Full Address: {displayValue(fullAddress)}</p>
+          <p>
+            <span className="text-charcoal/65">Full address: </span>
+            {displayValue(fullAddress)}
+          </p>
+          <p>
+            <span className="text-charcoal/65">PIN code: </span>
+            {displayValue(v.pinCode)}
+          </p>
         </div>
-        <div className="space-y-2">
+
+        <div className="space-y-2 border-t border-soft-gold/25 pt-3 md:pt-4">
           <div className="flex items-center justify-between gap-2">
-            <p className="text-xs font-semibold uppercase tracking-wide text-charcoal/55">Section 3: Customer Picture</p>
-            <Button type="button" size="sm" variant="outline" className="rounded-lg" onClick={() => onEditStep(2)}>
+            <p className="text-xs font-semibold uppercase tracking-wide text-charcoal/55">Documents &amp; KYC</p>
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              className="rounded-lg"
+              onClick={() => onEditStep(2)}
+              aria-label="Edit documents and KYC"
+            >
               Edit
             </Button>
           </div>
+          <p>
+            <span className="text-charcoal/65">PAN: </span>
+            {displayValue(v.pan)}
+          </p>
+          <p>
+            <span className="text-charcoal/65">Aadhaar: </span>
+            {displayValue(v.aadhaar)}
+          </p>
           {v.customerPictureUrl?.trim() ? (
-            <div className="h-24 w-24 overflow-hidden rounded-xl border border-soft-gold/40">
-              <SafeCustomerImage
-                src={v.customerPictureUrl.trim()}
-                alt="Customer"
-                className="h-full w-full object-cover"
-                fallbackClassName="h-full w-full"
-                fallbackText="Unavailable"
-              />
+            <div className="flex items-start gap-3">
+              <div className="h-24 w-24 shrink-0 overflow-hidden rounded-xl border border-soft-gold/40 bg-white">
+                <SafeCustomerImage
+                  src={v.customerPictureUrl.trim()}
+                  alt="Customer"
+                  className="h-full w-full object-cover"
+                  fallbackClassName="h-full w-full"
+                  fallbackText="Unavailable"
+                />
+              </div>
+              <div className="min-w-0 flex-1 space-y-1.5">
+                <p className="text-xs text-charcoal/65">Customer picture preview</p>
+                <div className="flex flex-wrap gap-1.5">
+                  <DocStatus ok={docFilled(v.customerPictureUrl)} label="Photo" />
+                  <DocStatus ok={docFilled(v.panDocumentUrl)} label="PAN doc" />
+                  <DocStatus ok={docFilled(v.aadhaarFrontUrl)} label="Aadhaar F" />
+                  <DocStatus ok={docFilled(v.aadhaarBackUrl)} label="Aadhaar B" />
+                  <DocStatus ok={docFilled(v.otherDocumentUrl)} label="Other" />
+                </div>
+              </div>
             </div>
           ) : (
-            <p>No picture added</p>
+            <div className="flex flex-wrap gap-1.5">
+              <DocStatus ok={false} label="Photo" />
+              <DocStatus ok={docFilled(v.panDocumentUrl)} label="PAN doc" />
+              <DocStatus ok={docFilled(v.aadhaarFrontUrl)} label="Aadhaar F" />
+              <DocStatus ok={docFilled(v.aadhaarBackUrl)} label="Aadhaar B" />
+              <DocStatus ok={docFilled(v.otherDocumentUrl)} label="Other" />
+            </div>
           )}
         </div>
-        <div className="space-y-2">
+
+        <div className="space-y-2 border-t border-soft-gold/25 pt-3 md:pt-4">
           <div className="flex items-center justify-between gap-2">
-            <p className="text-xs font-semibold uppercase tracking-wide text-charcoal/55">Section 3a: Uploaded Documents</p>
-            <Button type="button" size="sm" variant="outline" className="rounded-lg" onClick={() => onEditStep(2)}>
+            <p className="text-xs font-semibold uppercase tracking-wide text-charcoal/55">Service details</p>
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              className="rounded-lg"
+              onClick={() => onEditStep(3)}
+              aria-label="Edit service details"
+            >
               Edit
             </Button>
           </div>
-          <div className="grid grid-cols-1 gap-2 text-sm sm:grid-cols-2 sm:gap-3">
-            <p>
-              Customer Photo:{" "}
-              <span className={v.customerPictureUrl?.trim() ? "text-green-600 font-medium" : "text-red-500"}>
-                {v.customerPictureUrl?.trim() ? "Uploaded" : "Not Uploaded"}
-              </span>
-            </p>
-            <p>
-              PAN:{" "}
-              <span className={v.panDocumentUrl?.trim() ? "text-green-600 font-medium" : "text-red-500"}>
-                {v.panDocumentUrl?.trim() ? "Uploaded" : "Not Uploaded"}
-              </span>
-            </p>
-            <p>
-              Aadhaar Front:{" "}
-              <span className={v.aadhaarFrontUrl?.trim() ? "text-green-600 font-medium" : "text-red-500"}>
-                {v.aadhaarFrontUrl?.trim() ? "Uploaded" : "Not Uploaded"}
-              </span>
-            </p>
-            <p>
-              Aadhaar Back:{" "}
-              <span className={v.aadhaarBackUrl?.trim() ? "text-green-600 font-medium" : "text-red-500"}>
-                {v.aadhaarBackUrl?.trim() ? "Uploaded" : "Not Uploaded"}
-              </span>
-            </p>
-            <p>
-              Other Document:{" "}
-              <span className={v.otherDocumentUrl?.trim() ? "text-green-600 font-medium" : "text-red-500"}>
-                {v.otherDocumentUrl?.trim() ? "Uploaded" : "Not Uploaded"}
-              </span>
-            </p>
-          </div>
-        </div>
-        <div className="space-y-2">
-          <div className="flex items-center justify-between gap-2">
-            <p className="text-xs font-semibold uppercase tracking-wide text-charcoal/55">Section 4: Uploaded Documents</p>
-            <Button type="button" size="sm" variant="outline" className="rounded-lg" onClick={() => onEditStep(2)}>
-              Edit
-            </Button>
-          </div>
-          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-2">
-            <span className="text-charcoal/65">Customer Photo:</span>
-            <span className={v.customerPictureUrl?.trim() ? "text-green-700 font-medium" : "text-red-600"}>
-              {v.customerPictureUrl?.trim() ? "Uploaded" : "Not Uploaded"}
-            </span>
-            <span className="text-charcoal/65">PAN:</span>
-            <span className={v.panDocumentUrl?.trim() ? "text-green-700 font-medium" : "text-red-600"}>
-              {v.panDocumentUrl?.trim() ? "Uploaded" : "Not Uploaded"}
-            </span>
-            <span className="text-charcoal/65">Aadhaar Front:</span>
-            <span className={v.aadhaarFrontUrl?.trim() ? "text-green-700 font-medium" : "text-red-600"}>
-              {v.aadhaarFrontUrl?.trim() ? "Uploaded" : "Not Uploaded"}
-            </span>
-            <span className="text-charcoal/65">Aadhaar Back:</span>
-            <span className={v.aadhaarBackUrl?.trim() ? "text-green-700 font-medium" : "text-red-600"}>
-              {v.aadhaarBackUrl?.trim() ? "Uploaded" : "Not Uploaded"}
-            </span>
-            <span className="text-charcoal/65">Other Document:</span>
-            <span className={v.otherDocumentUrl?.trim() ? "text-green-700 font-medium" : "text-red-600"}>
-              {v.otherDocumentUrl?.trim() ? "Uploaded" : "Not Uploaded"}
-            </span>
-          </div>
-        </div>
-        <div className="space-y-2">
-          <div className="flex items-center justify-between gap-2">
-            <p className="text-xs font-semibold uppercase tracking-wide text-charcoal/55">Section 5: Customer Status & Type</p>
-            <Button type="button" size="sm" variant="outline" className="rounded-lg" onClick={() => onEditStep(3)}>
-              Edit
-            </Button>
-          </div>
-          <p>Customer Status: {displayValue(STATUS[v.customerStatus] ?? v.customerStatus)}</p>
-          <p>Customer Type: {displayValue(TYPE[v.customerType] ?? v.customerType)}</p>
-        </div>
-<div className="space-y-2">
-          <div className="flex items-center justify-between gap-2">
-            <p className="text-xs font-semibold uppercase tracking-wide text-charcoal/55">Section 5: Service Details</p>
-            <Button type="button" size="sm" variant="outline" className="rounded-lg" onClick={() => onEditStep(3)}>
-              Edit
-            </Button>
-          </div>
-          <p>Provider Company Name: {displayValue(v.providerCompanyName)}</p>
-          <p>Date of Service Commenced: {v.serviceCommencedDate ? formatDateOnly(v.serviceCommencedDate) : "—"}</p>
-          <p>Expiry Date: {v.expiryDate ? formatDateOnly(v.expiryDate) : "—"}</p>
           <p>
-            Insurance / Loan Amount:{" "}
+            <span className="text-charcoal/65">Customer status: </span>
+            {displayValue(STATUS[v.customerStatus] ?? v.customerStatus)}
+          </p>
+          <p>
+            <span className="text-charcoal/65">Customer type: </span>
+            {displayValue(TYPE[v.customerType] ?? v.customerType)}
+          </p>
+          <p>
+            <span className="text-charcoal/65">Provider company: </span>
+            {displayValue(v.providerCompanyName)}
+          </p>
+          <p>
+            <span className="text-charcoal/65">Service commenced: </span>
+            {v.serviceCommencedDate ? formatDateOnly(v.serviceCommencedDate) : "—"}
+          </p>
+          <p>
+            <span className="text-charcoal/65">Expiry date: </span>
+            {v.expiryDate ? formatDateOnly(v.expiryDate) : "—"}
+          </p>
+          <p>
+            <span className="text-charcoal/65">Insurance / loan amount: </span>
             {v.insuranceLoanAmount !== undefined && v.insuranceLoanAmount !== null && v.insuranceLoanAmount !== ""
               ? formatInrAmount(v.insuranceLoanAmount)
               : "—"}
           </p>
           <p>
-            Premium / EMI:{" "}
+            <span className="text-charcoal/65">Premium / EMI: </span>
             {v.premiumEmi !== undefined && v.premiumEmi !== null && v.premiumEmi !== ""
               ? formatInrAmount(v.premiumEmi)
               : "—"}
           </p>
           <p>
-            Cover / Final Payout:{" "}
+            <span className="text-charcoal/65">Cover / final payout: </span>
             {v.coverFinalPayout !== undefined && v.coverFinalPayout !== null && v.coverFinalPayout !== ""
               ? formatInrAmount(v.coverFinalPayout)
               : "—"}
           </p>
-        </div>
-        <div className="space-y-2">
-          <p className="text-xs font-semibold uppercase tracking-wide text-charcoal/55">Section 6: Documents</p>
-          <p>Customer Photo: {v.customerPictureUrl?.trim() ? "Uploaded" : "Not Uploaded"}</p>
-          <p>PAN: {v.panDocumentUrl?.trim() ? "Uploaded" : "Not Uploaded"}</p>
-          <p>Aadhaar Front: {v.aadhaarFrontUrl?.trim() ? "Uploaded" : "Not Uploaded"}</p>
-          <p>Aadhaar Back: {v.aadhaarBackUrl?.trim() ? "Uploaded" : "Not Uploaded"}</p>
-          <p>Other Document: {v.otherDocumentUrl?.trim() ? "Uploaded" : "Not Uploaded"}</p>
         </div>
       </div>
     </div>

@@ -4,11 +4,11 @@ import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const STEPS = [
-  { n: 1, title: "Personal", short: "Personal" },
-  { n: 2, title: "Address", short: "Address" },
-  { n: 3, title: "Documents", short: "Docs" },
-  { n: 4, title: "Service", short: "Service" },
-  { n: 5, title: "Review", short: "Review" },
+  { n: 1, title: "Personal Details", short: "Personal" },
+  { n: 2, title: "Address Details", short: "Address" },
+  { n: 3, title: "Documents & KYC", short: "KYC" },
+  { n: 4, title: "Service Details", short: "Service" },
+  { n: 5, title: "Review & Submit", short: "Review" },
 ] as const;
 
 type Props = {
@@ -41,7 +41,7 @@ export function CustomerRecordStepper({ currentStep, maxReached: _maxReached }: 
                 </div>
                 <span
                   className={cn(
-                    "mt-2 text-center text-xs font-medium truncate max-w-full",
+                    "mt-2 text-center text-[11px] font-medium leading-tight max-w-full px-0.5 md:text-xs",
                     complete && "text-green-700",
                     active && "text-trust-blue",
                     !active && !complete && "text-charcoal/65",

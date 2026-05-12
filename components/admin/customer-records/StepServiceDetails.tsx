@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { DateSelect } from "@/components/admin/DateSelect";
 import { cn } from "@/lib/utils";
 import { invalidFieldRing } from "./fieldStyles";
+import { RequiredMark } from "./formFieldHints";
 
 export function StepServiceDetails() {
   const { control } = useFormContext<CustomerRecordFormInput>();
@@ -26,7 +27,12 @@ export function StepServiceDetails() {
 
   return (
     <div className="space-y-4 md:space-y-6">
-      <p className="hidden text-sm leading-snug text-charcoal/70 md:block">Status, type, and policy / loan details.</p>
+      <p className="text-[11px] leading-snug text-charcoal/65 md:hidden">
+        Set customer status and product line, then dates and amounts if known.
+      </p>
+      <p className="hidden text-sm leading-snug text-charcoal/70 md:block">
+        Classify the customer, capture the servicing company, and key dates and financials when available.
+      </p>
       <div className="space-y-2 md:space-y-3">
         <h3 className="text-xs font-semibold text-trust-blue md:text-sm">Service classification</h3>
         <div className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-4">
@@ -35,7 +41,10 @@ export function StepServiceDetails() {
           name="customerStatus"
           render={({ field, fieldState }) => (
             <FormItem data-rhf-field="customerStatus">
-              <FormLabel>Customer Status *</FormLabel>
+              <FormLabel className="text-charcoal">
+                Customer status
+                <RequiredMark />
+              </FormLabel>
               <Select value={(field.value as string | undefined) ?? ""} onValueChange={field.onChange}>
                 <FormControl>
                   <SelectTrigger
@@ -64,7 +73,10 @@ export function StepServiceDetails() {
           name="customerType"
           render={({ field, fieldState }) => (
             <FormItem data-rhf-field="customerType">
-              <FormLabel>Customer Type *</FormLabel>
+              <FormLabel className="text-charcoal">
+                Customer type
+                <RequiredMark />
+              </FormLabel>
               <Select value={(field.value as string | undefined) ?? "INSURANCE"} onValueChange={field.onChange}>
                 <FormControl>
                   <SelectTrigger

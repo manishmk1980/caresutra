@@ -6,6 +6,7 @@ import { formatDateOnly, formatInrAmount } from "@/lib/formatDateTime";
 import type { ApiCustomerRecord } from "@/lib/customerRecordLoadRecord";
 import { Eye, Pencil } from "lucide-react";
 import { SafeCustomerImage } from "@/components/admin/SafeCustomerImage";
+import { cn } from "@/lib/utils";
 
 export type CustomerRecord = ApiCustomerRecord;
 
@@ -48,6 +49,38 @@ function labelType(type: CustomerRecord["customerType"]) {
   return TYPE_LABELS[type];
 }
 
+function DocChip({ ok, label, abbr }: { ok: boolean; label: string; abbr: string }) {
+  return (
+    <span
+      title={`${label}: ${ok ? "Uploaded" : "Not uploaded"}`}
+      className={cn(
+        "inline-flex h-[1.125rem] min-w-[1.125rem] items-center justify-center rounded border px-0.5 font-mono text-[9px] font-bold leading-none",
+        ok ? "border-green-300/80 bg-green-50 text-green-800" : "border-soft-gold/35 bg-ivory text-charcoal/35",
+      )}
+      aria-label={`${label}: ${ok ? "Uploaded" : "Not uploaded"}`}
+    >
+      {abbr}
+    </span>
+  );
+}
+
+function DocumentChips({ record }: { record: CustomerRecord }) {
+  const pic = Boolean(record.customerPictureUrl?.trim());
+  const pan = Boolean(record.panDocumentUrl?.trim());
+  const af = Boolean(record.aadharFrontUrl?.trim());
+  const ab = Boolean(record.aadharBackUrl?.trim());
+  const oth = Boolean(record.otherDocumentUrl?.trim());
+  return (
+    <div className="flex flex-wrap items-center gap-0.5" role="group" aria-label="Document upload status">
+      <DocChip ok={pic} label="Customer picture" abbr="P" />
+      <DocChip ok={pan} label="PAN document" abbr="N" />
+      <DocChip ok={af} label="Aadhaar front" abbr="F" />
+      <DocChip ok={ab} label="Aadhaar back" abbr="B" />
+      <DocChip ok={oth} label="Other document" abbr="O" />
+    </div>
+  );
+}
+
 export default function CustomerActivityTable({
   records,
   loading,
@@ -84,22 +117,24 @@ export default function CustomerActivityTable({
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
             </svg>
           </div>
-          <h3 className="text-lg font-medium text-charcoal">No customer records yet</h3>
-          <p className="text-charcoal/60 max-w-md mx-auto">Start with the guided form above — save a draft or submit when ready.</p>
+          <p className="mx-auto max-w-md text-base font-medium leading-relaxed text-charcoal">
+            No customer records yet. Start by adding a customer record.
+          </p>
         </div>
       ) : (
         <div className="overflow-x-auto -mx-2 px-2">
-          <table className="w-full border-collapse min-w-[1560px]">
+          <table className="w-full border-collapse min-w-[1680px]">
             <thead>
               <tr className="border-b bg-ivory">
                 <th className="text-left py-3.5 px-4 font-semibold text-charcoal align-middle">Record</th>
                 <th className="text-left py-3.5 px-4 font-semibold text-charcoal align-middle">Picture</th>
+                <th className="min-w-[120px] text-left py-3.5 px-4 font-semibold text-charcoal align-middle">Docs</th>
                 <th className="text-left py-3.5 px-4 font-semibold text-charcoal align-middle">Name</th>
                 <th className="text-left py-3.5 px-4 font-semibold text-charcoal align-middle">Mobile</th>
                 <th className="min-w-[220px] text-left py-3.5 px-4 font-semibold text-charcoal align-middle">Email</th>
                 <th className="min-w-[120px] text-left py-3.5 px-4 font-semibold text-charcoal align-middle">City</th>
                 <th className="min-w-[130px] text-left py-3.5 px-4 font-semibold text-charcoal align-middle">Customer Type</th>
-                <th className="min-w-[120px] text-left py-3.5 px-4 font-semibold text-charcoal align-middle">Status</th>
+                <th className="min-w-[120px] text-left py-3.5 px-4 font-semibold text-charcoal align-middle">Customer status</th>
                 <th className="min-w-[160px] text-left py-3.5 px-4 font-semibold text-charcoal align-middle">Provider Company</th>
                 <th className="text-left py-3.5 px-4 font-semibold text-charcoal align-middle">Service Commenced</th>
                 <th className="text-left py-3.5 px-4 font-semibold text-charcoal align-middle">Expiry Date</th>
@@ -131,6 +166,9 @@ export default function CustomerActivityTable({
                         N/A
                       </div>
                     )}
+                  </td>
+                  <td className="py-3.5 px-4 align-middle">
+                    <DocumentChips record={record} />
                   </td>
                   <td className="py-3.5 px-4 align-middle">
                     <div className="font-medium text-charcoal">

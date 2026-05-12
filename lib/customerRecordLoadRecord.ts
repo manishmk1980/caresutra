@@ -19,6 +19,11 @@ export type ApiCustomerRecord = {
   state: string | null;
   pinCode: string | null;
   customerPictureUrl?: string | null;
+  /** Present on list/detail payloads from Prisma — used for admin table doc indicators only. */
+  panDocumentUrl?: string | null;
+  aadharFrontUrl?: string | null;
+  aadharBackUrl?: string | null;
+  otherDocumentUrl?: string | null;
   customerStatus: "ACTIVE" | "INACTIVE" | "PROSPECT";
   customerType: "INSURANCE" | "LOAN" | "HEALTHCARE" | null;
   providerCompanyName?: string | null;
@@ -58,6 +63,10 @@ export const emptyWizardValues: CustomerRecordFormInput = {
   insuranceLoanAmount: "" as unknown as CustomerRecordFormInput["insuranceLoanAmount"],
   premiumEmi: "" as unknown as CustomerRecordFormInput["premiumEmi"],
   coverFinalPayout: "" as unknown as CustomerRecordFormInput["coverFinalPayout"],
+  panDocumentUrl: "",
+  aadhaarFrontUrl: "",
+  aadhaarBackUrl: "",
+  otherDocumentUrl: "",
 };
 
 export function apiRecordToFormValues(r: ApiCustomerRecord): CustomerRecordFormInput {
@@ -84,6 +93,10 @@ export function apiRecordToFormValues(r: ApiCustomerRecord): CustomerRecordFormI
     state: toStr(r.state),
     pinCode: toStr(r.pinCode),
     customerPictureUrl: toStr(r.customerPictureUrl),
+    panDocumentUrl: toStr(r.panDocumentUrl),
+    aadhaarFrontUrl: toStr(r.aadharFrontUrl),
+    aadhaarBackUrl: toStr(r.aadharBackUrl),
+    otherDocumentUrl: toStr(r.otherDocumentUrl),
     customerStatus: r.customerStatus,
     customerType: r.customerType ?? "INSURANCE",
     providerCompanyName: toStr(r.providerCompanyName),
