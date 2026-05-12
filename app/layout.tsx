@@ -3,8 +3,7 @@ import { Montserrat, Cormorant_Garamond } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
-import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
-import PageViewTracker from "@/components/analytics/PageViewTracker";
+import PublicSiteAnalytics from "@/components/analytics/PublicSiteAnalytics";
 import { getSiteOrigin } from "@/lib/site-url";
 
 const montserrat = Montserrat({
@@ -117,8 +116,7 @@ export default function RootLayout({
         <Header />
         <main className="flex-1">{children}</main>
         <Footer />
-        <GoogleAnalytics />
-        <PageViewTracker />
+        <PublicSiteAnalytics />
       </body>
     </html>
   );
