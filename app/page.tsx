@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import HeroSection from "@/components/home/HeroSection";
 import ServicesSection from "@/components/home/ServicesSection";
+import GuidanceAcrossDecisionsSection from "@/components/home/GuidanceAcrossDecisionsSection";
 import USPSection from "@/components/home/USPSection";
 import TrustSection from "@/components/home/TrustSection";
 import ContactSection from "@/components/home/ContactSection";
@@ -9,7 +10,7 @@ import { getHomepageProfessionalServiceJsonLd } from "@/lib/homepage-jsonld";
 
 const pageTitle = "CareSutra | Har Zarurat Ka Sahi Margdarshan";
 const pageDescription =
-  "Get trusted guidance for insurance, loans, and alternative health services with CareSutra — Aapke saath, har kadam.";
+  "Get trusted guidance for insurance, loans, and health services with CareSutra — Aapke saath, har kadam.";
 
 export const metadata: Metadata = {
   title: {
@@ -53,6 +54,7 @@ export default function Home() {
       <JsonLd data={getHomepageProfessionalServiceJsonLd()} />
       <HeroSection />
       <ServicesSection />
+      <GuidanceAcrossDecisionsSection />
       <USPSection />
       <TrustSection />
       <ContactSection />

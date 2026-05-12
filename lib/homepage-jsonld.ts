@@ -8,7 +8,8 @@ export function getHomepageProfessionalServiceJsonLd(): Record<string, unknown> 
     "@type": "ProfessionalService",
     name: "CareSutra",
     slogan: "Har Zarurat Ka Sahi Margdarshan",
-    description: "CareSutra provides guidance for insurance, loans, and health services.",
+    description:
+      "CareSutra provides human-first guidance for insurance, loans, and health services for families in India.",
     url: origin,
     areaServed: "India",
     serviceType: ["Insurance Guidance", "Loan Assistance", "Health Services Guidance"],

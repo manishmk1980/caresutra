@@ -4,7 +4,14 @@ import Link from "next/link";
 import type { ComponentProps } from "react";
 import { trackEvent } from "@/lib/analytics";
 
-export type BookAppointmentClickLocation = "header" | "hero" | "footer" | "appointment_page";
+export type BookAppointmentClickLocation =
+  | "header"
+  | "hero"
+  | "footer"
+  | "appointment_page"
+  | "home_guidance"
+  | "home_services"
+  | "home_contact";
 
 type Props = Omit<ComponentProps<typeof Link>, "href"> & {
   location: BookAppointmentClickLocation;

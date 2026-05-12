@@ -124,12 +124,15 @@ export default function BookAppointmentPageContent({ calendlyUrl }: Props) {
     <section id="appointment" className="min-w-0 bg-ivory pb-12 pt-8 md:pb-20 md:pt-14">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mb-6 rounded-2xl border border-soft-gold/35 bg-white p-4 shadow-sm sm:mb-8 sm:rounded-3xl sm:p-6 md:p-8">
-          <p className="text-xs font-semibold uppercase tracking-wide text-trust-blue">Book an Appointment</p>
+          <p className="text-xs font-semibold uppercase tracking-wide text-trust-blue">Guidance call</p>
           <h1 className="mt-2 font-serif text-3xl font-semibold leading-tight text-charcoal sm:text-4xl md:text-5xl">
-            Book an Appointment
+            Book a CareSutra guidance call
           </h1>
           <p className="mt-3 max-w-3xl text-sm leading-relaxed text-charcoal/75 sm:text-base">
-            Share your details and preferred contact method. Our team will connect with you soon.
+            Tell us what you need help with—insurance, loans, or health services—and our team will guide you through the next steps.
+          </p>
+          <p className="mt-3 max-w-3xl text-sm font-medium text-trust-blue sm:text-base">
+            No pressure. No confusing jargon. Just clear guidance.
           </p>
         </div>
 
@@ -328,7 +331,7 @@ export default function BookAppointmentPageContent({ calendlyUrl }: Props) {
                 <p className="rounded-xl bg-ivory/50 p-3">No obligation</p>
                 <p className="rounded-xl bg-ivory/50 p-3">Simple guidance</p>
                 <p className="rounded-xl bg-ivory/50 p-3">Personal support</p>
-                <p className="rounded-xl bg-ivory/50 p-3">Response within 24 hours</p>
+                <p className="rounded-xl bg-ivory/50 p-3">We aim to reply promptly</p>
               </div>
               <div className="mt-5">
                 <Button asChild variant="outline" className="h-11 w-full rounded-xl border-soft-gold/50 sm:h-10 sm:w-auto">

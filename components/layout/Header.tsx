@@ -106,10 +106,10 @@ export default function Header() {
                     ) : null}
                     <Button
                         asChild
-                        className="bg-trust-blue hover:bg-support-blue text-white rounded-full px-6 py-2.5 font-medium transition-all duration-300 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-heritage-gold focus:ring-offset-2"
+                        className="bg-trust-blue hover:bg-support-blue text-white rounded-full px-4 py-2.5 text-xs font-medium transition-all duration-300 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-heritage-gold focus:ring-offset-2 sm:px-6 sm:text-sm"
                     >
                         <TrackedBookAppointmentLink location="header">
-                            Book Appointment
+                            Book Free Guidance Call
                         </TrackedBookAppointmentLink>
                     </Button>
                 </div>
@@ -161,7 +161,7 @@ export default function Header() {
                                     location="header"
                                     onClick={() => setMobileMenuOpen(false)}
                                 >
-                                    Book Appointment
+                                    Book Free Guidance Call
                                 </TrackedBookAppointmentLink>
                             </Button>
                         </div>

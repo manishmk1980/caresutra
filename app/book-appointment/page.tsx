@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import BookAppointmentPageContent from "@/components/appointments/BookAppointmentPageContent";
 
-const pageTitle = "Book Appointment";
+const pageTitle = "Book a Guidance Call";
 const pageDescription =
-  "Book an appointment with CareSutra for insurance, loan, or health service guidance.";
+  "Book a CareSutra guidance call for insurance, loan, or health-service support.";
 
 export const metadata: Metadata = {
   title: {
