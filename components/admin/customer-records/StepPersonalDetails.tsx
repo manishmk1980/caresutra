@@ -1,6 +1,6 @@
 "use client";
 
-import { useFormContext } from "react-hook-form";
+import { useFormContext, useWatch } from "react-hook-form";
 import type { CustomerRecordFormInput } from "@/lib/validations/customerRecordSchema";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -9,8 +9,42 @@ import { cn } from "@/lib/utils";
 import { invalidFieldRing } from "./fieldStyles";
 import { FieldHint, RequiredMark } from "./formFieldHints";
 
+function calculateAge(dateValue?: string | null): string {
+  if (!dateValue) return "";
+
+  const dob = new Date(`${dateValue}T00:00:00`);
+  if (Number.isNaN(dob.getTime())) return "";
+
+  const today = new Date();
+  let years = today.getFullYear() - dob.getFullYear();
+  let months = today.getMonth() - dob.getMonth();
+
+  if (today.getDate() < dob.getDate()) {
+    months -= 1;
+  }
+
+  if (months < 0) {
+    years -= 1;
+    months += 12;
+  }
+
+  if (years < 0) return "";
+
+  if (years === 0) {
+    return months === 1 ? "1 month" : `${months} months`;
+  }
+
+  if (months === 0) {
+    return years === 1 ? "1 year" : `${years} years`;
+  }
+
+  return `${years} years ${months} months`;
+}
+
 export function StepPersonalDetails() {
   const { control } = useFormContext<CustomerRecordFormInput>();
+  const dateOfBirth = useWatch({ control, name: "dateOfBirth" });
+  const currentAge = calculateAge(dateOfBirth);
 
   return (
     <div className="space-y-3 md:space-y-4">
@@ -183,6 +217,11 @@ export function StepPersonalDetails() {
                   summaryPrefix="Selected DOB"
                 />
               </FormControl>
+              {currentAge ? (
+                <p className="mt-1 text-[11px] font-medium text-trust-blue md:text-xs">
+                  Current age: {currentAge}
+                </p>
+              ) : null}
               <FormMessage className="text-amber-900" />
             </FormItem>
           )}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { cn } from "@/lib/utils";
 
 export type SafeCustomerImageProps = {
@@ -23,17 +23,18 @@ export function SafeCustomerImage({
   fallbackClassName,
   fallbackText = "—",
 }: SafeCustomerImageProps) {
-  const [failed, setFailed] = useState(false);
+  const safeSrc = src.trim();
+  const [failedSrc, setFailedSrc] = useState<string | null>(null);
 
-  useEffect(() => {
-    setFailed(false);
-  }, [src]);
+  const hasFailed = Boolean(safeSrc) && failedSrc === safeSrc;
 
   const handleError = useCallback(() => {
-    setFailed(true);
-  }, []);
+    if (safeSrc) {
+      setFailedSrc(safeSrc);
+    }
+  }, [safeSrc]);
 
-  if (failed) {
+  if (!safeSrc || hasFailed) {
     return (
       <div
         className={cn(
@@ -51,7 +52,7 @@ export function SafeCustomerImage({
   return (
     // eslint-disable-next-line @next/next/no-img-element -- arbitrary admin/record URLs
     <img
-      src={src}
+      src={safeSrc}
       alt={alt}
       className={className}
       onError={handleError}

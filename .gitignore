@@ -46,3 +46,10 @@ yarn-error.log*
 next-env.d.ts
 
 /lib/generated/prisma
+
+# local backups
+*.bak_*
+
+# uploaded customer documents/files
+/public/uploads/customers/*
+!/public/uploads/customers/.gitkeep
