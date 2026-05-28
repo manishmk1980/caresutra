@@ -37,3 +37,6 @@ npm-debug.log*
 
 # Local migration staging
 _migration_old_project/
+
+# Local/server env snapshots
+apps/web/.env.production.server
