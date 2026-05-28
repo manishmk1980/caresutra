@@ -9,103 +9,78 @@ import {
   CardHeader,
   CardTitle,
 } from "@workspace/ui/components/card"
-import { TrendingUpIcon, TrendingDownIcon } from "lucide-react"
+import {
+  ClipboardCheckIcon,
+  FileClockIcon,
+  FileWarningIcon,
+  UsersIcon,
+} from "lucide-react"
+
+const metrics = [
+  {
+    label: "Total Customer Records",
+    value: "4",
+    badge: "Sample",
+    footerTitle: "Records available in admin",
+    footerText: "This will connect to live CustomerRecord count next.",
+    icon: UsersIcon,
+  },
+  {
+    label: "Submitted Records",
+    value: "2",
+    badge: "Ready",
+    footerTitle: "Submitted customer records",
+    footerText: "Records marked as SUBMITTED for processing.",
+    icon: ClipboardCheckIcon,
+  },
+  {
+    label: "Draft Records",
+    value: "2",
+    badge: "Pending",
+    footerTitle: "Draft records need completion",
+    footerText: "Records saved but not finally submitted.",
+    icon: FileClockIcon,
+  },
+  {
+    label: "Documents Pending",
+    value: "3",
+    badge: "Review",
+    footerTitle: "Document checks required",
+    footerText: "PAN, Aadhaar, photo, or other files may be incomplete.",
+    icon: FileWarningIcon,
+  },
+]
 
 export function SectionCards() {
   return (
     <div className="grid grid-cols-1 gap-4 px-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card *:data-[slot=card]:shadow-xs lg:px-6 @xl/main:grid-cols-2 @5xl/main:grid-cols-4 dark:*:data-[slot=card]:bg-card">
-      <Card className="@container/card">
-        <CardHeader>
-          <CardDescription>Total Revenue</CardDescription>
-          <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-            $1,250.00
-          </CardTitle>
-          <CardAction>
-            <Badge variant="outline">
-              <TrendingUpIcon
-              />
-              +12.5%
-            </Badge>
-          </CardAction>
-        </CardHeader>
-        <CardFooter className="flex-col items-start gap-1.5 text-sm">
-          <div className="line-clamp-1 flex gap-2 font-medium">
-            Trending up this month{" "}
-            <TrendingUpIcon className="size-4" />
-          </div>
-          <div className="text-muted-foreground">
-            Visitors for the last 6 months
-          </div>
-        </CardFooter>
-      </Card>
-      <Card className="@container/card">
-        <CardHeader>
-          <CardDescription>New Customers</CardDescription>
-          <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-            1,234
-          </CardTitle>
-          <CardAction>
-            <Badge variant="outline">
-              <TrendingDownIcon
-              />
-              -20%
-            </Badge>
-          </CardAction>
-        </CardHeader>
-        <CardFooter className="flex-col items-start gap-1.5 text-sm">
-          <div className="line-clamp-1 flex gap-2 font-medium">
-            Down 20% this period{" "}
-            <TrendingDownIcon className="size-4" />
-          </div>
-          <div className="text-muted-foreground">
-            Acquisition needs attention
-          </div>
-        </CardFooter>
-      </Card>
-      <Card className="@container/card">
-        <CardHeader>
-          <CardDescription>Active Accounts</CardDescription>
-          <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-            45,678
-          </CardTitle>
-          <CardAction>
-            <Badge variant="outline">
-              <TrendingUpIcon
-              />
-              +12.5%
-            </Badge>
-          </CardAction>
-        </CardHeader>
-        <CardFooter className="flex-col items-start gap-1.5 text-sm">
-          <div className="line-clamp-1 flex gap-2 font-medium">
-            Strong user retention{" "}
-            <TrendingUpIcon className="size-4" />
-          </div>
-          <div className="text-muted-foreground">Engagement exceed targets</div>
-        </CardFooter>
-      </Card>
-      <Card className="@container/card">
-        <CardHeader>
-          <CardDescription>Growth Rate</CardDescription>
-          <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-            4.5%
-          </CardTitle>
-          <CardAction>
-            <Badge variant="outline">
-              <TrendingUpIcon
-              />
-              +4.5%
-            </Badge>
-          </CardAction>
-        </CardHeader>
-        <CardFooter className="flex-col items-start gap-1.5 text-sm">
-          <div className="line-clamp-1 flex gap-2 font-medium">
-            Steady performance increase{" "}
-            <TrendingUpIcon className="size-4" />
-          </div>
-          <div className="text-muted-foreground">Meets growth projections</div>
-        </CardFooter>
-      </Card>
+      {metrics.map((metric) => {
+        const Icon = metric.icon
+
+        return (
+          <Card key={metric.label} className="@container/card">
+            <CardHeader>
+              <CardDescription>{metric.label}</CardDescription>
+              <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
+                {metric.value}
+              </CardTitle>
+              <CardAction>
+                <Badge variant="outline">
+                  <Icon />
+                  {metric.badge}
+                </Badge>
+              </CardAction>
+            </CardHeader>
+            <CardFooter className="flex-col items-start gap-1.5 text-sm">
+              <div className="line-clamp-1 flex gap-2 font-medium">
+                {metric.footerTitle}
+                <Icon className="size-4" />
+              </div>
+              <div className="text-muted-foreground">{metric.footerText}</div>
+            </CardFooter>
+          </Card>
+        )
+      })}
     </div>
   )
 }
