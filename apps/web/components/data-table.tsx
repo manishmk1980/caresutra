@@ -1,9 +1,20 @@
 "use client"
 
 import * as React from "react"
+import { useRouter } from "next/navigation"
 
 import { Badge } from "@workspace/ui/components/badge"
 import { Button } from "@workspace/ui/components/button"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@workspace/ui/components/alert-dialog"
 import {
   Table,
   TableBody,
@@ -34,9 +45,55 @@ function formatServiceType(value: string) {
 }
 
 export function DataTable({ data }: { data: CustomerRecordRow[] }) {
+  const router = useRouter()
+  const [rows, setRows] = React.useState<CustomerRecordRow[]>(data)
   const [deleteCandidate, setDeleteCandidate] =
     React.useState<CustomerRecordRow | null>(null)
   const [actionMessage, setActionMessage] = React.useState<string | null>(null)
+  const [isDeleting, setIsDeleting] = React.useState(false)
+
+  React.useEffect(() => {
+    setRows(data)
+  }, [data])
+
+  async function deleteRecord() {
+    if (!deleteCandidate) return
+
+    setIsDeleting(true)
+    setActionMessage(null)
+
+    try {
+      const response = await fetch(`/api/customer-records/${deleteCandidate.id}`, {
+        method: "DELETE",
+        credentials: "same-origin",
+      })
+
+      const result = await response.json().catch(() => null)
+
+      if (!response.ok) {
+        throw new Error(
+          result?.error || result?.message || "Unable to delete customer record."
+        )
+      }
+
+      const deletedName = deleteCandidate.customerName
+
+      setRows((currentRows) =>
+        currentRows.filter((record) => record.id !== deleteCandidate.id)
+      )
+      setDeleteCandidate(null)
+      setActionMessage(`${deletedName} has been deleted successfully.`)
+      router.refresh()
+    } catch (error) {
+      setActionMessage(
+        error instanceof Error
+          ? error.message
+          : "Unable to delete customer record."
+      )
+    } finally {
+      setIsDeleting(false)
+    }
+  }
 
   return (
     <div className="px-4 lg:px-6">
@@ -74,94 +131,102 @@ export function DataTable({ data }: { data: CustomerRecordRow[] }) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {data.map((record) => (
-              <TableRow key={record.id}>
-                <TableCell className="font-medium">
-                  {record.customerName}
-                </TableCell>
-                <TableCell>{record.mobile}</TableCell>
-                <TableCell>
-                  <Badge variant="outline">
-                    {formatServiceType(record.serviceType)}
-                  </Badge>
-                </TableCell>
-                <TableCell>{record.customerStatus}</TableCell>
-                <TableCell>
-                  <Badge
-                    variant={
-                      record.recordStatus === "SUBMITTED"
-                        ? "default"
-                        : "secondary"
-                    }
-                  >
-                    {record.recordStatus}
-                  </Badge>
-                </TableCell>
-                <TableCell>{record.city}</TableCell>
-                <TableCell>{record.documents}</TableCell>
-                <TableCell>{record.createdAt}</TableCell>
-                <TableCell className="text-right">
-                  <div className="flex justify-end gap-1">
-                    <Button size="sm" variant="ghost" asChild>
-                      <a href={`/admin/customer-records/${record.id}`}>View</a>
-                    </Button>
-                    <Button size="sm" variant="ghost" asChild>
-                      <a href={`/admin/customer-records/${record.id}/edit`}>
-                        Edit
-                      </a>
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      className="text-destructive hover:text-destructive"
-                      onClick={() => setDeleteCandidate(record)}
+            {rows.length > 0 ? (
+              rows.map((record) => (
+                <TableRow key={record.id}>
+                  <TableCell className="font-medium">
+                    {record.customerName}
+                  </TableCell>
+                  <TableCell>{record.mobile}</TableCell>
+                  <TableCell>
+                    <Badge variant="outline">
+                      {formatServiceType(record.serviceType)}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>{record.customerStatus}</TableCell>
+                  <TableCell>
+                    <Badge
+                      variant={
+                        record.recordStatus === "SUBMITTED"
+                          ? "default"
+                          : "secondary"
+                      }
                     >
-                      Delete
-                    </Button>
-                  </div>
+                      {record.recordStatus}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>{record.city}</TableCell>
+                  <TableCell>{record.documents}</TableCell>
+                  <TableCell>{record.createdAt}</TableCell>
+                  <TableCell className="text-right">
+                    <div className="flex justify-end gap-1">
+                      <Button size="sm" variant="ghost" asChild>
+                        <a href={`/admin/customer-records/${record.id}`}>View</a>
+                      </Button>
+                      <Button size="sm" variant="ghost" asChild>
+                        <a href={`/admin/customer-records/${record.id}/edit`}>
+                          Edit
+                        </a>
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="text-destructive hover:text-destructive"
+                        onClick={() => setDeleteCandidate(record)}
+                      >
+                        Delete
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell
+                  colSpan={9}
+                  className="h-28 text-center text-sm text-muted-foreground"
+                >
+                  No customer records found. Use New Customer to add the first
+                  record.
                 </TableCell>
               </TableRow>
-            ))}
+            )}
           </TableBody>
         </Table>
       </div>
 
-      {deleteCandidate ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/35 px-4">
-          <div className="w-full max-w-md rounded-xl border bg-background p-5 shadow-lg">
-            <h2 className="text-lg font-semibold">Delete customer record?</h2>
-            <p className="mt-2 text-sm text-muted-foreground">
+      <AlertDialog
+        open={deleteCandidate !== null}
+        onOpenChange={(open) => {
+          if (!open && !isDeleting) setDeleteCandidate(null)
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete customer record?</AlertDialogTitle>
+            <AlertDialogDescription>
               You are about to delete the record for{" "}
               <span className="font-medium text-foreground">
-                {deleteCandidate.customerName}
+                {deleteCandidate?.customerName}
               </span>
-              . This action should only be used when the record was created by
-              mistake.
-            </p>
-
-            <div className="mt-5 flex justify-end gap-2">
-              <Button
-                variant="outline"
-                onClick={() => setDeleteCandidate(null)}
-              >
-                Cancel
-              </Button>
-              <Button
-                variant="destructive"
-                onClick={() => {
-                  setActionMessage(
-                    `Delete confirmed for ${deleteCandidate.customerName}. API connection will be added next.`
-                  )
-                  setDeleteCandidate(null)
-                }}
-              >
-                Yes, delete
-              </Button>
-            </div>
-          </div>
-        </div>
-      ) : null}
+              . This should only be done when the record was created by mistake.
+              This action cannot be undone from the admin panel.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              disabled={isDeleting}
+              onClick={(event) => {
+                event.preventDefault()
+                void deleteRecord()
+              }}
+            >
+              {isDeleting ? "Deleting..." : "Yes, delete"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }
-
