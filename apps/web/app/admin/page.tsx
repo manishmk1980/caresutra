@@ -1,4 +1,4 @@
-import { AdminShell } from "@/components/admin/admin-shell"
+﻿import { AdminShell } from "@/components/admin/admin-shell"
 import {
   ChartAreaInteractive,
   type CustomerRecordChartPoint,
@@ -30,40 +30,55 @@ function getDashboardStats(
   }
 }
 
-function getLastSevenDays(): CustomerRecordChartPoint[] {
+function getFallbackChartDates(): string[] {
   return Array.from({ length: 7 }).map((_, index) => {
     const date = new Date()
     date.setDate(date.getDate() - (6 - index))
-
-    return {
-      date: date.toISOString().slice(0, 10),
-      insurance: 0,
-      loans: 0,
-      healthcare: 0,
-    }
+    return date.toISOString().slice(0, 10)
   })
 }
 
+function normalizeServiceType(value: string) {
+  const normalized = value.toUpperCase()
+
+  if (normalized === "INSURANCE") return "insurance"
+  if (normalized === "LOAN") return "loans"
+  if (normalized === "HEALTHCARE" || normalized === "HEALTH_SERVICES") {
+    return "healthcare"
+  }
+
+  return null
+}
+
 function getChartData(records: CustomerRecordTableRow[]) {
-  const points = getLastSevenDays()
+  const recordDates = Array.from(
+    new Set(
+      records
+        .map((record) => record.createdAtIso)
+        .filter((date): date is string => Boolean(date))
+    )
+  )
+    .sort()
+    .slice(-7)
+
+  const dates = recordDates.length > 0 ? recordDates : getFallbackChartDates()
+
+  const points: CustomerRecordChartPoint[] = dates.map((date) => ({
+    date,
+    insurance: 0,
+    loans: 0,
+    healthcare: 0,
+  }))
+
   const pointByDate = new Map(points.map((point) => [point.date, point]))
 
   for (const record of records) {
     const point = pointByDate.get(record.createdAtIso)
+    const serviceKey = normalizeServiceType(record.serviceType)
 
-    if (!point) continue
+    if (!point || !serviceKey) continue
 
-    if (record.serviceType === "INSURANCE") {
-      point.insurance += 1
-    }
-
-    if (record.serviceType === "LOAN") {
-      point.loans += 1
-    }
-
-    if (record.serviceType === "HEALTHCARE") {
-      point.healthcare += 1
-    }
+    point[serviceKey] += 1
   }
 
   return points
