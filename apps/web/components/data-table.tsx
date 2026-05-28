@@ -34,6 +34,9 @@ function formatServiceType(value: string) {
 }
 
 export function DataTable({ data }: { data: CustomerRecordRow[] }) {
+  const [deleteCandidate, setDeleteCandidate] =
+    React.useState<CustomerRecordRow | null>(null)
+
   return (
     <div className="px-4 lg:px-6">
       <div className="overflow-hidden rounded-lg border bg-card">
@@ -60,7 +63,7 @@ export function DataTable({ data }: { data: CustomerRecordRow[] }) {
               <TableHead>City</TableHead>
               <TableHead>Documents</TableHead>
               <TableHead>Created</TableHead>
-              <TableHead className="text-right">Action</TableHead>
+              <TableHead className="w-[220px] text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -91,15 +94,64 @@ export function DataTable({ data }: { data: CustomerRecordRow[] }) {
                 <TableCell>{record.documents}</TableCell>
                 <TableCell>{record.createdAt}</TableCell>
                 <TableCell className="text-right">
-                  <Button size="sm" variant="ghost" asChild>
-                    <a href={`/admin/customer-records/${record.id}`}>View</a>
-                  </Button>
+                  <div className="flex justify-end gap-1">
+                    <Button size="sm" variant="ghost" asChild>
+                      <a href={`/admin/customer-records/${record.id}`}>View</a>
+                    </Button>
+                    <Button size="sm" variant="ghost" asChild>
+                      <a href={`/admin/customer-records/${record.id}/edit`}>
+                        Edit
+                      </a>
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="text-destructive hover:text-destructive"
+                      onClick={() => setDeleteCandidate(record)}
+                    >
+                      Delete
+                    </Button>
+                  </div>
                 </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </div>
+
+      {deleteCandidate ? (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/35 px-4">
+          <div className="w-full max-w-md rounded-xl border bg-background p-5 shadow-lg">
+            <h2 className="text-lg font-semibold">Delete customer record?</h2>
+            <p className="mt-2 text-sm text-muted-foreground">
+              You are about to delete the record for{" "}
+              <span className="font-medium text-foreground">
+                {deleteCandidate.customerName}
+              </span>
+              . This action should only be used when the record was created by
+              mistake.
+            </p>
+
+            <div className="mt-5 flex justify-end gap-2">
+              <Button
+                variant="outline"
+                onClick={() => setDeleteCandidate(null)}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="destructive"
+                onClick={() => {
+                  setDeleteCandidate(null)
+                  alert("Delete action placeholder. We will connect API next.")
+                }}
+              >
+                Yes, delete
+              </Button>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </div>
   )
 }
