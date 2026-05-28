@@ -69,3 +69,25 @@ export async function getCustomerRecordRows(): Promise<CustomerRecordTableRow[]>
   }))
 }
 
+
+export async function getCustomerRecordById(id: number) {
+  const prisma = getPrisma()
+
+  const record = await prisma.customerRecord.findUnique({
+    where: { id },
+  })
+
+  if (!record) return null
+
+  return {
+    ...record,
+    insuranceLoanAmount: record.insuranceLoanAmount?.toString() ?? null,
+    premiumEmi: record.premiumEmi?.toString() ?? null,
+    coverFinalPayout: record.coverFinalPayout?.toString() ?? null,
+    createdAt: record.createdAt.toISOString(),
+    updatedAt: record.updatedAt.toISOString(),
+    dateOfBirth: record.dateOfBirth?.toISOString() ?? null,
+    serviceCommencedDate: record.serviceCommencedDate?.toISOString() ?? null,
+    expiryDate: record.expiryDate?.toISOString() ?? null,
+  }
+}
