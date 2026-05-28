@@ -10,6 +10,7 @@ export type CustomerRecordTableRow = {
   city: string
   documents: string
   createdAt: string
+  createdAtIso: string
   reviewer: string
 }
 
@@ -63,6 +64,8 @@ export async function getCustomerRecordRows(): Promise<CustomerRecordTableRow[]>
       month: "short",
       year: "numeric",
     }),
+    createdAtIso: record.createdAt.toISOString().slice(0, 10),
     reviewer: "CareSutra Admin",
   }))
 }
+

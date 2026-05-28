@@ -1,5 +1,8 @@
 import { AdminShell } from "@/components/admin/admin-shell"
-import { ChartAreaInteractive } from "@/components/chart-area-interactive"
+import {
+  ChartAreaInteractive,
+  type CustomerRecordChartPoint,
+} from "@/components/chart-area-interactive"
 import { DataTable } from "@/components/data-table"
 import { SectionCards, type AdminDashboardStats } from "@/components/section-cards"
 import {
@@ -27,6 +30,45 @@ function getDashboardStats(
   }
 }
 
+function getLastSevenDays(): CustomerRecordChartPoint[] {
+  return Array.from({ length: 7 }).map((_, index) => {
+    const date = new Date()
+    date.setDate(date.getDate() - (6 - index))
+
+    return {
+      date: date.toISOString().slice(0, 10),
+      insurance: 0,
+      loans: 0,
+      healthcare: 0,
+    }
+  })
+}
+
+function getChartData(records: CustomerRecordTableRow[]) {
+  const points = getLastSevenDays()
+  const pointByDate = new Map(points.map((point) => [point.date, point]))
+
+  for (const record of records) {
+    const point = pointByDate.get(record.createdAtIso)
+
+    if (!point) continue
+
+    if (record.serviceType === "INSURANCE") {
+      point.insurance += 1
+    }
+
+    if (record.serviceType === "LOAN") {
+      point.loans += 1
+    }
+
+    if (record.serviceType === "HEALTHCARE") {
+      point.healthcare += 1
+    }
+  }
+
+  return points
+}
+
 export default async function Page() {
   let data: CustomerRecordTableRow[] = []
   let source: AdminDashboardStats["source"] = "live"
@@ -42,6 +84,7 @@ export default async function Page() {
   }
 
   const stats = getDashboardStats(data, source)
+  const chartData = getChartData(data)
 
   return (
     <AdminShell>
@@ -61,7 +104,7 @@ export default async function Page() {
             <SectionCards stats={stats} />
 
             <div className="px-4 lg:px-6">
-              <ChartAreaInteractive />
+              <ChartAreaInteractive data={chartData} source={source} />
             </div>
 
             <DataTable data={data} />

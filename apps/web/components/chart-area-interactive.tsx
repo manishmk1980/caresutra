@@ -18,15 +18,12 @@ import {
 
 export const description = "CareSutra customer record trend"
 
-const chartData = [
-  { date: "2026-05-21", insurance: 1, loans: 0, healthcare: 0 },
-  { date: "2026-05-22", insurance: 1, loans: 1, healthcare: 0 },
-  { date: "2026-05-23", insurance: 2, loans: 1, healthcare: 0 },
-  { date: "2026-05-24", insurance: 2, loans: 1, healthcare: 1 },
-  { date: "2026-05-25", insurance: 3, loans: 2, healthcare: 1 },
-  { date: "2026-05-26", insurance: 3, loans: 2, healthcare: 2 },
-  { date: "2026-05-27", insurance: 4, loans: 3, healthcare: 2 },
-]
+export type CustomerRecordChartPoint = {
+  date: string
+  insurance: number
+  loans: number
+  healthcare: number
+}
 
 const chartConfig = {
   records: {
@@ -46,13 +43,21 @@ const chartConfig = {
   },
 } satisfies ChartConfig
 
-export function ChartAreaInteractive() {
+export function ChartAreaInteractive({
+  data,
+  source,
+}: {
+  data: CustomerRecordChartPoint[]
+  source: "live" | "fallback"
+}) {
   return (
     <Card className="@container/card">
       <CardHeader>
         <CardTitle>Customer Record Trend</CardTitle>
         <CardDescription>
-          New CareSutra records by service category for the latest sample period.
+          {source === "live"
+            ? "New CareSutra records by service category from live customer data."
+            : "Database is not reachable locally, so the chart is showing an empty offline-safe trend."}
         </CardDescription>
       </CardHeader>
       <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
@@ -60,7 +65,7 @@ export function ChartAreaInteractive() {
           config={chartConfig}
           className="aspect-auto h-[250px] w-full"
         >
-          <AreaChart data={chartData}>
+          <AreaChart data={data}>
             <defs>
               <linearGradient id="fillInsurance" x1="0" y1="0" x2="0" y2="1">
                 <stop
