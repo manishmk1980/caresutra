@@ -36,6 +36,7 @@ function formatServiceType(value: string) {
 export function DataTable({ data }: { data: CustomerRecordRow[] }) {
   const [deleteCandidate, setDeleteCandidate] =
     React.useState<CustomerRecordRow | null>(null)
+  const [actionMessage, setActionMessage] = React.useState<string | null>(null)
 
   return (
     <div className="px-4 lg:px-6">
@@ -51,6 +52,12 @@ export function DataTable({ data }: { data: CustomerRecordRow[] }) {
             <a href="/admin/customer-records/new">New Customer</a>
           </Button>
         </div>
+
+        {actionMessage ? (
+          <div className="border-b bg-muted/40 px-4 py-3 text-sm text-muted-foreground">
+            {actionMessage}
+          </div>
+        ) : null}
 
         <Table>
           <TableHeader>
@@ -142,8 +149,10 @@ export function DataTable({ data }: { data: CustomerRecordRow[] }) {
               <Button
                 variant="destructive"
                 onClick={() => {
+                  setActionMessage(
+                    `Delete confirmed for ${deleteCandidate.customerName}. API connection will be added next.`
+                  )
                   setDeleteCandidate(null)
-                  alert("Delete action placeholder. We will connect API next.")
                 }}
               >
                 Yes, delete
@@ -155,3 +164,4 @@ export function DataTable({ data }: { data: CustomerRecordRow[] }) {
     </div>
   )
 }
+
