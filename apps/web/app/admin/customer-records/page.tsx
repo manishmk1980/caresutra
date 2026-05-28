@@ -1,9 +1,12 @@
 import { AdminShell } from "@/components/admin/admin-shell"
 import { DataTable } from "@/components/data-table"
+import { getCustomerRecordRows } from "@/lib/adminCustomerRecords"
 
-import data from "../data.json"
+export const dynamic = "force-dynamic"
 
-export default function CustomerRecordsPage() {
+export default async function CustomerRecordsPage() {
+  const data = await getCustomerRecordRows()
+
   return (
     <AdminShell>
       <div className="flex flex-1 flex-col gap-4 p-4 md:p-6">
@@ -19,3 +22,4 @@ export default function CustomerRecordsPage() {
     </AdminShell>
   )
 }
+
