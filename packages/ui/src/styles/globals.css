@@ -127,3 +127,12 @@
     @apply bg-background text-foreground;
     }
 }
+/* CareSutra public brand tokens */
+@theme inline {
+  --color-trust-blue: #1f4e79;
+  --color-support-blue: #2e6aa6;
+  --color-heritage-gold: #c8a24d;
+  --color-soft-gold: #e3c77a;
+  --color-ivory: #f7f4ed;
+  --color-charcoal: #1f2933;
+}

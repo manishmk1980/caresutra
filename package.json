@@ -26,6 +26,7 @@
     "packages/*"
   ],
   "dependencies": {
+    "@hookform/resolvers": "5.4.0",
     "@prisma/adapter-mariadb": "7.8.0",
     "@prisma/client": "7.8.0",
     "mariadb": "3.5.2",
