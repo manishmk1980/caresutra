@@ -1,4 +1,5 @@
 ﻿import { AdminShell } from "@/components/admin/admin-shell"
+import { MobileQuickActions } from "@/components/admin/mobile-quick-actions"
 import {
   ChartAreaInteractive,
   type CustomerRecordChartPoint,
@@ -116,6 +117,8 @@ export default async function Page() {
               </div>
             ) : null}
 
+            <MobileQuickActions />
+
             <SectionCards stats={stats} />
 
             <div className="px-4 lg:px-6">
@@ -129,3 +132,4 @@ export default async function Page() {
     </AdminShell>
   )
 }
+
