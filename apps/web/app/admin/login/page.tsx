@@ -4,10 +4,16 @@ import Image from "next/image"
 import Link from "next/link"
 import { Suspense, useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
+import { Eye, EyeOff } from "lucide-react"
 
 import { Button } from "@workspace/ui/components/button"
 import { Input } from "@workspace/ui/components/input"
 import { Label } from "@workspace/ui/components/label"
+
+type FieldErrors = {
+  username?: string
+  password?: string
+}
 
 function LoginForm() {
   const router = useRouter()
@@ -15,12 +21,32 @@ function LoginForm() {
 
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
+  const [showPassword, setShowPassword] = useState(false)
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
   const [error, setError] = useState<string | null>(null)
   const [pending, setPending] = useState(false)
+
+  function validateForm() {
+    const nextErrors: FieldErrors = {}
+
+    if (!username.trim()) {
+      nextErrors.username = "Please enter admin username."
+    }
+
+    if (!password) {
+      nextErrors.password = "Please enter admin password."
+    }
+
+    setFieldErrors(nextErrors)
+    return Object.keys(nextErrors).length === 0
+  }
 
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
     setError(null)
+
+    if (!validateForm()) return
+
     setPending(true)
 
     try {
@@ -29,7 +55,10 @@ function LoginForm() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({
+          username: username.trim(),
+          password,
+        }),
       })
 
       const result = (await response.json().catch(() => ({}))) as {
@@ -51,7 +80,7 @@ function LoginForm() {
       router.push(destination)
       router.refresh()
     } catch {
-      setError("Something went wrong. Please try again.")
+      setError("Unable to sign in right now. Please check your connection and try again.")
     } finally {
       setPending(false)
     }
@@ -103,7 +132,7 @@ function LoginForm() {
               </p>
             </div>
 
-            <form onSubmit={onSubmit} className="space-y-5">
+            <form onSubmit={onSubmit} className="space-y-5" noValidate>
               <div className="space-y-2">
                 <Label htmlFor="admin-username">Username</Label>
                 <Input
@@ -112,28 +141,62 @@ function LoginForm() {
                   type="text"
                   autoComplete="username"
                   value={username}
-                  onChange={(event) => setUsername(event.target.value)}
-                  required
+                  onChange={(event) => {
+                    setUsername(event.target.value)
+                    setFieldErrors((current) => ({ ...current, username: undefined }))
+                    setError(null)
+                  }}
+                  aria-invalid={Boolean(fieldErrors.username)}
+                  aria-describedby={fieldErrors.username ? "admin-username-error" : undefined}
                   className="rounded-xl border-soft-gold/50"
                 />
+                {fieldErrors.username ? (
+                  <p id="admin-username-error" className="text-sm text-red-700">
+                    {fieldErrors.username}
+                  </p>
+                ) : null}
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="admin-password">Password</Label>
-                <Input
-                  id="admin-password"
-                  name="password"
-                  type="password"
-                  autoComplete="current-password"
-                  value={password}
-                  onChange={(event) => setPassword(event.target.value)}
-                  required
-                  className="rounded-xl border-soft-gold/50"
-                />
+                <div className="relative">
+                  <Input
+                    id="admin-password"
+                    name="password"
+                    type={showPassword ? "text" : "password"}
+                    autoComplete="current-password"
+                    value={password}
+                    onChange={(event) => {
+                      setPassword(event.target.value)
+                      setFieldErrors((current) => ({ ...current, password: undefined }))
+                      setError(null)
+                    }}
+                    aria-invalid={Boolean(fieldErrors.password)}
+                    aria-describedby={fieldErrors.password ? "admin-password-error" : undefined}
+                    className="rounded-xl border-soft-gold/50 pr-12"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((current) => !current)}
+                    className="absolute right-2 top-1/2 inline-flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-lg text-charcoal/60 transition hover:bg-ivory hover:text-trust-blue"
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-4 w-4" aria-hidden />
+                    ) : (
+                      <Eye className="h-4 w-4" aria-hidden />
+                    )}
+                  </button>
+                </div>
+                {fieldErrors.password ? (
+                  <p id="admin-password-error" className="text-sm text-red-700">
+                    {fieldErrors.password}
+                  </p>
+                ) : null}
               </div>
 
               {error ? (
-                <p className="rounded-xl bg-red-50 px-3 py-2 text-sm text-red-700">
+                <p className="rounded-xl bg-red-50 px-3 py-2 text-sm text-red-700" role="alert">
                   {error}
                 </p>
               ) : null}
