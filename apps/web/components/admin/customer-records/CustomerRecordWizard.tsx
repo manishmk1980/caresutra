@@ -24,6 +24,16 @@ import {
 import { orderedValidationMessagesForStep, focusFirstZodPath } from "@/lib/customerRecordFormErrors";
 import { formatTimeOnly } from "@/lib/formatDateTime";
 import { Button } from "@workspace/ui/components/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@workspace/ui/components/alert-dialog";
 import { Loader2, ArrowLeft, Save, ArrowRight, RotateCcw } from "lucide-react";
 import { CustomerRecordStepper } from "./CustomerRecordStepper";
 import { StepPersonalDetails } from "./StepPersonalDetails";
@@ -67,6 +77,7 @@ const CustomerRecordWizard = forwardRef<CustomerRecordWizardHandle, Props>(funct
   const [stepValidationBanner, setStepValidationBanner] = useState(false);
   const [savingDraft, setSavingDraft] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [pendingConfirmation, setPendingConfirmation] = useState<"save-draft" | "submit-final" | "reset-form" | null>(null);
   const [reviewIssues, setReviewIssues] = useState<readonly ZodIssue[]>([]);
   const [showActionBar, setShowActionBar] = useState(true);
   const wizardRootRef = useRef<HTMLDivElement | null>(null);
@@ -256,7 +267,7 @@ const CustomerRecordWizard = forwardRef<CustomerRecordWizardHandle, Props>(funct
   }, [currentRecordId, form, onSuccess, applyZodIssues]);
 
   const resetForm = useCallback(() => {
-    if (formState.isDirty && !window.confirm("Discard unsaved changes and reset the form?")) return;
+    // Confirmation is handled by the contextual AlertDialog before this function runs.
     form.reset(emptyWizardValues);
     setStep(0);
     setMaxReached(0);
@@ -414,7 +425,7 @@ const CustomerRecordWizard = forwardRef<CustomerRecordWizardHandle, Props>(funct
               variant="outline"
               size="icon"
               className="h-11 min-h-11 w-11 min-w-11 shrink-0 rounded-xl border-charcoal/15 bg-white text-charcoal/80 hover:bg-ivory sm:hidden"
-              onClick={() => void saveDraft()}
+              onClick={() => setPendingConfirmation("save-draft")}
               disabled={savingDraft || submitting}
               aria-label="Save draft"
             >
@@ -428,7 +439,7 @@ const CustomerRecordWizard = forwardRef<CustomerRecordWizardHandle, Props>(funct
               type="button"
               variant="outline"
               className="hidden min-h-11 rounded-xl border-charcoal/15 bg-white text-charcoal/80 hover:bg-ivory sm:flex sm:min-w-[120px] sm:flex-none"
-              onClick={() => void saveDraft()}
+              onClick={() => setPendingConfirmation("save-draft")}
               disabled={savingDraft || submitting}
             >
               {savingDraft ? (
@@ -455,7 +466,7 @@ const CustomerRecordWizard = forwardRef<CustomerRecordWizardHandle, Props>(funct
               <Button
                 type="button"
                 className="h-11 min-h-11 min-w-0 flex-1 gap-1 rounded-xl bg-trust-blue px-2.5 text-sm font-semibold text-white shadow-sm hover:bg-support-blue sm:h-auto sm:min-h-11 sm:flex-none sm:min-w-[160px] sm:gap-1.5 sm:px-4"
-                onClick={() => void submitFinal()}
+                onClick={() => setPendingConfirmation("submit-final")}
                 disabled={savingDraft || submitting}
                 aria-busy={submitting}
               >
@@ -477,7 +488,7 @@ const CustomerRecordWizard = forwardRef<CustomerRecordWizardHandle, Props>(funct
               variant="ghost"
               size="icon"
               className="h-11 min-h-11 w-11 min-w-11 shrink-0 rounded-xl text-charcoal/70 sm:hidden"
-              onClick={resetForm}
+              onClick={() => setPendingConfirmation("reset-form")}
               disabled={savingDraft || submitting}
               aria-label="Reset form"
             >
@@ -487,7 +498,7 @@ const CustomerRecordWizard = forwardRef<CustomerRecordWizardHandle, Props>(funct
               type="button"
               variant="ghost"
               className="hidden min-h-11 text-charcoal/70 sm:flex sm:w-auto sm:px-3"
-              onClick={resetForm}
+              onClick={() => setPendingConfirmation("reset-form")}
               disabled={savingDraft || submitting}
             >
               Reset
@@ -501,4 +512,9 @@ const CustomerRecordWizard = forwardRef<CustomerRecordWizardHandle, Props>(funct
 });
 
 export default CustomerRecordWizard;
+
+
+
+
+
 
