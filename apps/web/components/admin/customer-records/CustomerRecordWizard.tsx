@@ -82,6 +82,12 @@ const CustomerRecordWizard = forwardRef<CustomerRecordWizardHandle, Props>(funct
   const [showActionBar, setShowActionBar] = useState(true);
   const wizardRootRef = useRef<HTMLDivElement | null>(null);
 
+  const isEditMode = Boolean(initialRecord?.id);
+  const saveActionLabel = isEditMode ? "Save Changes" : "Save Draft";
+  const savingActionLabel = isEditMode ? "Saving changes..." : "Saving...";
+  const finalActionMobileLabel = isEditMode ? "Save" : "Submit";
+  const finalActionDesktopLabel = isEditMode ? "Save Changes" : "Submit Customer Record";
+
   const form = useForm<CustomerRecordFormInput>({
     defaultValues: emptyWizardValues,
     mode: "onBlur",
@@ -427,7 +433,7 @@ const CustomerRecordWizard = forwardRef<CustomerRecordWizardHandle, Props>(funct
               className="h-11 min-h-11 w-11 min-w-11 shrink-0 rounded-xl border-charcoal/15 bg-white text-charcoal/80 hover:bg-ivory sm:hidden"
               onClick={() => setPendingConfirmation("save-draft")}
               disabled={savingDraft || submitting}
-              aria-label="Save draft"
+              aria-label={saveActionLabel}
             >
               {savingDraft ? (
                 <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
@@ -445,10 +451,10 @@ const CustomerRecordWizard = forwardRef<CustomerRecordWizardHandle, Props>(funct
               {savingDraft ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden />
-                  Savingâ€¦
+                  {savingActionLabel}
                 </>
               ) : (
-                "Save Draft"
+                saveActionLabel
               )}
             </Button>
             {step < 4 ? (
@@ -466,14 +472,14 @@ const CustomerRecordWizard = forwardRef<CustomerRecordWizardHandle, Props>(funct
               <Button
                 type="button"
                 className="h-11 min-h-11 min-w-0 flex-1 gap-1 rounded-xl bg-trust-blue px-2.5 text-sm font-semibold text-white shadow-sm hover:bg-support-blue sm:h-auto sm:min-h-11 sm:flex-none sm:min-w-[160px] sm:gap-1.5 sm:px-4"
-                onClick={() => setPendingConfirmation("submit-final")}
+                onClick={() => setPendingConfirmation(isEditMode ? "save-draft" : "submit-final")}
                 disabled={savingDraft || submitting}
                 aria-busy={submitting}
               >
                 {submitting ? (
                   <>
                     <Loader2 className="h-4 w-4 shrink-0 animate-spin" aria-hidden />
-                    <span className="truncate">Submittingâ€¦</span>
+                    <span className="truncate">{isEditMode ? "Saving..." : "Submitting..."}</span>
                   </>
                 ) : (
                   <>
@@ -512,6 +518,11 @@ const CustomerRecordWizard = forwardRef<CustomerRecordWizardHandle, Props>(funct
 });
 
 export default CustomerRecordWizard;
+
+
+
+
+
 
 
 
