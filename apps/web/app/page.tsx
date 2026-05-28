@@ -1,19 +1,63 @@
-import { Button } from "@workspace/ui/components/button"
+import type { Metadata } from "next";
+import HeroSection from "@/components/home/HeroSection";
+import ServicesSection from "@/components/home/ServicesSection";
+import GuidanceAcrossDecisionsSection from "@/components/home/GuidanceAcrossDecisionsSection";
+import USPSection from "@/components/home/USPSection";
+import TrustSection from "@/components/home/TrustSection";
+import ContactSection from "@/components/home/ContactSection";
+import JsonLd from "@/components/seo/JsonLd";
+import { getHomepageProfessionalServiceJsonLd } from "@/lib/homepage-jsonld";
 
-export default function Page() {
+const pageTitle = "CareSutra | Har Zarurat Ka Sahi Margdarshan";
+const pageDescription =
+  "Get trusted guidance for insurance, loans, and health services with CareSutra — Aapke saath, har kadam.";
+
+export const metadata: Metadata = {
+  title: {
+    absolute: pageTitle,
+  },
+  description: pageDescription,
+  alternates: {
+    canonical: "/",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+  openGraph: {
+    title: pageTitle,
+    description: pageDescription,
+    url: "/",
+    type: "website",
+    locale: "en_IN",
+    siteName: "CareSutra",
+    images: [
+      {
+        url: "/caresutra-hr-logo.png",
+        width: 1200,
+        height: 630,
+        alt: "CareSutra",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: pageTitle,
+    description: pageDescription,
+    images: ["/caresutra-hr-logo.png"],
+  },
+};
+
+export default function Home() {
   return (
-    <div className="flex min-h-svh p-6">
-      <div className="flex max-w-md min-w-0 flex-col gap-4 text-sm leading-loose">
-        <div>
-          <h1 className="font-medium">Project ready!</h1>
-          <p>You may now add components and start building.</p>
-          <p>We&apos;ve already added the button component for you.</p>
-          <Button className="mt-2">Button</Button>
-        </div>
-        <div className="text-muted-foreground font-mono text-xs">
-          (Press <kbd>d</kbd> to toggle dark mode)
-        </div>
-      </div>
-    </div>
-  )
+    <>
+      <JsonLd data={getHomepageProfessionalServiceJsonLd()} />
+      <HeroSection />
+      <ServicesSection />
+      <GuidanceAcrossDecisionsSection />
+      <USPSection />
+      <TrustSection />
+      <ContactSection />
+    </>
+  );
 }
