@@ -50,7 +50,7 @@ const data = {
       icon: <UsersIcon />,
     },
     {
-      title: "New Customer",
+      title: "Add Customer",
       url: "/admin/customer-records/new",
       icon: <ClipboardListIcon />,
     },
@@ -110,7 +110,7 @@ const data = {
     },
     {
       name: "Health Services",
-      url: "/admin/services/health",
+      url: "/admin/services/health-services",
       icon: <HeartPulseIcon />,
     },
   ],
