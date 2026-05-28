@@ -1,4 +1,4 @@
-import { getPrisma } from "@/lib/prisma"
+﻿import { getPrisma } from "@/lib/prisma"
 
 export type CustomerRecordTableRow = {
   id: number
@@ -91,3 +91,5 @@ export async function getCustomerRecordById(id: number) {
     expiryDate: record.expiryDate?.toISOString() ?? null,
   }
 }
+
+
