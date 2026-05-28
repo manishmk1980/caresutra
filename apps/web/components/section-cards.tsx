@@ -16,42 +16,53 @@ import {
   UsersIcon,
 } from "lucide-react"
 
-const metrics = [
-  {
-    label: "Total Customer Records",
-    value: "4",
-    badge: "Sample",
-    footerTitle: "Records available in admin",
-    footerText: "This will connect to live CustomerRecord count next.",
-    icon: UsersIcon,
-  },
-  {
-    label: "Submitted Records",
-    value: "2",
-    badge: "Ready",
-    footerTitle: "Submitted customer records",
-    footerText: "Records marked as SUBMITTED for processing.",
-    icon: ClipboardCheckIcon,
-  },
-  {
-    label: "Draft Records",
-    value: "2",
-    badge: "Pending",
-    footerTitle: "Draft records need completion",
-    footerText: "Records saved but not finally submitted.",
-    icon: FileClockIcon,
-  },
-  {
-    label: "Documents Pending",
-    value: "3",
-    badge: "Review",
-    footerTitle: "Document checks required",
-    footerText: "PAN, Aadhaar, photo, or other files may be incomplete.",
-    icon: FileWarningIcon,
-  },
-]
+export type AdminDashboardStats = {
+  totalRecords: number
+  submittedRecords: number
+  draftRecords: number
+  documentsPending: number
+  source: "live" | "fallback"
+}
 
-export function SectionCards() {
+export function SectionCards({ stats }: { stats: AdminDashboardStats }) {
+  const metrics = [
+    {
+      label: "Total Customer Records",
+      value: String(stats.totalRecords),
+      badge: stats.source === "live" ? "Live" : "Offline",
+      footerTitle: "Records available in admin",
+      footerText:
+        stats.source === "live"
+          ? "Loaded from CustomerRecord database."
+          : "Database not reachable in this environment.",
+      icon: UsersIcon,
+    },
+    {
+      label: "Submitted Records",
+      value: String(stats.submittedRecords),
+      badge: "Submitted",
+      footerTitle: "Submitted customer records",
+      footerText: "Records marked as SUBMITTED for processing.",
+      icon: ClipboardCheckIcon,
+    },
+    {
+      label: "Draft Records",
+      value: String(stats.draftRecords),
+      badge: "Draft",
+      footerTitle: "Draft records need completion",
+      footerText: "Records saved but not finally submitted.",
+      icon: FileClockIcon,
+    },
+    {
+      label: "Documents Pending",
+      value: String(stats.documentsPending),
+      badge: "Review",
+      footerTitle: "Document checks required",
+      footerText: "PAN, Aadhaar, photo, or other files may be incomplete.",
+      icon: FileWarningIcon,
+    },
+  ]
+
   return (
     <div className="grid grid-cols-1 gap-4 px-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card *:data-[slot=card]:shadow-xs lg:px-6 @xl/main:grid-cols-2 @5xl/main:grid-cols-4 dark:*:data-[slot=card]:bg-card">
       {metrics.map((metric) => {
