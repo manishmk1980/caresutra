@@ -1,11 +1,21 @@
 import { AdminShell } from "@/components/admin/admin-shell"
 import { DataTable } from "@/components/data-table"
-import { getCustomerRecordRows } from "@/lib/adminCustomerRecords"
+import { getCustomerRecordRows, type CustomerRecordTableRow } from "@/lib/adminCustomerRecords"
+import { Card, CardContent } from "@workspace/ui/components/card"
 
 export const dynamic = "force-dynamic"
 
 export default async function CustomerRecordsPage() {
-  const data = await getCustomerRecordRows()
+  let data: CustomerRecordTableRow[] = []
+  let errorMessage: string | null = null
+
+  try {
+    data = await getCustomerRecordRows()
+  } catch (error) {
+    console.error("ADMIN_CUSTOMER_RECORDS_PAGE_ERROR", error)
+    errorMessage =
+      "Customer records could not be loaded because the database connection is not configured or not reachable in this environment."
+  }
 
   return (
     <AdminShell>
@@ -17,9 +27,18 @@ export default async function CustomerRecordsPage() {
           </p>
         </div>
 
+        {errorMessage ? (
+          <Card className="border-amber-200 bg-amber-50/60">
+            <CardContent className="p-4 text-sm text-amber-900">
+              {errorMessage}
+            </CardContent>
+          </Card>
+        ) : null}
+
         <DataTable data={data} />
       </div>
     </AdminShell>
   )
 }
+
 
