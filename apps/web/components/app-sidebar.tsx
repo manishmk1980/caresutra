@@ -15,163 +15,103 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@workspace/ui/components/sidebar"
-import { LayoutDashboardIcon, ListIcon, ChartBarIcon, FolderIcon, UsersIcon, CameraIcon, FileTextIcon, Settings2Icon, CircleHelpIcon, SearchIcon, DatabaseIcon, FileChartColumnIcon, FileIcon, CommandIcon } from "lucide-react"
+import {
+  ActivityIcon,
+  CalendarClockIcon,
+  CircleHelpIcon,
+  ClipboardListIcon,
+  FileChartColumnIcon,
+  FileTextIcon,
+  HeartPulseIcon,
+  LandmarkIcon,
+  LayoutDashboardIcon,
+  SearchIcon,
+  Settings2Icon,
+  ShieldCheckIcon,
+  UploadCloudIcon,
+  UsersIcon,
+} from "lucide-react"
 
 const data = {
   user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
+    name: "CareSutra Admin",
+    email: "admin@caresutra.in",
+    avatar: "/brand/emblem.png",
   },
   navMain: [
     {
       title: "Dashboard",
-      url: "#",
-      icon: (
-        <LayoutDashboardIcon
-        />
-      ),
+      url: "/admin",
+      icon: <LayoutDashboardIcon />,
     },
     {
-      title: "Lifecycle",
-      url: "#",
-      icon: (
-        <ListIcon
-        />
-      ),
+      title: "Customer Records",
+      url: "/admin/customer-records",
+      icon: <UsersIcon />,
     },
     {
-      title: "Analytics",
-      url: "#",
-      icon: (
-        <ChartBarIcon
-        />
-      ),
+      title: "New Customer",
+      url: "/admin/customer-records/new",
+      icon: <ClipboardListIcon />,
     },
     {
-      title: "Projects",
-      url: "#",
-      icon: (
-        <FolderIcon
-        />
-      ),
+      title: "Activity",
+      url: "/admin/activity",
+      icon: <ActivityIcon />,
     },
     {
-      title: "Team",
-      url: "#",
-      icon: (
-        <UsersIcon
-        />
-      ),
-    },
-  ],
-  navClouds: [
-    {
-      title: "Capture",
-      icon: (
-        <CameraIcon
-        />
-      ),
-      isActive: true,
-      url: "#",
-      items: [
-        {
-          title: "Active Proposals",
-          url: "#",
-        },
-        {
-          title: "Archived",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Proposal",
-      icon: (
-        <FileTextIcon
-        />
-      ),
-      url: "#",
-      items: [
-        {
-          title: "Active Proposals",
-          url: "#",
-        },
-        {
-          title: "Archived",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Prompts",
-      icon: (
-        <FileTextIcon
-        />
-      ),
-      url: "#",
-      items: [
-        {
-          title: "Active Proposals",
-          url: "#",
-        },
-        {
-          title: "Archived",
-          url: "#",
-        },
-      ],
+      title: "Appointments",
+      url: "/admin/appointments",
+      icon: <CalendarClockIcon />,
     },
   ],
   navSecondary: [
     {
       title: "Settings",
       url: "#",
-      icon: (
-        <Settings2Icon
-        />
-      ),
+      icon: <Settings2Icon />,
     },
     {
       title: "Get Help",
       url: "#",
-      icon: (
-        <CircleHelpIcon
-        />
-      ),
+      icon: <CircleHelpIcon />,
     },
     {
       title: "Search",
       url: "#",
-      icon: (
-        <SearchIcon
-        />
-      ),
+      icon: <SearchIcon />,
     },
   ],
   documents: [
     {
-      name: "Data Library",
-      url: "#",
-      icon: (
-        <DatabaseIcon
-        />
-      ),
+      name: "Documents",
+      url: "/admin/documents",
+      icon: <FileTextIcon />,
+    },
+    {
+      name: "Uploads",
+      url: "/admin/uploads",
+      icon: <UploadCloudIcon />,
     },
     {
       name: "Reports",
-      url: "#",
-      icon: (
-        <FileChartColumnIcon
-        />
-      ),
+      url: "/admin/reports",
+      icon: <FileChartColumnIcon />,
     },
     {
-      name: "Word Assistant",
-      url: "#",
-      icon: (
-        <FileIcon
-        />
-      ),
+      name: "Insurance",
+      url: "/admin/services/insurance",
+      icon: <ShieldCheckIcon />,
+    },
+    {
+      name: "Loans",
+      url: "/admin/services/loans",
+      icon: <LandmarkIcon />,
+    },
+    {
+      name: "Health Services",
+      url: "/admin/services/health",
+      icon: <HeartPulseIcon />,
     },
   ],
 }
@@ -186,9 +126,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               asChild
               className="data-[slot=sidebar-menu-button]:p-1.5!"
             >
-              <a href="#">
-                <CommandIcon className="size-5!" />
-                <span className="text-base font-semibold">Acme Inc.</span>
+              <a href="/admin">
+                <img
+                  src="/brand/emblem.png"
+                  alt="CareSutra"
+                  className="size-6 rounded-md object-contain"
+                />
+                <span className="text-base font-semibold">CareSutra Admin</span>
               </a>
             </SidebarMenuButton>
           </SidebarMenuItem>
