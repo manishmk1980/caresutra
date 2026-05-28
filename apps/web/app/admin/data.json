@@ -1,0 +1,50 @@
+[
+  {
+    "id": 1,
+    "customerName": "Ramesh Kumar",
+    "mobile": "9876543210",
+    "serviceType": "INSURANCE",
+    "customerStatus": "PROSPECT",
+    "recordStatus": "DRAFT",
+    "city": "Noida",
+    "documents": "2/5",
+    "createdAt": "2026-05-24",
+    "reviewer": "CareSutra Admin"
+  },
+  {
+    "id": 2,
+    "customerName": "Neha Sharma",
+    "mobile": "9876501234",
+    "serviceType": "LOAN",
+    "customerStatus": "ACTIVE",
+    "recordStatus": "SUBMITTED",
+    "city": "Delhi",
+    "documents": "4/5",
+    "createdAt": "2026-05-25",
+    "reviewer": "CareSutra Admin"
+  },
+  {
+    "id": 3,
+    "customerName": "Amit Verma",
+    "mobile": "9811112233",
+    "serviceType": "HEALTHCARE",
+    "customerStatus": "PROSPECT",
+    "recordStatus": "DRAFT",
+    "city": "Ghaziabad",
+    "documents": "1/5",
+    "createdAt": "2026-05-26",
+    "reviewer": "CareSutra Admin"
+  },
+  {
+    "id": 4,
+    "customerName": "Pooja Singh",
+    "mobile": "9990011223",
+    "serviceType": "INSURANCE",
+    "customerStatus": "ACTIVE",
+    "recordStatus": "SUBMITTED",
+    "city": "Gurugram",
+    "documents": "5/5",
+    "createdAt": "2026-05-27",
+    "reviewer": "CareSutra Admin"
+  }
+]
