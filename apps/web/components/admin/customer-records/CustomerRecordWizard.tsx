@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
 import { useForm, FormProvider } from "react-hook-form";
@@ -383,7 +383,7 @@ const CustomerRecordWizard = forwardRef<CustomerRecordWizardHandle, Props>(funct
         <div className="rounded-2xl border border-soft-gold/35 bg-white p-2 shadow-sm sm:p-3 md:p-6">
           {step === 0 ? <StepPersonalDetails /> : null}
           {step === 1 ? <StepAddressDetails /> : null}
-          {step === 2 ? <StepDocuments /> : null}
+          {step === 2 ? <StepDocuments customerId={initialRecord?.id} /> : null}
           {step === 3 ? <StepServiceDetails /> : null}
           {step === 4 ? <StepReviewSubmit onEditStep={setStep} /> : null}
         </div>
@@ -445,7 +445,7 @@ const CustomerRecordWizard = forwardRef<CustomerRecordWizardHandle, Props>(funct
               {savingDraft ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden />
-                  Saving…
+                  Savingâ€¦
                 </>
               ) : (
                 "Save Draft"
@@ -473,7 +473,7 @@ const CustomerRecordWizard = forwardRef<CustomerRecordWizardHandle, Props>(funct
                 {submitting ? (
                   <>
                     <Loader2 className="h-4 w-4 shrink-0 animate-spin" aria-hidden />
-                    <span className="truncate">Submitting…</span>
+                    <span className="truncate">Submittingâ€¦</span>
                   </>
                 ) : (
                   <>
