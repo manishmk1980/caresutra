@@ -1,5 +1,4 @@
 ﻿import { AdminShell } from "@/components/admin/admin-shell"
-import { MobileQuickActions } from "@/components/admin/mobile-quick-actions"
 import { DataTable } from "@/components/data-table"
 import {
   getCustomerRecordRows,
@@ -42,7 +41,6 @@ export default async function CustomerRecordsPage() {
           </Card>
         ) : null}
 
-        <MobileQuickActions />
         <DataTable data={data} />
       </div>
     </AdminShell>
