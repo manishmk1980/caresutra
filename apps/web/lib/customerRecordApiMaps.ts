@@ -1,4 +1,6 @@
 import type { Prisma } from "@prisma/client";
+import { existsSync } from "node:fs";
+import path from "node:path";
 import type { CustomerRecordFormInput } from "@/lib/validations/customerRecordSchema";
 import { emptyToNull, nullableDate, nullableDecimal } from "@/lib/customerRecordNormalize";
 import type { z } from "zod";
@@ -11,6 +13,23 @@ function normalizeEnum<T extends string>(value: unknown): T | null {
   if (typeof value !== "string") return null;
   const normalized = value.trim().toUpperCase();
   return normalized.length > 0 ? (normalized as T) : null;
+}
+
+function existingDocumentUrl(value: unknown): string | null {
+  const url = emptyToNull(value);
+  if (!url) return null;
+  if (!url.startsWith("/uploads/customers/")) return url;
+
+  const cleanUrl = url.split("?")[0]?.replaceAll("\\", "/") ?? "";
+  const publicDir = path.join(process.cwd(), "public");
+  const targetPath = path.join(publicDir, cleanUrl);
+  const relative = path.relative(publicDir, targetPath);
+
+  if (relative.startsWith("..") || path.isAbsolute(relative)) {
+    return null;
+  }
+
+  return existsSync(targetPath) ? url : null;
 }
 
 /** Prisma payload for DRAFT create/update from relaxed draft parse */
@@ -35,7 +54,11 @@ export function draftToPrismaUnchecked(data: DraftData): Prisma.CustomerRecordUn
     city: emptyToNull(data.city),
     state: emptyToNull(data.state),
     pinCode: emptyToNull(onlyDigits(String(data.pinCode ?? ""))),
-    customerPictureUrl: emptyToNull(data.customerPictureUrl),
+    customerPictureUrl: existingDocumentUrl(data.customerPictureUrl),
+    panDocumentUrl: existingDocumentUrl(data.panDocumentUrl),
+    aadharFrontUrl: existingDocumentUrl(data.aadhaarFrontUrl),
+    aadharBackUrl: existingDocumentUrl(data.aadhaarBackUrl),
+    otherDocumentUrl: existingDocumentUrl(data.otherDocumentUrl),
     customerStatus,
     customerType,
     providerCompanyName: emptyToNull(data.providerCompanyName),
@@ -69,7 +92,11 @@ export function submitToPrismaUnchecked(data: CustomerRecordFormInput): Prisma.C
     city: emptyToNull(data.city) ?? "",
     state: emptyToNull(data.state) ?? "",
     pinCode: onlyDigits(String(data.pinCode ?? "")),
-    customerPictureUrl: emptyToNull(data.customerPictureUrl),
+    customerPictureUrl: existingDocumentUrl(data.customerPictureUrl),
+    panDocumentUrl: existingDocumentUrl(data.panDocumentUrl),
+    aadharFrontUrl: existingDocumentUrl(data.aadhaarFrontUrl),
+    aadharBackUrl: existingDocumentUrl(data.aadhaarBackUrl),
+    otherDocumentUrl: existingDocumentUrl(data.otherDocumentUrl),
     customerStatus,
     customerType,
     providerCompanyName: emptyToNull(data.providerCompanyName),

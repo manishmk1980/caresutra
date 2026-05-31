@@ -16,10 +16,10 @@ export default function NewCustomerRecordPage() {
       <AppSidebar variant="inset" />
       <SidebarInset>
         <SiteHeader />
-        <div className="flex flex-1 flex-col">
-          <div className="@container/main flex flex-1 flex-col gap-4 p-4 md:p-6">
+        <div className="flex min-w-0 flex-1 flex-col">
+          <div className="@container/main flex min-w-0 flex-1 flex-col gap-4 p-3 sm:p-4 md:p-6">
             <div>
-              <h1 className="text-2xl font-semibold tracking-tight">New Customer Record</h1>
+              <h1 className="text-xl font-semibold tracking-tight sm:text-2xl">New Customer Record</h1>
               <p className="text-sm text-muted-foreground">
                 Add customer details, service information, and required documents.
               </p>

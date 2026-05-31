@@ -1,6 +1,10 @@
-import { AdminShell } from "@/components/admin/admin-shell"
+﻿import { AdminShell } from "@/components/admin/admin-shell"
+import { MobileQuickActions } from "@/components/admin/mobile-quick-actions"
 import { DataTable } from "@/components/data-table"
-import { getCustomerRecordRows, type CustomerRecordTableRow } from "@/lib/adminCustomerRecords"
+import {
+  getCustomerRecordRows,
+  type CustomerRecordTableRow,
+} from "@/lib/adminCustomerRecords"
 import { Card, CardContent } from "@workspace/ui/components/card"
 
 export const dynamic = "force-dynamic"
@@ -21,9 +25,12 @@ export default async function CustomerRecordsPage() {
     <AdminShell>
       <div className="flex flex-1 flex-col gap-4 p-4 md:p-6">
         <div className="flex flex-col gap-1">
-          <h1 className="text-2xl font-semibold tracking-tight">Customer Records</h1>
+          <h1 className="text-2xl font-semibold tracking-tight">
+            Customer Records
+          </h1>
           <p className="text-sm text-muted-foreground">
-            View and manage CareSutra customer records across insurance, loans, and health services.
+            View and manage CareSutra customer records across insurance, loans,
+            and health services.
           </p>
         </div>
 
@@ -35,10 +42,9 @@ export default async function CustomerRecordsPage() {
           </Card>
         ) : null}
 
+        <MobileQuickActions />
         <DataTable data={data} />
       </div>
     </AdminShell>
   )
 }
-
-

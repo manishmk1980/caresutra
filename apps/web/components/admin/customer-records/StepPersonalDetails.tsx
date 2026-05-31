@@ -9,6 +9,8 @@ import { cn } from "@/lib/utils";
 import { invalidFieldRing } from "./fieldStyles";
 import { FieldHint, RequiredMark } from "./formFieldHints";
 
+const inputClass = "h-12 rounded-xl border-soft-gold/40 text-base md:h-9 md:text-sm";
+
 function calculateAge(dateValue?: string | null): string {
   if (!dateValue) return "";
 
@@ -29,14 +31,8 @@ function calculateAge(dateValue?: string | null): string {
   }
 
   if (years < 0) return "";
-
-  if (years === 0) {
-    return months === 1 ? "1 month" : `${months} months`;
-  }
-
-  if (months === 0) {
-    return years === 1 ? "1 year" : `${years} years`;
-  }
+  if (years === 0) return months === 1 ? "1 month" : `${months} months`;
+  if (months === 0) return years === 1 ? "1 year" : `${years} years`;
 
   return `${years} years ${months} months`;
 }
@@ -47,13 +43,15 @@ export function StepPersonalDetails() {
   const currentAge = calculateAge(dateOfBirth);
 
   return (
-    <div className="space-y-3 md:space-y-4">
-      <p className="text-[11px] leading-snug text-charcoal/65 md:hidden">
-        Required fields are marked with an asterisk (<span className="text-support-blue">*</span>).
+    <div className="space-y-4">
+      <p className="rounded-xl bg-ivory/70 px-3 py-2 text-xs leading-snug text-charcoal/70 md:hidden">
+        Start with the legal name and reachable phone number. Required fields use{" "}
+        <span className="font-semibold text-support-blue">*</span>.
       </p>
       <p className="hidden text-sm leading-snug text-charcoal/70 md:block">
         Enter the customer&apos;s legal name and best contact numbers. Required fields are marked with an asterisk.
       </p>
+
       <div className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-4 xl:grid-cols-3">
         <FormField
           control={control}
@@ -66,19 +64,17 @@ export function StepPersonalDetails() {
               </FormLabel>
               <FormControl>
                 <Input
-                  placeholder="Ravi"
+                  placeholder="e.g. Ravi"
                   {...field}
                   value={field.value ?? ""}
-                  className={cn(
-                    "h-11 rounded-xl border-soft-gold/40 py-2.5 md:h-9 md:py-1",
-                    fieldState.invalid && invalidFieldRing,
-                  )}
+                  className={cn(inputClass, fieldState.invalid && invalidFieldRing)}
                 />
               </FormControl>
               <FormMessage className="text-amber-900" />
             </FormItem>
           )}
         />
+
         <FormField
           control={control}
           name="middleName"
@@ -87,19 +83,17 @@ export function StepPersonalDetails() {
               <FormLabel className="text-charcoal">Middle name</FormLabel>
               <FormControl>
                 <Input
-                  placeholder="Kumar"
+                  placeholder="e.g. Kumar"
                   {...field}
                   value={field.value ?? ""}
-                  className={cn(
-                    "h-11 rounded-xl border-soft-gold/40 py-2.5 md:h-9 md:py-1",
-                    fieldState.invalid && invalidFieldRing,
-                  )}
+                  className={cn(inputClass, fieldState.invalid && invalidFieldRing)}
                 />
               </FormControl>
               <FormMessage className="text-amber-900" />
             </FormItem>
           )}
         />
+
         <FormField
           control={control}
           name="lastName"
@@ -111,19 +105,17 @@ export function StepPersonalDetails() {
               </FormLabel>
               <FormControl>
                 <Input
-                  placeholder="Sharma"
+                  placeholder="e.g. Sharma"
                   {...field}
                   value={field.value ?? ""}
-                  className={cn(
-                    "h-11 rounded-xl border-soft-gold/40 py-2.5 md:h-9 md:py-1",
-                    fieldState.invalid && invalidFieldRing,
-                  )}
+                  className={cn(inputClass, fieldState.invalid && invalidFieldRing)}
                 />
               </FormControl>
               <FormMessage className="text-amber-900" />
             </FormItem>
           )}
         />
+
         <FormField
           control={control}
           name="email"
@@ -133,19 +125,17 @@ export function StepPersonalDetails() {
               <FormControl>
                 <Input
                   type="email"
-                  placeholder="ravi@example.com"
+                  placeholder="e.g. ravi.sharma@example.com"
                   {...field}
                   value={field.value ?? ""}
-                  className={cn(
-                    "h-11 rounded-xl border-soft-gold/40 py-2.5 md:h-9 md:py-1",
-                    fieldState.invalid && invalidFieldRing,
-                  )}
+                  className={cn(inputClass, fieldState.invalid && invalidFieldRing)}
                 />
               </FormControl>
               <FormMessage className="text-amber-900" />
             </FormItem>
           )}
         />
+
         <FormField
           control={control}
           name="mobile"
@@ -157,22 +147,20 @@ export function StepPersonalDetails() {
               </FormLabel>
               <FormControl>
                 <Input
-                  placeholder="9876543210"
+                  placeholder="10-digit mobile number"
                   {...field}
                   value={String(field.value ?? "")}
                   inputMode="numeric"
                   autoComplete="tel"
-                  className={cn(
-                    "h-11 rounded-xl border-soft-gold/40 py-2.5 md:h-9 md:py-1",
-                    fieldState.invalid && invalidFieldRing,
-                  )}
+                  className={cn(inputClass, fieldState.invalid && invalidFieldRing)}
                 />
               </FormControl>
-              <FieldHint>10-digit number — non-digits are removed when you save.</FieldHint>
+              <FieldHint>Only 10 digits are stored. Spaces and dashes are removed.</FieldHint>
               <FormMessage className="text-amber-900" />
             </FormItem>
           )}
         />
+
         <FormField
           control={control}
           name="alternativeMobile"
@@ -181,17 +169,14 @@ export function StepPersonalDetails() {
               <FormLabel className="text-charcoal">Alternative mobile</FormLabel>
               <FormControl>
                 <Input
-                  placeholder="9123456789"
+                  placeholder="Optional backup mobile number"
                   {...field}
                   value={field.value ?? ""}
                   inputMode="numeric"
-                  className={cn(
-                    "h-11 rounded-xl border-soft-gold/40 py-2.5 md:h-9 md:py-1",
-                    fieldState.invalid && invalidFieldRing,
-                  )}
+                  className={cn(inputClass, fieldState.invalid && invalidFieldRing)}
                 />
               </FormControl>
-              <FieldHint>10-digit number, if provided.</FieldHint>
+              <FieldHint>Use this only if the customer has a second reachable number.</FieldHint>
               <FormMessage className="text-amber-900" />
             </FormItem>
           )}
@@ -201,7 +186,7 @@ export function StepPersonalDetails() {
           control={control}
           name="dateOfBirth"
           render={({ field, fieldState }) => (
-            <FormItem data-rhf-field="dateOfBirth">
+            <FormItem className="xl:col-span-3" data-rhf-field="dateOfBirth">
               <FormLabel className="text-charcoal">Date of birth</FormLabel>
               <FormControl>
                 <DateSelect
@@ -215,10 +200,11 @@ export function StepPersonalDetails() {
                   maxYear={new Date().getFullYear()}
                   allowClear
                   summaryPrefix="Selected DOB"
+                  emptyText="Not known yet - leave blank and continue"
                 />
               </FormControl>
               {currentAge ? (
-                <p className="mt-1 text-[11px] font-medium text-trust-blue md:text-xs">
+                <p className="mt-1 text-xs font-medium text-trust-blue">
                   Current age: {currentAge}
                 </p>
               ) : null}
