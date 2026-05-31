@@ -1,10 +1,5 @@
-﻿import Link from "next/link"
-import {
-  CalendarDays,
-  FileUp,
-  UserPlus,
-  UsersRound,
-} from "lucide-react"
+import Link from "next/link"
+import { UserPlus, UsersRound } from "lucide-react"
 
 const quickLinks = [
   {
@@ -16,16 +11,6 @@ const quickLinks = [
     label: "New Customer",
     href: "/admin/customer-records/new",
     icon: UserPlus,
-  },
-  {
-    label: "Appointments",
-    href: "/admin/appointments",
-    icon: CalendarDays,
-  },
-  {
-    label: "Uploads",
-    href: "/admin/uploads",
-    icon: FileUp,
   },
 ]
 
@@ -48,10 +33,10 @@ export function MobileQuickActions() {
               <Link
                 key={item.href}
                 href={item.href}
-                className="flex min-h-16 items-center gap-2 rounded-xl border border-soft-gold/35 bg-ivory/60 px-3 py-2 text-sm font-semibold text-charcoal transition hover:border-trust-blue/30 hover:bg-trust-blue/5 hover:text-trust-blue"
+                className="flex min-h-14 items-center gap-2 rounded-xl border border-soft-gold/35 bg-ivory/60 px-3 py-2 text-sm font-semibold text-charcoal transition hover:border-trust-blue/30 hover:bg-trust-blue/5 hover:text-trust-blue"
               >
-                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white text-trust-blue shadow-sm">
-                  <Icon className="h-4 w-4" aria-hidden />
+                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-white text-trust-blue shadow-sm">
+                  <Icon className="h-3.5 w-3.5" aria-hidden />
                 </span>
                 <span className="leading-tight">{item.label}</span>
               </Link>
