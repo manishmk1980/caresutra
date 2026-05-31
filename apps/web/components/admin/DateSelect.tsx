@@ -61,6 +61,7 @@ export type DateSelectProps = {
   helperText?: string;
   /** Prefix for summary line, e.g. "Selected DOB" */
   summaryPrefix?: string;
+  emptyText?: string;
   allowClear?: boolean;
   id?: string;
 };
@@ -78,6 +79,7 @@ export const DateSelect = React.forwardRef<HTMLDivElement, DateSelectProps>(func
     mode = "past",
     helperText,
     summaryPrefix = "Selected",
+    emptyText = "Optional - leave blank if unknown.",
     allowClear = false,
     id,
   },
@@ -176,12 +178,12 @@ export const DateSelect = React.forwardRef<HTMLDivElement, DateSelectProps>(func
         </Label>
       ) : null}
       {helperText ? <p className="text-xs text-charcoal/65">{helperText}</p> : null}
-      <div className="flex flex-wrap gap-2">
+      <div className="grid grid-cols-3 gap-2 sm:flex sm:flex-wrap">
         <Select value={d || ""} onValueChange={handleDay}>
           <SelectTrigger
             id={id ? `${id}-day` : undefined}
             className={cn(
-              "w-[90px] rounded-xl border-soft-gold/40 bg-white",
+              "w-full rounded-xl border-soft-gold/40 bg-white sm:w-[90px]",
               error && "border-amber-600 ring-1 ring-amber-500/50 focus-visible:ring-amber-500",
             )}
           >
@@ -199,7 +201,7 @@ export const DateSelect = React.forwardRef<HTMLDivElement, DateSelectProps>(func
           <SelectTrigger
             id={id ? `${id}-month` : undefined}
             className={cn(
-              "w-[130px] rounded-xl border-soft-gold/40 bg-white",
+              "w-full rounded-xl border-soft-gold/40 bg-white sm:w-[130px]",
               error && "border-amber-600 ring-1 ring-amber-500/50 focus-visible:ring-amber-500",
             )}
           >
@@ -217,7 +219,7 @@ export const DateSelect = React.forwardRef<HTMLDivElement, DateSelectProps>(func
           <SelectTrigger
             id={id ? `${id}-year` : undefined}
             className={cn(
-              "w-[110px] rounded-xl border-soft-gold/40 bg-white",
+              "w-full rounded-xl border-soft-gold/40 bg-white sm:w-[110px]",
               error && "border-amber-600 ring-1 ring-amber-500/50 focus-visible:ring-amber-500",
             )}
           >
@@ -239,7 +241,7 @@ export const DateSelect = React.forwardRef<HTMLDivElement, DateSelectProps>(func
             <span className="text-charcoal/55">(DD-MM-YYYY)</span>
           </p>
         ) : (
-          <p className="text-xs text-charcoal/55">Optional — leave blank if unknown.</p>
+          <p className="text-xs text-charcoal/55">{emptyText}</p>
         )}
         {allowClear && built ? (
           <Button type="button" variant="ghost" size="sm" className="h-8 text-support-blue" onClick={clear}>

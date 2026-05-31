@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 
 export type SafeCustomerImageProps = {
@@ -13,17 +13,18 @@ export type SafeCustomerImageProps = {
 };
 
 /**
- * Renders a customer photo URL; on load error (e.g. missing /uploads file), shows a placeholder once
- * so the browser does not retry the broken URL on every render.
+ * Renders a customer photo URL; if a stored upload is missing, shows a
+ * placeholder once so the browser does not retry it on every render.
  */
 export function SafeCustomerImage({
   src,
   alt,
   className,
   fallbackClassName,
-  fallbackText = "—",
+  fallbackText = "-",
 }: SafeCustomerImageProps) {
   const safeSrc = src.trim();
+  const imageRef = useRef<HTMLImageElement | null>(null);
   const [failedSrc, setFailedSrc] = useState<string | null>(null);
 
   const hasFailed = Boolean(safeSrc) && failedSrc === safeSrc;
@@ -34,12 +35,20 @@ export function SafeCustomerImage({
     }
   }, [safeSrc]);
 
+  useEffect(() => {
+    const image = imageRef.current;
+
+    if (safeSrc && image?.complete && image.naturalWidth === 0) {
+      setFailedSrc(safeSrc);
+    }
+  }, [safeSrc]);
+
   if (!safeSrc || hasFailed) {
     return (
       <div
         className={cn(
           "flex items-center justify-center border border-soft-gold/30 bg-ivory text-center text-[10px] font-medium leading-tight text-charcoal/45",
-          fallbackClassName,
+          fallbackClassName
         )}
         role="img"
         aria-label={`${alt} (unavailable)`}
@@ -52,6 +61,7 @@ export function SafeCustomerImage({
   return (
     // eslint-disable-next-line @next/next/no-img-element -- arbitrary admin/record URLs
     <img
+      ref={imageRef}
       src={safeSrc}
       alt={alt}
       className={className}

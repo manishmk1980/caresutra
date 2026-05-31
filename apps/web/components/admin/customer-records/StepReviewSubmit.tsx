@@ -17,9 +17,9 @@ const TYPE: Record<string, string> = {
   HEALTHCARE: "Healthcare",
 };
 
-function displayValue(value: unknown): string {
-  if (value === undefined || value === null) return "—";
-  if (typeof value === "string" && value.trim().length === 0) return "—";
+function displayValue(value: unknown, fallback = "Not provided yet"): string {
+  if (value === undefined || value === null) return fallback;
+  if (typeof value === "string" && value.trim().length === 0) return fallback;
   return String(value);
 }
 
@@ -104,7 +104,7 @@ export function StepReviewSubmit({ onEditStep }: Props) {
           </p>
           <p>
             <span className="text-charcoal/65">Email: </span>
-            {displayValue(v.email)}
+            {displayValue(v.email, "No email added")}
           </p>
           <p>
             <span className="text-charcoal/65">Mobile: </span>
@@ -112,11 +112,11 @@ export function StepReviewSubmit({ onEditStep }: Props) {
           </p>
           <p>
             <span className="text-charcoal/65">Alternative mobile: </span>
-            {displayValue(v.alternativeMobile)}
+            {displayValue(v.alternativeMobile, "No alternate mobile added")}
           </p>
           <p>
             <span className="text-charcoal/65">Date of birth: </span>
-            {v.dateOfBirth ? formatDateOnly(v.dateOfBirth) : "—"}
+            {v.dateOfBirth ? formatDateOnly(v.dateOfBirth) : "Date of birth not known"}
           </p>
         </div>
 
@@ -160,11 +160,11 @@ export function StepReviewSubmit({ onEditStep }: Props) {
           </div>
           <p>
             <span className="text-charcoal/65">PAN: </span>
-            {displayValue(v.pan)}
+            {displayValue(v.pan, "PAN number not added")}
           </p>
           <p>
             <span className="text-charcoal/65">Aadhaar: </span>
-            {displayValue(v.aadhaar)}
+            {displayValue(v.aadhaar, "Aadhaar number not added")}
           </p>
           {v.customerPictureUrl?.trim() ? (
             <div className="flex items-start gap-3">
@@ -223,33 +223,33 @@ export function StepReviewSubmit({ onEditStep }: Props) {
           </p>
           <p>
             <span className="text-charcoal/65">Provider company: </span>
-            {displayValue(v.providerCompanyName)}
+            {displayValue(v.providerCompanyName, "Provider not confirmed")}
           </p>
           <p>
             <span className="text-charcoal/65">Service commenced: </span>
-            {v.serviceCommencedDate ? formatDateOnly(v.serviceCommencedDate) : "—"}
+            {v.serviceCommencedDate ? formatDateOnly(v.serviceCommencedDate) : "Start date not confirmed"}
           </p>
           <p>
             <span className="text-charcoal/65">Expiry date: </span>
-            {v.expiryDate ? formatDateOnly(v.expiryDate) : "—"}
+            {v.expiryDate ? formatDateOnly(v.expiryDate) : "Expiry date not confirmed"}
           </p>
           <p>
             <span className="text-charcoal/65">Insurance / loan amount: </span>
             {v.insuranceLoanAmount !== undefined && v.insuranceLoanAmount !== null && v.insuranceLoanAmount !== ""
               ? formatInrAmount(v.insuranceLoanAmount)
-              : "—"}
+              : "Amount not confirmed"}
           </p>
           <p>
             <span className="text-charcoal/65">Premium / EMI: </span>
             {v.premiumEmi !== undefined && v.premiumEmi !== null && v.premiumEmi !== ""
               ? formatInrAmount(v.premiumEmi)
-              : "—"}
+              : "Premium/EMI not confirmed"}
           </p>
           <p>
             <span className="text-charcoal/65">Cover / final payout: </span>
             {v.coverFinalPayout !== undefined && v.coverFinalPayout !== null && v.coverFinalPayout !== ""
               ? formatInrAmount(v.coverFinalPayout)
-              : "—"}
+              : "Payout not confirmed"}
           </p>
         </div>
       </div>

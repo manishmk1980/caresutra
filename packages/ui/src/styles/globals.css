@@ -136,3 +136,59 @@
   --color-ivory: #f7f4ed;
   --color-charcoal: #1f2933;
 }
+
+
+/* CareSutra admin/public visibility hardening */
+@layer base {
+  input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+  textarea,
+  select {
+    color: #1f2933;
+    background-color: #ffffff;
+    border-color: rgba(200, 162, 77, 0.48);
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    color: rgba(31, 41, 51, 0.58);
+    opacity: 1;
+  }
+
+  input:disabled,
+  textarea:disabled,
+  select:disabled {
+    color: rgba(31, 41, 51, 0.58);
+    background-color: rgba(247, 244, 237, 0.72);
+    cursor: not-allowed;
+  }
+
+  button,
+  [role="button"],
+  a {
+    text-underline-offset: 4px;
+  }
+
+  button:disabled,
+  [role="button"][aria-disabled="true"] {
+    opacity: 0.7;
+  }
+
+  .text-muted-foreground {
+    color: rgba(31, 41, 51, 0.68);
+  }
+
+  .bg-trust-blue,
+  .hover\:bg-support-blue:hover {
+    color: #ffffff;
+  }
+
+  .admin-contrast-panel {
+    color: #1f2933;
+    background-color: #ffffff;
+  }
+}\n\n
+/* Dashboard customer table should show summary only, without row actions */
+.dashboard-customer-table table th:last-child,
+.dashboard-customer-table table td:last-child {
+  display: none;
+}

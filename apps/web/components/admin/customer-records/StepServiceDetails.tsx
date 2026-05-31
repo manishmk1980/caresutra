@@ -27,8 +27,8 @@ export function StepServiceDetails() {
 
   return (
     <div className="space-y-4 md:space-y-6">
-      <p className="text-[11px] leading-snug text-charcoal/65 md:hidden">
-        Set customer status and product line, then dates and amounts if known.
+      <p className="rounded-xl bg-ivory/70 px-3 py-2 text-xs leading-snug text-charcoal/70 md:hidden">
+        Pick the service category first. Dates and amounts can stay blank when they are not confirmed.
       </p>
       <p className="hidden text-sm leading-snug text-charcoal/70 md:block">
         Classify the customer, capture the servicing company, and key dates and financials when available.
@@ -49,7 +49,7 @@ export function StepServiceDetails() {
                 <FormControl>
                   <SelectTrigger
                     className={cn(
-                      "h-11 min-h-[2.75rem] rounded-xl border-soft-gold/40 bg-white py-2.5 md:h-9 md:min-h-0 md:py-2",
+                      "h-12 min-h-12 rounded-xl border-soft-gold/40 bg-white text-base md:h-9 md:min-h-0 md:text-sm",
                       fieldState.invalid && invalidFieldRing,
                     )}
                   >
@@ -81,7 +81,7 @@ export function StepServiceDetails() {
                 <FormControl>
                   <SelectTrigger
                     className={cn(
-                      "h-11 min-h-[2.75rem] rounded-xl border-soft-gold/40 bg-white py-2.5 md:h-9 md:min-h-0 md:py-2",
+                      "h-12 min-h-12 rounded-xl border-soft-gold/40 bg-white text-base md:h-9 md:min-h-0 md:text-sm",
                       fieldState.invalid && invalidFieldRing,
                     )}
                   >
@@ -113,11 +113,11 @@ export function StepServiceDetails() {
               <FormLabel>Provider Company Name</FormLabel>
               <FormControl>
                 <Input
-                  placeholder="Company whose service is opted"
+                  placeholder="e.g. LIC, HDFC Bank, Apollo Health"
                   {...field}
                   value={field.value ?? ""}
                   className={cn(
-                    "h-11 rounded-xl border-soft-gold/40 py-2.5 md:h-9 md:py-1",
+                    "h-12 rounded-xl border-soft-gold/40 text-base md:h-9 md:text-sm",
                     fieldState.invalid && invalidFieldRing,
                   )}
                 />
@@ -132,7 +132,7 @@ export function StepServiceDetails() {
           render={({ field, fieldState }) => (
             <FormItem data-rhf-field="serviceCommencedDate">
               <FormLabel>Date of Service Commenced</FormLabel>
-              <p className="mt-0.5 text-[11px] leading-snug text-charcoal/65 md:mt-1 md:text-xs">Format: DD-MM-YYYY (calendar below).</p>
+              <p className="mt-0.5 text-[11px] leading-snug text-charcoal/65 md:mt-1 md:text-xs">Choose the service start date when confirmed.</p>
               <FormControl>
                 <DateSelect
                   label="Service commenced"
@@ -145,6 +145,7 @@ export function StepServiceDetails() {
                   maxYear={cy + 30}
                   allowClear
                   summaryPrefix="Selected date"
+                  emptyText="Not confirmed yet - leave blank"
                 />
               </FormControl>
               <FormMessage className="text-amber-900" />
@@ -170,6 +171,7 @@ export function StepServiceDetails() {
                   maxYear={cy + 30}
                   allowClear
                   summaryPrefix="Selected date"
+                  emptyText="Not confirmed yet - leave blank"
                 />
               </FormControl>
               <FormMessage className="text-amber-900" />
@@ -191,11 +193,11 @@ export function StepServiceDetails() {
                 <Input
                   type="number"
                   step="0.01"
-                  placeholder="0.00"
+                  placeholder="e.g. 500000"
                   {...field}
                   value={field.value ?? ""}
                   className={cn(
-                    "h-11 rounded-xl border-soft-gold/40 py-2.5 md:h-9 md:py-1",
+                    "h-12 rounded-xl border-soft-gold/40 text-base md:h-9 md:text-sm",
                     fieldState.invalid && invalidFieldRing,
                   )}
                 />
@@ -214,11 +216,11 @@ export function StepServiceDetails() {
                 <Input
                   type="number"
                   step="0.01"
-                  placeholder="0.00"
+                  placeholder="e.g. 12500"
                   {...field}
                   value={field.value ?? ""}
                   className={cn(
-                    "h-11 rounded-xl border-soft-gold/40 py-2.5 md:h-9 md:py-1",
+                    "h-12 rounded-xl border-soft-gold/40 text-base md:h-9 md:text-sm",
                     fieldState.invalid && invalidFieldRing,
                   )}
                 />
@@ -237,11 +239,11 @@ export function StepServiceDetails() {
                 <Input
                   type="number"
                   step="0.01"
-                  placeholder="0.00"
+                  placeholder="e.g. 750000"
                   {...field}
                   value={field.value ?? ""}
                   className={cn(
-                    "h-11 rounded-xl border-soft-gold/40 py-2.5 md:h-9 md:py-1",
+                    "h-12 rounded-xl border-soft-gold/40 text-base md:h-9 md:text-sm",
                     fieldState.invalid && invalidFieldRing,
                   )}
                 />

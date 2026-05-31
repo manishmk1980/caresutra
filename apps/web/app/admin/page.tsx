@@ -125,7 +125,11 @@ export default async function Page() {
               <ChartAreaInteractive data={chartData} source={source} />
             </div>
 
-            <DataTable data={data} />
+            <div className="px-4 lg:px-6">
+              <div className="dashboard-customer-table">
+                <DataTable data={data} />
+              </div>
+            </div>
           </div>
         </div>
       </div>

@@ -83,6 +83,7 @@ const CustomerRecordWizard = forwardRef<CustomerRecordWizardHandle, Props>(funct
   const wizardRootRef = useRef<HTMLDivElement | null>(null);
 
   const isEditMode = Boolean(initialRecord?.id);
+  const isSubmittedEdit = initialRecord?.recordStatus === "SUBMITTED";
   const saveActionLabel = isEditMode ? "Save Changes" : "Save Draft";
   const savingActionLabel = isEditMode ? "Saving changes..." : "Saving...";
   const finalActionMobileLabel = isEditMode ? "Save" : "Submit";
@@ -207,7 +208,10 @@ const CustomerRecordWizard = forwardRef<CustomerRecordWizardHandle, Props>(funct
       const res = await fetchWithTimeout("/api/customer-records/draft", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(parsed.data),
+        body: JSON.stringify({
+          ...(currentRecordId ? { id: currentRecordId } : {}),
+          ...parsed.data,
+        }),
       });
       const result = (await res.json().catch(() => null)) as {
         success?: boolean;
@@ -283,7 +287,52 @@ const CustomerRecordWizard = forwardRef<CustomerRecordWizardHandle, Props>(funct
     setErrorBanner(null);
     setStepValidationBanner(false);
     setReviewIssues([]);
-  }, [form, formState.isDirty]);
+  }, [form]);
+
+  const runPendingConfirmation = useCallback(() => {
+    const action = pendingConfirmation;
+    setPendingConfirmation(null);
+
+    if (action === "save-draft") {
+      void (isSubmittedEdit ? submitFinal() : saveDraft());
+      return;
+    }
+
+    if (action === "submit-final") {
+      void submitFinal();
+      return;
+    }
+
+    if (action === "reset-form") {
+      resetForm();
+    }
+  }, [isSubmittedEdit, pendingConfirmation, resetForm, saveDraft, submitFinal]);
+
+  const confirmationContent = useMemo(() => {
+    if (pendingConfirmation === "save-draft") {
+      return {
+        title: isSubmittedEdit ? "Save changes to this record?" : "Save this draft?",
+        description: isSubmittedEdit
+          ? "This will validate the record and update the saved customer details in the database."
+          : "This will store the current details as a draft so you can continue later.",
+        action: isSubmittedEdit ? "Save changes" : "Save draft",
+      };
+    }
+
+    if (pendingConfirmation === "submit-final") {
+      return {
+        title: isEditMode ? "Save final changes?" : "Submit customer record?",
+        description: "This will validate all required fields and save the customer record to the database.",
+        action: isEditMode ? "Save changes" : "Submit record",
+      };
+    }
+
+    return {
+      title: "Reset this form?",
+      description: "This clears the visible form fields and any unsaved document paths from this screen.",
+      action: "Reset form",
+    };
+  }, [isEditMode, isSubmittedEdit, pendingConfirmation]);
 
   const goToFirstIssue = useCallback(() => {
     const firstIssue = reviewIssues.find((issue) => typeof issue.path?.[0] === "string");
@@ -319,10 +368,10 @@ const CustomerRecordWizard = forwardRef<CustomerRecordWizardHandle, Props>(funct
 
   return (
     <FormProvider {...form}>
-      <div ref={wizardRootRef} className="space-y-3 pb-32 md:space-y-5 md:pb-44">
+      <div ref={wizardRootRef} className="mx-auto w-full max-w-[1400px] space-y-3 pb-36 md:space-y-5 md:pb-44">
         <CustomerRecordStepper currentStep={step} maxReached={maxReached} />
 
-        <div className="rounded-2xl border border-soft-gold/30 bg-ivory/30 px-2 py-1.5 md:px-4">
+        <div className="rounded-2xl border border-soft-gold/30 bg-ivory/45 px-3 py-3 md:px-4">
           <p className="text-[10px] font-semibold text-trust-blue uppercase tracking-wide md:text-xs">Step {step + 1} of 5</p>
           <h2 className="font-serif text-base font-semibold leading-snug text-charcoal md:text-xl">
             {activeStepMeta.title}
@@ -386,7 +435,7 @@ const CustomerRecordWizard = forwardRef<CustomerRecordWizardHandle, Props>(funct
           ) : null}
         </div>
 
-        <div className="rounded-2xl border border-soft-gold/35 bg-white p-2 shadow-sm sm:p-3 md:p-6">
+        <div className="rounded-2xl border border-soft-gold/35 bg-white p-3 shadow-sm sm:p-4 md:p-6">
           {step === 0 ? <StepPersonalDetails /> : null}
           {step === 1 ? <StepAddressDetails /> : null}
           {step === 2 ? <StepDocuments customerId={initialRecord?.id} /> : null}
@@ -396,7 +445,7 @@ const CustomerRecordWizard = forwardRef<CustomerRecordWizardHandle, Props>(funct
 
         {showActionBar ? (
           <div className="pointer-events-none fixed inset-x-0 bottom-0 z-40 flex justify-center px-1.5 pb-[max(0.25rem,env(safe-area-inset-bottom))] pt-1 sm:px-6 sm:pb-3 sm:pt-2">
-            <div className="pointer-events-auto flex w-full max-w-[820px] flex-nowrap items-center gap-1.5 rounded-xl border border-soft-gold/40 bg-white/95 px-1.5 py-1 shadow-lg backdrop-blur-sm sm:flex-wrap sm:items-stretch sm:justify-center sm:gap-3 sm:rounded-2xl sm:p-3 sm:shadow-xl">
+            <div className="pointer-events-auto grid w-full max-w-[820px] grid-cols-[auto_auto_minmax(0,1fr)_auto] items-center gap-1.5 rounded-xl border border-soft-gold/40 bg-white/95 px-1.5 py-1 shadow-lg backdrop-blur-sm sm:flex sm:flex-wrap sm:items-stretch sm:justify-center sm:gap-3 sm:rounded-2xl sm:p-3 sm:shadow-xl">
             {step > 0 ? (
               <>
                 <Button
@@ -429,8 +478,7 @@ const CustomerRecordWizard = forwardRef<CustomerRecordWizardHandle, Props>(funct
             <Button
               type="button"
               variant="outline"
-              size="icon"
-              className="h-11 min-h-11 w-11 min-w-11 shrink-0 rounded-xl border-charcoal/15 bg-white text-charcoal/80 hover:bg-ivory sm:hidden"
+              className="h-11 min-h-11 shrink-0 rounded-xl border-charcoal/15 bg-white px-3 text-xs font-semibold text-charcoal/80 hover:bg-ivory sm:hidden"
               onClick={() => setPendingConfirmation("save-draft")}
               disabled={savingDraft || submitting}
               aria-label={saveActionLabel}
@@ -438,7 +486,10 @@ const CustomerRecordWizard = forwardRef<CustomerRecordWizardHandle, Props>(funct
               {savingDraft ? (
                 <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
               ) : (
-                <Save className="h-4 w-4" aria-hidden />
+                <>
+                  <Save className="h-4 w-4" aria-hidden />
+                  <span className="hidden min-[380px]:inline">Save</span>
+                </>
               )}
             </Button>
             <Button
@@ -472,7 +523,7 @@ const CustomerRecordWizard = forwardRef<CustomerRecordWizardHandle, Props>(funct
               <Button
                 type="button"
                 className="h-11 min-h-11 min-w-0 flex-1 gap-1 rounded-xl bg-trust-blue px-2.5 text-sm font-semibold text-white shadow-sm hover:bg-support-blue sm:h-auto sm:min-h-11 sm:flex-none sm:min-w-[160px] sm:gap-1.5 sm:px-4"
-                onClick={() => setPendingConfirmation(isEditMode ? "save-draft" : "submit-final")}
+                onClick={() => setPendingConfirmation("submit-final")}
                 disabled={savingDraft || submitting}
                 aria-busy={submitting}
               >
@@ -483,8 +534,8 @@ const CustomerRecordWizard = forwardRef<CustomerRecordWizardHandle, Props>(funct
                   </>
                 ) : (
                   <>
-                    <span className="truncate sm:hidden">Submit</span>
-                    <span className="hidden truncate sm:inline">Submit Customer Record</span>
+                    <span className="truncate sm:hidden">{finalActionMobileLabel}</span>
+                    <span className="hidden truncate sm:inline">{finalActionDesktopLabel}</span>
                   </>
                 )}
               </Button>
@@ -512,6 +563,32 @@ const CustomerRecordWizard = forwardRef<CustomerRecordWizardHandle, Props>(funct
             </div>
           </div>
         ) : null}
+
+        <AlertDialog
+          open={pendingConfirmation !== null}
+          onOpenChange={(open) => {
+            if (!open && !savingDraft && !submitting) setPendingConfirmation(null);
+          }}
+        >
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>{confirmationContent.title}</AlertDialogTitle>
+              <AlertDialogDescription>{confirmationContent.description}</AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel disabled={savingDraft || submitting}>Cancel</AlertDialogCancel>
+              <AlertDialogAction
+                disabled={savingDraft || submitting}
+                onClick={(event) => {
+                  event.preventDefault();
+                  runPendingConfirmation();
+                }}
+              >
+                {savingDraft || submitting ? "Working..." : confirmationContent.action}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </FormProvider>
   );

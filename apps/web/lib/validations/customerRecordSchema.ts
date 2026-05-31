@@ -42,8 +42,18 @@ const docUrl = z
   .string()
   .optional()
   .transform((v) => (v && v.trim().length > 0 ? v.trim() : undefined))
-  .refine((v) => !v || v.startsWith("/") || z.string().url().safeParse(v).success, {
-    message: "Document URL must be a valid URL or uploaded path.",
+  .refine((v) => {
+    if (!v) return true;
+    if (v.startsWith("/")) return v.startsWith("/uploads/customers/");
+
+    try {
+      const url = new URL(v);
+      return url.protocol === "https:" || url.protocol === "http:";
+    } catch {
+      return false;
+    }
+  }, {
+    message: "Document URL must be an uploaded customer file or a valid http(s) URL.",
   });
 
 const expiryAfterService = (

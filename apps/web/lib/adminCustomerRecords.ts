@@ -1,16 +1,28 @@
-﻿import { getPrisma } from "@/lib/prisma"
+import { existsSync } from "node:fs"
+import path from "node:path"
+
+import { getPrisma } from "@/lib/prisma"
 
 export type CustomerRecordTableRow = {
   id: number
   customerName: string
+  initials: string
+  email: string
   mobile: string
   serviceType: string
   customerStatus: string
   recordStatus: string
   city: string
   documents: string
+  uploadedDocumentCount: number
+  totalDocumentCount: number
   createdAt: string
   createdAtIso: string
+  customerPictureUrl: string | null
+  panDocumentUrl: string | null
+  aadharFrontUrl: string | null
+  aadharBackUrl: string | null
+  otherDocumentUrl: string | null
   reviewer: string
 }
 
@@ -19,10 +31,12 @@ function fullName(record: {
   middleName: string | null
   lastName: string | null
 }) {
-  return [record.firstName, record.middleName, record.lastName]
-    .filter(Boolean)
-    .join(" ")
-    .trim() || "Unnamed Customer"
+  return (
+    [record.firstName, record.middleName, record.lastName]
+      .filter(Boolean)
+      .join(" ")
+      .trim() || "Unnamed Customer"
+  )
 }
 
 function documentCount(record: {
@@ -32,15 +46,44 @@ function documentCount(record: {
   aadharBackUrl: string | null
   otherDocumentUrl: string | null
 }) {
-  const uploaded = [
+  return [
     record.customerPictureUrl,
     record.panDocumentUrl,
     record.aadharFrontUrl,
     record.aadharBackUrl,
     record.otherDocumentUrl,
   ].filter(Boolean).length
+}
 
-  return `${uploaded}/5`
+function visibleUploadUrl(url: string | null) {
+  if (!url) return null
+
+  if (!url.startsWith("/uploads/customers/")) {
+    return url
+  }
+
+  const cleanUrl = url.split("?")[0]?.replaceAll("\\", "/") ?? ""
+  const publicDir = path.join(process.cwd(), "public")
+  const targetPath = path.join(publicDir, cleanUrl)
+  const relative = path.relative(publicDir, targetPath)
+
+  if (relative.startsWith("..") || path.isAbsolute(relative)) {
+    return null
+  }
+
+  return existsSync(targetPath) ? url : null
+}
+
+function initials(name: string) {
+  const parts = name
+    .split(" ")
+    .map((part) => part.trim())
+    .filter(Boolean)
+
+  return (parts.length > 1
+    ? `${parts[0]?.[0] ?? ""}${parts[parts.length - 1]?.[0] ?? ""}`
+    : parts[0]?.slice(0, 2) || "CS"
+  ).toUpperCase()
 }
 
 export async function getCustomerRecordRows(): Promise<CustomerRecordTableRow[]> {
@@ -50,25 +93,45 @@ export async function getCustomerRecordRows(): Promise<CustomerRecordTableRow[]>
     orderBy: { updatedAt: "desc" },
   })
 
-  return records.map((record) => ({
-    id: record.id,
-    customerName: fullName(record),
-    mobile: record.mobile ?? "-",
-    serviceType: record.customerType ?? "-",
-    customerStatus: record.customerStatus,
-    recordStatus: record.recordStatus,
-    city: record.city ?? "-",
-    documents: documentCount(record),
-    createdAt: record.createdAt.toLocaleDateString("en-IN", {
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-    }),
-    createdAtIso: record.createdAt.toISOString().slice(0, 10),
-    reviewer: "CareSutra Admin",
-  }))
-}
+  return records.map((record) => {
+    const customerName = fullName(record)
+    const documents = {
+      customerPictureUrl: visibleUploadUrl(record.customerPictureUrl),
+      panDocumentUrl: visibleUploadUrl(record.panDocumentUrl),
+      aadharFrontUrl: visibleUploadUrl(record.aadharFrontUrl),
+      aadharBackUrl: visibleUploadUrl(record.aadharBackUrl),
+      otherDocumentUrl: visibleUploadUrl(record.otherDocumentUrl),
+    }
+    const uploadedDocumentCount = documentCount(documents)
 
+    return {
+      id: record.id,
+      customerName,
+      initials: initials(customerName),
+      email: record.email ?? "-",
+      mobile: record.mobile ?? "-",
+      serviceType: record.customerType ?? "-",
+      customerStatus: record.customerStatus,
+      recordStatus: record.recordStatus,
+      city: record.city ?? "-",
+      documents: `${uploadedDocumentCount} Documents`,
+      uploadedDocumentCount,
+      totalDocumentCount: 5,
+      createdAt: record.createdAt.toLocaleDateString("en-IN", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+      }),
+      createdAtIso: record.createdAt.toISOString().slice(0, 10),
+      customerPictureUrl: documents.customerPictureUrl,
+      panDocumentUrl: documents.panDocumentUrl,
+      aadharFrontUrl: documents.aadharFrontUrl,
+      aadharBackUrl: documents.aadharBackUrl,
+      otherDocumentUrl: documents.otherDocumentUrl,
+      reviewer: "CareSutra Admin",
+    }
+  })
+}
 
 export async function getCustomerRecordById(id: number) {
   const prisma = getPrisma()
@@ -91,5 +154,3 @@ export async function getCustomerRecordById(id: number) {
     expiryDate: record.expiryDate?.toISOString() ?? null,
   }
 }
-
-
